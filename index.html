@@ -31,8 +31,19 @@
             position: absolute;
             width: 100%;
             height: 100%;
-            background: radial-gradient(circle at center, rgba(212, 175, 55, 0.05) 0%, transparent 70%);
+            background: radial-gradient(circle at center, rgba(212, 175, 55, 0.07) 0%, transparent 70%);
             z-index: 0;
+        }
+
+        /* Subtelny efekt ziarna dla tekstury premium */
+        .background-glow::before {
+            content: "";
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0.03;
+            pointer-events: none;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
         }
 
         .container {
@@ -40,11 +51,12 @@
             z-index: 1;
             opacity: 0;
             animation: fadeIn 3s forwards ease-in-out;
+            padding: 20px;
         }
 
         /* Złote Serce - Logo */
         .logo-wrapper {
-            margin-bottom: 30px;
+            margin-bottom: 40px;
         }
 
         .logo-ring {
@@ -56,61 +68,78 @@
             justify-content: center;
             align-items: center;
             box-shadow: 0 0 30px rgba(212, 175, 55, 0.2);
-            animation: pulse 4s infinite;
+            animation: pulse 4s infinite ease-in-out;
         }
 
         /* Typografia Luxury */
         h1 {
             font-family: 'Cinzel', serif;
-            font-size: 3rem;
-            letter-spacing: 12px;
+            font-size: clamp(2rem, 8vw, 3.5rem); /* Skaluje się płynnie */
+            letter-spacing: 15px;
             color: var(--gold);
             margin: 10px 0;
             text-transform: uppercase;
+            font-weight: 700;
+        }
+
+        /* TWOJE NOWE MANIFESTO */
+        .manifesto {
+            font-size: 0.85rem;
+            letter-spacing: 5px;
+            color: #888;
+            text-transform: uppercase;
+            margin: 30px auto 60px auto;
+            font-weight: 300;
+            max-width: 700px;
+            line-height: 2;
+            animation: fadeIn 5s forwards ease-in-out;
         }
 
         p.status {
-            font-size: 0.9rem;
-            letter-spacing: 5px;
-            color: #666;
+            font-size: 0.7rem;
+            letter-spacing: 4px;
+            color: #444;
             text-transform: uppercase;
-            margin-bottom: 50px;
+            margin-bottom: 40px;
         }
 
         /* Linki do Twoich Sociali */
         .nexus-links {
             display: flex;
-            gap: 30px;
+            gap: 20px;
             justify-content: center;
+            flex-wrap: wrap;
         }
 
         .nexus-links a {
             color: var(--gold);
             text-decoration: none;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             letter-spacing: 2px;
-            opacity: 0.6;
-            transition: 0.4s;
+            opacity: 0.5;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
             border: 1px solid transparent;
-            padding: 8px 15px;
+            padding: 10px 20px;
+            text-transform: uppercase;
         }
 
         .nexus-links a:hover {
             opacity: 1;
             border: 1px solid var(--gold);
             background: rgba(212, 175, 55, 0.05);
+            letter-spacing: 4px; /* Efekt rozszerzenia przy hoverze */
         }
 
         /* Animacje */
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
+            from { opacity: 0; transform: translateY(15px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
         @keyframes pulse {
-            0% { transform: scale(1); box-shadow: 0 0 20px rgba(212, 175, 55, 0.2); }
-            50% { transform: scale(1.05); box-shadow: 0 0 40px rgba(212, 175, 55, 0.4); }
-            100% { transform: scale(1); box-shadow: 0 0 20px rgba(212, 175, 55, 0.2); }
+            0% { transform: scale(1); box-shadow: 0 0 20px rgba(212, 175, 55, 0.2); border-color: var(--gold); }
+            50% { transform: scale(1.03); box-shadow: 0 0 50px rgba(212, 175, 55, 0.4); border-color: #fff; }
+            100% { transform: scale(1); box-shadow: 0 0 20px rgba(212, 175, 55, 0.2); border-color: var(--gold); }
         }
     </style>
 </head>
@@ -120,11 +149,14 @@
     <div class="container">
         <div class="logo-wrapper">
             <div class="logo-ring">
-                <span style="color: var(--gold); font-size: 2rem;">JC</span>
+                <span style="color: var(--gold); font-size: 2rem; font-family: 'Cinzel';">JC</span>
             </div>
         </div>
         
         <h1>JuicyCore</h1>
+        
+        <p class="manifesto">In a world of noise, silence is the ultimate form of technology.</p>
+        
         <p class="status">System Initializing // Project Zero</p>
 
         <nav class="nexus-links">
