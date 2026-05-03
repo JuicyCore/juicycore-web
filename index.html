@@ -9,7 +9,6 @@
         :root {
             --gold: #D4AF37;
             --dark: #050505;
-            --obsidian: #0A0A0A;
         }
 
         body, html {
@@ -26,7 +25,6 @@
             align-items: center;
         }
 
-        /* Luksusowy Gradient w Tle */
         .background-glow {
             position: absolute;
             width: 100%;
@@ -35,7 +33,7 @@
             z-index: 0;
         }
 
-        /* Subtelny efekt ziarna dla tekstury premium */
+        /* Tekstura ziarna */
         .background-glow::before {
             content: "";
             position: absolute;
@@ -54,14 +52,14 @@
             padding: 20px;
         }
 
-        /* Złote Serce - Logo */
+        /* OKRĄG Z SERCEM */
         .logo-wrapper {
             margin-bottom: 40px;
         }
 
         .logo-ring {
-            width: 120px;
-            height: 120px;
+            width: 160px; /* Rozmiar dopasowany do detali serca */
+            height: 160px;
             border: 1px solid var(--gold);
             border-radius: 50%;
             display: inline-flex;
@@ -69,12 +67,20 @@
             align-items: center;
             box-shadow: 0 0 30px rgba(212, 175, 55, 0.2);
             animation: pulse 4s infinite ease-in-out;
+            overflow: hidden;
+            background-color: black;
         }
 
-        /* Typografia Luxury */
+        .logo-ring img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Wypełnia okrąg bez zniekształceń */
+            display: block;
+        }
+
         h1 {
             font-family: 'Cinzel', serif;
-            font-size: clamp(2rem, 8vw, 3.5rem); /* Skaluje się płynnie */
+            font-size: clamp(2rem, 8vw, 3.5rem);
             letter-spacing: 15px;
             color: var(--gold);
             margin: 10px 0;
@@ -82,7 +88,6 @@
             font-weight: 700;
         }
 
-        /* TWOJE NOWE MANIFESTO */
         .manifesto {
             font-size: 0.85rem;
             letter-spacing: 5px;
@@ -92,7 +97,6 @@
             font-weight: 300;
             max-width: 700px;
             line-height: 2;
-            animation: fadeIn 5s forwards ease-in-out;
         }
 
         p.status {
@@ -103,7 +107,6 @@
             margin-bottom: 40px;
         }
 
-        /* Linki do Twoich Sociali */
         .nexus-links {
             display: flex;
             gap: 20px;
@@ -127,19 +130,18 @@
             opacity: 1;
             border: 1px solid var(--gold);
             background: rgba(212, 175, 55, 0.05);
-            letter-spacing: 4px; /* Efekt rozszerzenia przy hoverze */
+            letter-spacing: 4px;
         }
 
-        /* Animacje */
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(15px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
         @keyframes pulse {
-            0% { transform: scale(1); box-shadow: 0 0 20px rgba(212, 175, 55, 0.2); border-color: var(--gold); }
-            50% { transform: scale(1.03); box-shadow: 0 0 50px rgba(212, 175, 55, 0.4); border-color: #fff; }
-            100% { transform: scale(1); box-shadow: 0 0 20px rgba(212, 175, 55, 0.2); border-color: var(--gold); }
+            0% { transform: scale(1); box-shadow: 0 0 20px rgba(212, 175, 55, 0.2); }
+            50% { transform: scale(1.05); box-shadow: 0 0 50px rgba(212, 175, 55, 0.4); }
+            100% { transform: scale(1); box-shadow: 0 0 20px rgba(212, 175, 55, 0.2); }
         }
     </style>
 </head>
@@ -149,7 +151,7 @@
     <div class="container">
         <div class="logo-wrapper">
             <div class="logo-ring">
-                <span style="color: var(--gold); font-size: 2rem; font-family: 'Cinzel';">JC</span>
+                <img src="heart.png" alt="JuicyCore Neural Heart">
             </div>
         </div>
         
