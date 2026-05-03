@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JuicyCore | Project Zero</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold: #D4AF37;
+            --dark: #050505;
+            --obsidian: #0A0A0A;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--dark);
+            color: white;
+            font-family: 'Inter', sans-serif;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Luksusowy Gradient w Tle */
+        .background-glow {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, rgba(212, 175, 55, 0.05) 0%, transparent 70%);
+            z-index: 0;
+        }
+
+        .container {
+            text-align: center;
+            z-index: 1;
+            opacity: 0;
+            animation: fadeIn 3s forwards ease-in-out;
+        }
+
+        /* Złote Serce - Logo */
+        .logo-wrapper {
+            margin-bottom: 30px;
+        }
+
+        .logo-ring {
+            width: 120px;
+            height: 120px;
+            border: 1px solid var(--gold);
+            border-radius: 50%;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 0 30px rgba(212, 175, 55, 0.2);
+            animation: pulse 4s infinite;
+        }
+
+        /* Typografia Luxury */
+        h1 {
+            font-family: 'Cinzel', serif;
+            font-size: 3rem;
+            letter-spacing: 12px;
+            color: var(--gold);
+            margin: 10px 0;
+            text-transform: uppercase;
+        }
+
+        p.status {
+            font-size: 0.9rem;
+            letter-spacing: 5px;
+            color: #666;
+            text-transform: uppercase;
+            margin-bottom: 50px;
+        }
+
+        /* Linki do Twoich Sociali */
+        .nexus-links {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+        }
+
+        .nexus-links a {
+            color: var(--gold);
+            text-decoration: none;
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+            opacity: 0.6;
+            transition: 0.4s;
+            border: 1px solid transparent;
+            padding: 8px 15px;
+        }
+
+        .nexus-links a:hover {
+            opacity: 1;
+            border: 1px solid var(--gold);
+            background: rgba(212, 175, 55, 0.05);
+        }
+
+        /* Animacje */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); box-shadow: 0 0 20px rgba(212, 175, 55, 0.2); }
+            50% { transform: scale(1.05); box-shadow: 0 0 40px rgba(212, 175, 55, 0.4); }
+            100% { transform: scale(1); box-shadow: 0 0 20px rgba(212, 175, 55, 0.2); }
+        }
+    </style>
+</head>
+<body>
+    <div class="background-glow"></div>
+    
+    <div class="container">
+        <div class="logo-wrapper">
+            <div class="logo-ring">
+                <span style="color: var(--gold); font-size: 2rem;">JC</span>
+            </div>
+        </div>
+        
+        <h1>JuicyCore</h1>
+        <p class="status">System Initializing // Project Zero</p>
+
+        <nav class="nexus-links">
+            <a href="https://github.com/JuicyCore" target="_blank">GitHub</a>
+            <a href="https://x.com/JuicyCoreHQ" target="_blank">X.com</a>
+            <a href="https://discord.gg/E6Cp7rvpWP" target="_blank">Discord</a>
+            <a href="https://juicycore.ai" target="_blank">The Lab</a>
+        </nav>
+    </div>
+</body>
+</html>
