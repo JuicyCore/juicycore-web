@@ -18,19 +18,23 @@
             margin: 0;
             padding: 0;
             width: 100%;
-            height: 100%;
+            min-height: 100vh;
             background-color: var(--dark);
             color: white;
             font-family: 'Inter', sans-serif;
-            overflow-x: hidden; /* Zmienione na overflow-x, aby dół był dostępny */
+            /* Zmienione na auto, aby móc przewinąć do odznaki na laptopach */
+            overflow-y: auto;
+            overflow-x: hidden;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
         }
 
+        /* Tło z poświatą i ziarnem */
         .background-glow {
             position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
             background: radial-gradient(circle at center, rgba(212, 175, 55, 0.07) 0%, transparent 70%);
@@ -52,7 +56,7 @@
             z-index: 1;
             opacity: 0;
             animation: fadeIn 3s forwards ease-in-out;
-            padding: 40px 20px;
+            padding: 60px 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -117,7 +121,7 @@
             gap: 20px;
             justify-content: center;
             flex-wrap: wrap;
-            margin-bottom: 50px;
+            margin-bottom: 60px;
         }
 
         .nexus-links a {
@@ -139,16 +143,18 @@
             letter-spacing: 4px;
         }
 
-        /* STYL DLA ODZNAKI LINKEDIN */
-        .linkedin-badge-container {
+        /* Kontener odznaki LinkedIn */
+        .linkedin-badge-wrapper {
             margin-top: 20px;
-            opacity: 0.6;
-            transition: opacity 0.5s ease;
-            transform: scale(0.9); /* Delikatne zmniejszenie by nie dominowało */
+            opacity: 0.7;
+            transition: opacity 0.5s ease, transform 0.5s ease;
+            filter: grayscale(0.2);
         }
 
-        .linkedin-badge-container:hover {
+        .linkedin-badge-wrapper:hover {
             opacity: 1;
+            filter: grayscale(0);
+            transform: translateY(-5px);
         }
 
         @keyframes fadeIn {
@@ -183,12 +189,17 @@
             <a href="https://github.com/JuicyCore" target="_blank">GitHub</a>
             <a href="https://x.com/JuicyCoreHQ" target="_blank">X.com</a>
             <a href="https://discord.gg/E6Cp7rvpWP" target="_blank">Discord</a>
-            <a href="https://www.linkedin.com/in/patrykbeczek" target="_blank">LinkedIn</a>
         </nav>
 
-        <div class="linkedin-badge-container">
-            <div class="badge-base LI-profile-badge" data-locale="pl_PL" data-size="medium" data-theme="dark" data-type="VERTICAL" data-vanity="patrykbeczek" data-version="v1">
-                <a class="badge-base__link LI-simple-link" href="https://nl.linkedin.com/in/patrykbeczek?trk=profile-badge"></a>
+        <div class="linkedin-badge-wrapper">
+            <div class="badge-base LI-profile-badge" 
+                 data-locale="pl_PL" 
+                 data-size="medium" 
+                 data-theme="dark" 
+                 data-type="VERTICAL" 
+                 data-vanity="patrykbeczek" 
+                 data-version="v1">
+                <a class="badge-base__link LI-simple-link" href="https://nl.linkedin.com/in/patrykbeczek?trk=profile-badge">Patryk Beczek</a>
             </div>
         </div>
     </div>
