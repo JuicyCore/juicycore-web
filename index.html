@@ -6,8 +6,6 @@
     <title>JuicyCore | Project Zero</title>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;600&display=swap" rel="stylesheet">
     
-    <script src="https://platform.linkedin.com/badges/js/profile.js" async defer type="text/javascript"></script>
-    
     <style>
         :root {
             --gold: #D4AF37;
@@ -22,7 +20,6 @@
             background-color: var(--dark);
             color: white;
             font-family: 'Inter', sans-serif;
-            /* Zmienione na auto, aby móc przewinąć do odznaki na laptopach */
             overflow-y: auto;
             overflow-x: hidden;
             display: flex;
@@ -30,7 +27,6 @@
             align-items: center;
         }
 
-        /* Tło z poświatą i ziarnem */
         .background-glow {
             position: fixed;
             top: 0;
@@ -108,7 +104,7 @@
             line-height: 2;
         }
 
-        p.status {
+        .status {
             font-size: 0.7rem;
             letter-spacing: 4px;
             color: #444;
@@ -121,7 +117,7 @@
             gap: 20px;
             justify-content: center;
             flex-wrap: wrap;
-            margin-bottom: 60px;
+            margin-bottom: 40px;
         }
 
         .nexus-links a {
@@ -143,18 +139,22 @@
             letter-spacing: 4px;
         }
 
-        /* Kontener odznaki LinkedIn */
+        /* Styl dla odznaki i linku awaryjnego */
         .linkedin-badge-wrapper {
             margin-top: 20px;
-            opacity: 0.7;
-            transition: opacity 0.5s ease, transform 0.5s ease;
-            filter: grayscale(0.2);
+            min-height: 250px; /* Rezerwuje miejsce na baner */
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
-        .linkedin-badge-wrapper:hover {
-            opacity: 1;
-            filter: grayscale(0);
-            transform: translateY(-5px);
+        .linkedin-badge-wrapper a {
+            color: var(--gold) !important; /* Nigdy więcej niebieskiego linku */
+            text-decoration: none;
+            font-size: 0.7rem;
+            letter-spacing: 2px;
+            opacity: 0.6;
+            text-transform: uppercase;
         }
 
         @keyframes fadeIn {
@@ -199,9 +199,11 @@
                  data-type="VERTICAL" 
                  data-vanity="patrykbeczek" 
                  data-version="v1">
-                <a class="badge-base__link LI-simple-link" href="https://nl.linkedin.com/in/patrykbeczek?trk=profile-badge">Patryk Beczek</a>
+                <a class="badge-base__link LI-simple-link" href="https://nl.linkedin.com/in/patrykbeczek?trk=profile-badge">View Patryk Beczek Profile</a>
             </div>
         </div>
     </div>
+
+    <script src="https://platform.linkedin.com/badges/js/profile.js" async defer type="text/javascript"></script>
 </body>
 </html>
