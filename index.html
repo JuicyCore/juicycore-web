@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>JuicyCore | Project Zero</title>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;600&display=swap" rel="stylesheet">
+    
+    <script src="https://platform.linkedin.com/badges/js/profile.js" async defer type="text/javascript"></script>
+    
     <style>
         :root {
             --gold: #D4AF37;
@@ -19,21 +22,21 @@
             background-color: var(--dark);
             color: white;
             font-family: 'Inter', sans-serif;
-            overflow: hidden;
+            overflow-x: hidden; /* Zmienione na overflow-x, aby dół był dostępny */
             display: flex;
             justify-content: center;
             align-items: center;
+            min-height: 100vh;
         }
 
         .background-glow {
-            position: absolute;
+            position: fixed;
             width: 100%;
             height: 100%;
             background: radial-gradient(circle at center, rgba(212, 175, 55, 0.07) 0%, transparent 70%);
             z-index: 0;
         }
 
-        /* Tekstura ziarna */
         .background-glow::before {
             content: "";
             position: absolute;
@@ -49,16 +52,18 @@
             z-index: 1;
             opacity: 0;
             animation: fadeIn 3s forwards ease-in-out;
-            padding: 20px;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
-        /* OKRĄG Z SERCEM */
         .logo-wrapper {
             margin-bottom: 40px;
         }
 
         .logo-ring {
-            width: 160px; /* Rozmiar dopasowany do detali serca */
+            width: 160px;
             height: 160px;
             border: 1px solid var(--gold);
             border-radius: 50%;
@@ -74,7 +79,7 @@
         .logo-ring img {
             width: 100%;
             height: 100%;
-            object-fit: cover; /* Wypełnia okrąg bez zniekształceń */
+            object-fit: cover;
             display: block;
         }
 
@@ -93,7 +98,7 @@
             letter-spacing: 5px;
             color: #888;
             text-transform: uppercase;
-            margin: 30px auto 60px auto;
+            margin: 30px auto 40px auto;
             font-weight: 300;
             max-width: 700px;
             line-height: 2;
@@ -104,7 +109,7 @@
             letter-spacing: 4px;
             color: #444;
             text-transform: uppercase;
-            margin-bottom: 40px;
+            margin-bottom: 30px;
         }
 
         .nexus-links {
@@ -112,6 +117,7 @@
             gap: 20px;
             justify-content: center;
             flex-wrap: wrap;
+            margin-bottom: 50px;
         }
 
         .nexus-links a {
@@ -131,6 +137,18 @@
             border: 1px solid var(--gold);
             background: rgba(212, 175, 55, 0.05);
             letter-spacing: 4px;
+        }
+
+        /* STYL DLA ODZNAKI LINKEDIN */
+        .linkedin-badge-container {
+            margin-top: 20px;
+            opacity: 0.6;
+            transition: opacity 0.5s ease;
+            transform: scale(0.9); /* Delikatne zmniejszenie by nie dominowało */
+        }
+
+        .linkedin-badge-container:hover {
+            opacity: 1;
         }
 
         @keyframes fadeIn {
@@ -165,8 +183,14 @@
             <a href="https://github.com/JuicyCore" target="_blank">GitHub</a>
             <a href="https://x.com/JuicyCoreHQ" target="_blank">X.com</a>
             <a href="https://discord.gg/E6Cp7rvpWP" target="_blank">Discord</a>
-            <a href="https://juicycore.ai" target="_blank">The Lab</a>
+            <a href="https://www.linkedin.com/in/patrykbeczek" target="_blank">LinkedIn</a>
         </nav>
+
+        <div class="linkedin-badge-container">
+            <div class="badge-base LI-profile-badge" data-locale="pl_PL" data-size="medium" data-theme="dark" data-type="VERTICAL" data-vanity="patrykbeczek" data-version="v1">
+                <a class="badge-base__link LI-simple-link" href="https://nl.linkedin.com/in/patrykbeczek?trk=profile-badge"></a>
+            </div>
+        </div>
     </div>
 </body>
 </html>
