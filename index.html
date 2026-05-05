@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>JuicyCore | Project Zero</title>
+    
+    <link rel="icon" type="image/png" href="favicon.png">
+    
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;600&display=swap" rel="stylesheet">
     
     <script src="https://platform.linkedin.com/badges/js/profile.js" async defer type="text/javascript"></script>
@@ -29,7 +32,7 @@
             min-height: 100vh;
         }
 
-        /* OPIS: Subtelny efekt skanowania (pozioma linia przechodząca przez ekran) */
+        /* EFEKT SKANOWANIA (Subtelna linia przechodząca przez ekran) */
         body::after {
             content: "";
             position: fixed;
@@ -62,7 +65,7 @@
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
         }
 
-        /* OPIS: Małe logi systemowe w lewym górnym rogu dla klimatu laboratorium */
+        /* LOGI SYSTEMOWE W ROGU */
         .system-logs {
             position: fixed;
             top: 20px;
@@ -125,7 +128,7 @@
             cursor: default;
         }
 
-        /* OPIS: Efekt lekkiego drżenia (glitch) po najechaniu na nazwę */
+        /* EFEKT GLITCH NA HOVER */
         h1:hover {
             text-shadow: 2px 0 rgba(255,255,255,0.5), -2px 0 rgba(212, 175, 55, 0.5);
             animation: textGlitch 0.2s infinite linear;
@@ -188,7 +191,6 @@
             opacity: 1;
         }
 
-        /* ANIMACJE */
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(15px); }
             to { opacity: 1; transform: translateY(0); }
@@ -227,7 +229,7 @@
     <div class="container">
         <div class="logo-wrapper">
             <div class="logo-ring">
-                <img src="heart1.png" alt="JuicyCore Neural Heart">
+                <img src="heart0.png" alt="JuicyCore Neural Heart">
             </div>
         </div>
         
