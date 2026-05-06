@@ -9,8 +9,6 @@
     
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;600&display=swap" rel="stylesheet">
     
-    <script src="https://platform.linkedin.com/badges/js/profile.js" async defer type="text/javascript"></script>
-    
     <style>
         :root {
             --gold: #D4AF37;
@@ -62,7 +60,7 @@
             height: 100%;
             opacity: 0.03;
             pointer-events: none;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' result='noise'/%3E%3C/filter%3E%3Crect width='200' height='200' fill='white' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
         }
 
         /* LOGI SYSTEMOWE W ROGU */
@@ -180,17 +178,6 @@
             letter-spacing: 4px;
         }
 
-        .linkedin-badge-container {
-            margin-top: 20px;
-            opacity: 0.6;
-            transition: opacity 0.5s ease;
-            transform: scale(0.9);
-        }
-
-        .linkedin-badge-container:hover {
-            opacity: 1;
-        }
-
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(15px); }
             to { opacity: 1; transform: translateY(0); }
@@ -245,12 +232,6 @@
             <a href="https://discord.gg/E6Cp7rvpWP" target="_blank">Discord</a>
             <a href="https://www.linkedin.com/in/patryk-beczek" target="_blank">LinkedIn</a>
         </nav>
-
-        <div class="linkedin-badge-container">
-            <div class="badge-base LI-profile-badge" data-locale="pl_PL" data-size="medium" data-theme="dark" data-type="VERTICAL" data-vanity="patryk-beczek" data-version="v1">
-                <a class="badge-base__link LI-simple-link" href="https://nl.linkedin.com/in/patryk-beczek?trk=profile-badge"></a>
-            </div>
-        </div>
     </div>
 </body>
 </html>
