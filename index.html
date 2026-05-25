@@ -377,21 +377,25 @@
 
         // 🛡️ DANE PROJEKTU FIREBASE
         const firebaseConfig = {
-            apiKey: "AIzaSyAs-TWÓJ_PRAWDZIWY_API_KEY_Z_KONSOLI_FIREBASE", // Wklej swój klucz API z Konsoli Firebase
+            
+            const firebaseConfig = {
+            apiKey: "AIzaSyDUOdCRYspQR-dP9BgXYd_VCws8k7avVaM",
             authDomain: "juicycore-360b7.firebaseapp.com",
             projectId: "juicycore-360b7",
-            storageBucket: "juicycore-360b7.appspot.com",
-            messagingSenderId: "10712953609",
-            appId: "1:10712953609:web:91a7c5b62e49c71280f3d6"
+            storageBucket: "juicycore-360b7.firebasestorage.app",
+            messagingSenderId: "444673905531",
+            appId: "1:444673905531:web:9e263e6a70ad31a1d063de",
+            measurementId: "G-ZP1RN9Y7Q2"
+            
         };
-
+        
         const app = initializeApp(firebaseConfig);
         const analytics = getAnalytics(app);
         const auth = getAuth(app);
         const db = getFirestore(app);
 
         // 🔑 TWÓJ ADMIN EMAIL (Podmień na swój rzeczywisty Gmail, którym się logujesz)
-        const ADMIN_EMAIL = "patryk.twoj-email@gmail.com"; 
+        const ADMIN_EMAIL = "patryk.beczek.925@gmail.com"; 
         
         let currentUser = null;
         let isAdmin = false;
