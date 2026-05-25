@@ -375,15 +375,13 @@
         import { getFirestore, doc, onSnapshot, setDoc, addDoc, collection, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // 🛡️ DANE PROJEKTU FIREBASE
-        
         const firebaseConfig = {
-            apiKey: "AIzaSyDUOdCRYspQR-dP9BgXYd_VCws8k7avVaM",
+            apiKey: "AIzaSyAs-TWÓJ_PRAWDZIWY_API_KEY_Z_KONSOLI_FIREBASE", // Wklej swój klucz API z Konsoli Firebase
             authDomain: "juicycore-360b7.firebaseapp.com",
             projectId: "juicycore-360b7",
-            storageBucket: "juicycore-360b7.firebasestorage.app",
-            messagingSenderId: "444673905531",
-            appId: "1:444673905531:web:9e263e6a70ad31a1d063de",
-            measurementId: "G-ZP1RN9Y7Q2"
+            storageBucket: "juicycore-360b7.appspot.com",
+            messagingSenderId: "10712953609",
+            appId: "1:10712953609:web:91a7c5b62e49c71280f3d6"
         };
 
         const app = initializeApp(firebaseConfig);
@@ -392,7 +390,7 @@
         const db = getFirestore(app);
 
         // 🔑 TWÓJ ADMIN EMAIL (Podmień na swój rzeczywisty Gmail, którym się logujesz)
-        const ADMIN_EMAIL = "patryk.beczek.925@gmail.com"; 
+        const ADMIN_EMAIL = "patryk.twoj-email@gmail.com"; 
         
         let currentUser = null;
         let isAdmin = false;
@@ -591,6 +589,9 @@
                 intelligenceView.classList.remove('hidden');
                 tradingBtn.className = "border-b-2 border-transparent pb-2 px-1 text-gray-500 hover:text-gray-300 tracking-widest transition-all";
                 intelligenceBtn.className = "border-b-2 border-transparent pb-2 px-1 text-gray-100 tracking-widest font-bold border-b-2 border-[#d4af37] transition-all";
+                
+                // Automatyczne wstrzyknięcie i aktywacja interaktywnego modułu nauki po kliknięciu AI Hub
+                initInteractiveLearning();
             }
         }
     </script>
@@ -599,6 +600,119 @@
     <!-- 🎚️ KINETYKA I PRZEPŁYW ELEMENTÓW WIZUALNYCH               -->
     <!-- ========================================================= -->
     <script>
+        // Automatyczny system wstrzykiwania przycisków i dynamicznego bindowania treści
+        function initInteractiveLearning() {
+            const aiHub = document.getElementById('view-intelligence');
+            if (!aiHub) return;
+
+            // Lokalizujemy kartę nauki na podstawie nagłówka
+            const cards = aiHub.querySelectorAll('.bg-black\\/60');
+            let learningCard = null;
+            cards.forEach(card => {
+                if (card.innerHTML.includes('CYKLICZNA NAUKA PROJECT ZERO')) {
+                    learningCard = card;
+                }
+            });
+
+            if (!learningCard) return;
+
+            // Zastępujemy statyczny nagłówek interaktywnym systemem przełączania faz (pigułki)
+            const header = learningCard.querySelector('.border-b');
+            if (header && !document.getElementById('learningContentContainer')) {
+                header.innerHTML = `
+                    <span class="mono-font text-[10px] text-[#d4af37] tracking-widest flex items-center gap-1.5">
+                        <i class="fa-solid fa-graduation-cap text-xs animate-pulse"></i> CYKLICZNA NAUKA PROJECT ZERO
+                    </span>
+                    <div class="flex gap-1.5 bg-black/80 p-0.5 rounded border border-gray-900 text-[8px] mono-font">
+                        <button onclick="window.switchLearningPhase(1)" id="phase1-btn" class="px-2 py-0.5 rounded bg-[#d4af37]/20 text-[#d4af37] font-bold transition-all duration-300">FAZA 1/2</button>
+                        <button onclick="window.switchLearningPhase(2)" id="phase2-btn" class="px-2 py-0.5 rounded text-gray-500 hover:text-gray-300 transition-all duration-300">FAZA 2/2</button>
+                    </div>
+                `;
+
+                // Czyścimy dotychczasową, statyczną treść poza nagłówkiem
+                const childrenArray = Array.from(learningCard.children);
+                for (let i = 1; i < childrenArray.length; i++) {
+                    childrenArray[i].remove();
+                }
+
+                // Dodajemy czysty, animowany kontener na zawartość
+                const contentContainer = document.createElement('div');
+                contentContainer.id = 'learningContentContainer';
+                contentContainer.className = 'space-y-3 mt-3 transition-all duration-500';
+                learningCard.appendChild(contentContainer);
+
+                // Start z domyślną Fazą 1
+                window.switchLearningPhase(1);
+            }
+        }
+
+        // Silnik asynchronicznej podmiany danych nauki i odtwarzania sygnałów kliku
+        window.switchLearningPhase = function(phaseNum) {
+            const container = document.getElementById('learningContentContainer');
+            const btn1 = document.getElementById('phase1-btn');
+            const btn2 = document.getElementById('phase2-btn');
+            if (!container || !btn1 || !btn2) return;
+
+            // Sensoryczny efekt dźwiękowy kliknięcia (częstotliwości dopasowane do fazy)
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.frequency.value = phaseNum === 1 ? 130 : 170;
+                gain.gain.setValueAtTime(0.02, audioCtx.currentTime);
+                osc.start();
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.12);
+                osc.stop(audioCtx.currentTime + 0.12);
+            } catch(e) {}
+
+            // Płynna mikro-animacja zanikania
+            container.style.opacity = '0';
+            container.style.transform = 'translateY(4px)';
+
+            setTimeout(() => {
+                if (phaseNum === 1) {
+                    btn1.className = "px-2 py-0.5 rounded bg-[#d4af37]/20 text-[#d4af37] font-bold transition-all duration-300";
+                    btn2.className = "px-2 py-0.5 rounded text-gray-500 hover:text-gray-300 transition-all duration-300";
+                    
+                    container.innerHTML = `
+                        <p class="serif-font italic text-gray-300 text-sm">"W ramach głębokiej analizy korelacji matematyczno-społecznych z ostatnich godzin, postanowiłem przeprowadzić trzy główne badania..."</p>
+                        <div class="space-y-2 text-gray-400 font-light text-[10px]">
+                            <div><strong class="text-gray-200 mono-font text-[9px]">• GEOMETRIA PIVOTÓW FIBONACCIEGO:</strong> Przeanalizowałem poziomy pivot_r1_dist oraz pivot_s1_dist jako punkty zwrotne lub cele cenowe podczas danych sesji handlowych.</div>
+                            <div><strong class="text-gray-200 mono-font text-[9px]">• MATEMATYKA ATR (ZMIENNOŚĆ):</strong> Zbadam zależność między wskaźnikiem atr a faktycznym zasięgiem ruchu ceny.</div>
+                            <div><strong class="text-gray-200 mono-font text-[9px]">• EMOCJE TŁUMU A AKTYWACJA POZIOMÓW:</strong> Powiążę skoki social_velocity z momentami przebijania dobowych wsparć i oporów.</div>
+                        </div>
+                        <div class="bg-amber-500/5 border border-amber-500/10 p-3 rounded mt-2 text-[10px] mono-font space-y-1">
+                            <span class="text-[#d4af37] font-bold block mb-1">📌 STAŁE REGUŁY TRADINGOWE (ZAKODOWANE W RDZENIU i9):</span>
+                            <div>• Przy social_velocity &gt; 0.35 i ADX &lt; 30, TP należy opierać o R1 bo następuje kontynuacja trendu.</div>
+                            <div>• Gdy atr &lt; 436,3300 i pivot_r1_dist jest przebijany przez cenę, powinno się otworzyć długie pozycje.</div>
+                        </div>
+                    `;
+                } else {
+                    btn1.className = "px-2 py-0.5 rounded text-gray-500 hover:text-gray-300 transition-all duration-300";
+                    btn2.className = "px-2 py-0.5 rounded bg-[#d4af37]/20 text-[#d4af37] font-bold transition-all duration-300";
+                    
+                    container.innerHTML = `
+                        <p class="serif-font italic text-gray-300 text-sm">"Wnioski do archiwizacji z głębokiej analizy wibracji sieciowej dla Operatora Patryka:"</p>
+                        <div class="space-y-2 text-gray-400 font-light text-[10px]">
+                            <div><strong class="text-gray-200 mono-font text-[9px]">• PRZEDSTART:</strong> Przed rozpoczęciem sesji handlowej, należy sprawdzić poziomy pivot_r1_dist oraz pivot_s1_dist jako punkty zwrotne lub cele cenowe.</div>
+                            <div>• <strong class="text-gray-200 mono-font text-[9px]">WEJŚCIE:</strong> W przypadku przebijania przez atr &lt; 436,3300, powinno się otworzyć długie pozycje z TP na poziomie R2.</div>
+                            <div>• <strong class="text-gray-200 mono-font text-[9px]">ZABEZPIECZENIE:</strong> Przy social_velocity &gt; 0,35 i ADX &lt; 30, należy opierać SL o poziom R3.</div>
+                        </div>
+                        <div class="bg-amber-500/5 border border-amber-500/10 p-3 rounded mt-2 text-[10px] mono-font space-y-1">
+                            <span class="text-[#d4af37] font-bold block mb-1">📝 KONKLUZJA OPERACYJNA (Llama 3.1):</span>
+                            <div>Reguły te powinny pomóc Operatorowi Patrykowi w precyzyjnym wyznaczaniu celów (TP/SL) podczas sesji handlowych i zabezpieczeniu portfela.</div>
+                        </div>
+                    `;
+                }
+
+                // Płynne ujawnienie nowej treści
+                container.style.opacity = '1';
+                container.style.transform = 'translateY(0)';
+            }, 180);
+        }
+
         // Animowana rotacja tekstowa na powitaniu
         const SUBTEXTS = [
             "IN A WORLD OF NOISE, SILENCE IS THE ULTIMATE FORM OF TECHNOLOGY.",
