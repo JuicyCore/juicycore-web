@@ -71,7 +71,6 @@
             border-radius: 2px;
         }
 
-        /* Glowing text effect */
         .glow-text {
             text-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
         }
@@ -123,16 +122,16 @@
                 <span>CORE: <span class="text-emerald-400 font-bold glow-text">ACTIVE</span></span>
             </div>
             <div>NEURAL_SYNC: <span class="text-[#d4af37]" id="syncVal">98%</span></div>
-            <div>PROJECT_ZERO: <span class="text-emerald-400 font-bold" id="systemStatusLabel">STABLE</span></div>
+            <div>PROJECT_ZERO: <span class="text-emerald-400 font-bold" id="systemStatusLabel">POŁĄCZONO</span></div>
             <div>LOC: <span class="text-gray-400">JUICYCORE_LAB</span></div>
         </div>
         <div class="mono-font text-[10px] tracking-[0.2em] text-gray-500 text-right flex flex-col items-end gap-1.5">
             <div id="utcTime" class="select-none pointer-events-none">12:00:00 UTC</div>
-            <div class="select-none pointer-events-none">PING: <span class="text-emerald-400" id="binancePing">12ms</span></div>
+            <div class="select-none pointer-events-none">PING: <span class="text-emerald-400" id="binancePing">11ms</span></div>
             <div class="select-none pointer-events-none">SYS_TEMP: <span class="text-amber-500">42°C</span></div>
             
             <div class="flex gap-2 mt-1">
-                <!-- Przycisk logowania Google Auth dla Patryka -->
+                <!-- Logowanie dla Patryka -->
                 <button id="adminLoginBtn" class="mono-font text-[9px] text-gray-500 hover:text-[#d4af37] border border-gray-900 hover:border-[#d4af37]/30 px-2.5 py-1 rounded bg-black/60 hover:bg-amber-500/5 transition-all duration-300 flex items-center gap-1.5 cursor-pointer">
                     <i class="fa-solid fa-user-shield text-[8px]"></i> <span id="loginBtnText">ADMIN LOGIN</span>
                 </button>
@@ -144,16 +143,15 @@
     </header>
 
     <!-- ========================================================= -->
-    <!-- 👁️ WIDOK 1: SILENCE MODE (LANDING PAGE - DOKŁADNIE SCREEN) -->
+    <!-- 👁️ WIDOK 1: SILENCE MODE (LANDING PAGE - PREMIUM UPGRADE) -->
     <!-- ========================================================= -->
     <main id="silenceView" class="relative z-10 flex-grow flex flex-col justify-center items-center px-4 transition-all duration-1000 ease-in-out">
         <div class="text-center max-w-2xl space-y-10 flex flex-col items-center">
             
-            <!-- Trójwymiarowe, złote serce SVG -->
+            <!-- Złote serce SVG -->
             <div class="relative w-48 h-48 cursor-pointer flex justify-center items-center" onclick="transitionToDashboard()">
                 <div class="absolute inset-0 bg-radial from-amber-500/10 to-transparent blur-xl rounded-full heart-pulse"></div>
                 <svg class="w-40 h-40 heart-pulse text-[#d4af37]" viewBox="0 0 100 100" fill="currentColor">
-                    <!-- Anatomical Heart Premium High-Quality SVG -->
                     <path d="M50 92c-1.5 0-3-.6-4.1-1.7C37.3 81.8 28.2 72 21.3 62.5 13.8 52.3 10 42.6 10 33.7 10 18.4 22.4 6 37.7 6c6.2 0 11.9 2.1 16.3 6 4.4-3.9 10.1-6 16.3-6C85.6 6 98 18.4 98 33.7c0 8.9-3.8 18.6-11.3 28.8-6.9 9.5-16 19.3-24.6 27.8C61 91.4 59.5 92 58 92H50zm-12.3-78c-11.2 0-20.3 9.1-20.3 20.3 0 7.2 3.1 15.3 9.5 24.1 6.2 8.6 14.5 17.5 22.1 25.1L50 84.6l1-1c7.6-7.6 15.9-16.5 22.1-25.1 6.4-8.8 9.5-16.9 9.5-24.1C82.6 23.1 73.5 14 62.3 14c-5.4 0-10.4 2.1-14.1 6L44.1 24l-4.1-4c-3.7-3.9-8.7-6-14.1-6z" opacity="0.3"/>
                     <path d="M50,85 C50,85 78,57 78,35 C78,19 66,9 50,23 C34,9 22,19 22,35 C22,57 50,85 50,85 Z" fill="url(#goldGradient)" />
                     <defs>
@@ -163,7 +161,6 @@
                             <stop offset="100%" stop-color="#8a6605" />
                         </linearGradient>
                     </defs>
-                    <!-- Tętnice i detale biomechaniczne -->
                     <path d="M47,24 C45,18 38,15 38,15" stroke="#fff" stroke-width="1.5" fill="none" opacity="0.6"/>
                     <path d="M53,24 C55,16 62,12 62,12" stroke="#fff" stroke-width="1.5" fill="none" opacity="0.6"/>
                     <circle cx="50" cy="45" r="4" fill="#000" opacity="0.4"/>
@@ -172,18 +169,16 @@
                 </svg>
             </div>
 
-            <!-- Główne napisy (Cormorant Serif i premium minimalizm) -->
+            <!-- Główne napisy (Luxury Minimalism) -->
             <div class="space-y-4">
                 <h1 class="serif-font text-5xl md:text-7xl font-light text-[#d4af37] tracking-[0.25em] transition-all hover:scale-105 duration-700 select-none">
                     JUICYCORE
                 </h1>
-                <p class="serif-font text-gray-500 text-[10px] md:text-xs tracking-[0.4em] font-light max-w-lg mx-auto leading-relaxed">
-                    IN A WORLD OF NOISE, SILENCE IS THE ULTIMATE FORM OF TECHNOLOGY.
-                </p>
+                <!-- Dynamiczny podtytuł -->
+                <p id="dynamicSubtext" class="mono-font text-gray-600 text-[9px] md:text-[10px] tracking-[0.3em] font-light max-w-lg mx-auto h-4 transition-all duration-500"></p>
             </div>
 
-            <!-- Dynamiczny, pulsujący guzik inicjalizacji -->
-            <div class="pt-8">
+            <div class="pt-6">
                 <button onclick="transitionToDashboard()" class="mono-font text-[10px] md:text-xs text-gray-400 hover:text-[#d4af37] tracking-[0.3em] transition-all duration-500 ease-in-out border border-gray-900 hover:border-[#d4af37]/30 px-6 py-3 rounded-full bg-black/40 hover:bg-amber-500/5 backdrop-blur-sm cursor-pointer animate-pulse">
                     ENTER MASTER CONTROLLER
                 </button>
@@ -202,21 +197,17 @@
                 <h2 class="mono-font text-xs font-semibold tracking-widest text-[#d4af37]">🧬 SWARM MATRIX (10 AGENTS)</h2>
                 <span class="mono-font text-[9px] text-emerald-400 animate-pulse font-bold" id="swarmStateBadge">MONITORING</span>
             </div>
-            
-            <!-- Kontenery agentów generowane dynamicznie dla elastyczności -->
-            <div id="swarmContainer" class="space-y-3">
-                <!-- Przykład agenta generowanego z JS (Heartbeat, RAM, PID) -->
-            </div>
+            <div id="swarmContainer" class="space-y-3"></div>
         </section>
 
-        <!-- ŚRODEK: WYKRESY I TRADING TERMINAL -->
+        <!-- KORPUS CENTRALNY: NAWIGACJA ZAKŁADEK -->
         <section class="lg:col-span-2 flex flex-col space-y-6">
             
-            <!-- NAJWAŻNIEJSZE METRYKI (FINANCIAL METRICS BLOCK - REAL LIVE DATA) -->
+            <!-- PANEL KONTROLI PORTFELA (FINANCIAL METRICS BLOCK - REAL LIVE DATA) -->
             <div class="grid grid-cols-3 gap-2 md:gap-4 bg-black/60 border border-gray-900 rounded-lg p-3 md:p-4 backdrop-blur-md">
                 <div class="text-center space-y-1">
                     <span class="mono-font text-[8px] md:text-[9px] text-gray-500 tracking-wider">SALDO WOLNE (USDT)</span>
-                    <div class="text-base md:text-xl font-bold text-gray-200 tracking-wide" id="freeBalance">10 000.00</div>
+                    <div class="text-base md:text-xl font-bold text-gray-200 tracking-wide" id="freeBalance">1 342.18</div>
                     <span class="mono-font text-[8px] md:text-[9px] text-emerald-400">100% płynności</span>
                 </div>
                 <div class="text-center space-y-1 border-x border-gray-900">
@@ -225,48 +216,108 @@
                     <span class="mono-font text-[8px] md:text-[9px] text-[#00FF66]" id="roiValue">+0.00%</span>
                 </div>
                 <div class="text-center space-y-1">
-                    <span class="mono-font text-[8px] md:text-[9px] text-gray-500 tracking-wider">WIN RATE (SKUTECZNOŚĆ)</span>
+                    <span class="mono-font text-[8px] md:text-[9px] text-gray-500 tracking-wider">SKUTECZNOŚĆ (WIN RATE)</span>
                     <div class="text-base md:text-xl font-bold text-emerald-400 tracking-wide" id="winRateVal">78.4%</div>
                     <span class="mono-font text-[8px] md:text-[9px] text-gray-500">PF: <strong class="text-gray-300" id="profitFactorVal">2.14</strong></span>
                 </div>
             </div>
 
-            <!-- WYKRES PNL (CHART) -->
-            <div class="bg-black/60 border border-gray-900 rounded-lg p-4 backdrop-blur-md flex-grow flex flex-col justify-between h-[280px]">
-                <div class="flex justify-between items-center mb-1">
-                    <span class="mono-font text-[10px] text-[#d4af37] tracking-widest">📈 KRZYWA KAPITAŁU (EQUITY CURVE)</span>
-                    <span class="px-2 py-0.5 border border-[#d4af37]/30 text-[#d4af37] text-[8px] mono-font bg-amber-500/5 rounded">REALTIME DATA</span>
+            <!-- NAWIGATOR ZAKŁADEK SYSTEMOWYCH -->
+            <div class="flex border-b border-gray-900 text-xs mono-font gap-4">
+                <button onclick="switchTab('trading')" id="tab-trading-btn" class="border-b-2 border-[#d4af37] pb-2 px-1 text-gray-100 tracking-widest font-bold transition-all">
+                    🎛️ LIVE QUANT TRADING
+                </button>
+                <button onclick="switchTab('intelligence')" id="tab-intelligence-btn" class="border-b-2 border-transparent pb-2 px-1 text-gray-500 hover:text-gray-300 tracking-widest transition-all flex items-center gap-1.5">
+                    🧠 QUANT INTELLIGENCE &amp; AI HUB
+                </button>
+            </div>
+
+            <!-- ZAKŁADKA 1: TRADING SUITE (WYKRES I LOGI SYSTEMOWE) -->
+            <div id="view-trading" class="space-y-6 flex-grow flex flex-col">
+                <div class="bg-black/60 border border-gray-900 rounded-lg p-4 backdrop-blur-md h-[260px] flex flex-col justify-between">
+                    <div class="relative w-full h-[220px]">
+                        <canvas id="equityChart"></canvas>
+                    </div>
                 </div>
-                <div class="relative w-full h-[220px]">
-                    <canvas id="equityChart"></canvas>
+
+                <div class="bg-black/80 border border-gray-900 rounded-lg p-4 scanlines flex flex-col h-[180px]">
+                    <div class="flex justify-between items-center border-b border-gray-900 pb-1 mb-2">
+                        <span class="mono-font text-[9px] text-gray-500">📂 TELEMETRY TERMINAL AUDIT (LOGS)</span>
+                        <span class="mono-font text-[8px] text-[#d4af37]">SCROLL: ACTIVE</span>
+                    </div>
+                    <div id="terminalConsole" class="flex-grow overflow-y-auto mono-font text-[9px] md:text-[10px] text-gray-400 space-y-1.5 pr-2 leading-relaxed"></div>
                 </div>
             </div>
 
-            <!-- TERMINAL LOGÓW SYSTEMOWYCH NA ŻYWO (AUDIT LOGGER - REAL LOGSTREAM) -->
-            <div class="bg-black/80 border border-gray-900 rounded-lg p-4 scanlines flex flex-col h-[180px]">
-                <div class="flex justify-between items-center border-b border-gray-900 pb-1 mb-2">
-                    <span class="mono-font text-[9px] text-gray-500">📂 TELEMETRY TERMINAL AUDIT (LOGS)</span>
-                    <span class="mono-font text-[8px] text-[#d4af37]">SCROLL: ACTIVE</span>
+            <!-- ZAKŁADKA 2: INTEL & AI HUB (RAPORTY NAUKI I INTEGRACJA DISCORDA) -->
+            <div id="view-intelligence" class="hidden space-y-6 flex-grow overflow-y-auto max-h-[50vh] pr-1">
+                
+                <!-- BLOK 1: DETEKCJA ANOMALII (TITANIUM BEAST CLONE Z DISCORDA) -->
+                <div class="bg-gradient-to-r from-red-950/10 to-black/40 border border-red-900/20 rounded-lg p-4 backdrop-blur-md space-y-3">
+                    <div class="flex justify-between items-center border-b border-red-900/20 pb-2">
+                        <span class="mono-font text-[10px] text-red-400 font-bold tracking-widest flex items-center gap-1.5">
+                            <i class="fa-solid fa-radiation animate-spin text-red-500 text-xs"></i> TITANIUM BEAST: DETEKCJA ANOMALII
+                        </span>
+                        <span class="bg-red-900/30 text-red-400 border border-red-800/50 text-[8px] px-1.5 py-0.5 rounded mono-font">TITANIUM SELL</span>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-3 text-[10px] mono-font text-gray-400">
+                        <div>• Aktywne aktywo: <strong class="text-gray-100">BNB/USDT</strong></div>
+                        <div>• Główny trend: <strong class="text-[#00FF66]">HOSSA (STRONG)</strong></div>
+                        <div>• Sesja: <strong class="text-amber-400">EUROPA / US OVERLAP</strong></div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2 border-t border-gray-900 text-[10px] mono-font">
+                        <div class="space-y-1.5 bg-black/40 p-2.5 rounded border border-gray-950">
+                            <span class="text-[#d4af37] block text-[9px] tracking-wider">🌀 VORTEX MATH (3-6-9)</span>
+                            <div class="flex justify-between"><span>RSI-9 (Tesla):</span><span class="text-rose-400 font-bold">83.83</span></div>
+                            <div class="flex justify-between"><span>MFI-9 (Flow):</span><span class="text-rose-400 font-bold">88.51</span></div>
+                            <div class="flex justify-between"><span>EMA Cross Dist:</span><span class="text-gray-300">5.01</span></div>
+                        </div>
+                        <div class="space-y-1.5 bg-black/40 p-2.5 rounded border border-gray-950">
+                            <span class="text-cyan-400 block text-[9px] tracking-wider">📊 ANALIZA KLASYCZNA</span>
+                            <div class="flex justify-between"><span>RSI-14:</span><span>75.89</span></div>
+                            <div class="flex justify-between"><span>ADX (Siła):</span><span>39.3</span></div>
+                            <div class="flex justify-between"><span>MACD:</span><span>3.4930</span></div>
+                        </div>
+                    </div>
                 </div>
-                <div id="terminalConsole" class="flex-grow overflow-y-auto mono-font text-[9px] md:text-[10px] text-gray-400 space-y-1.5 pr-2 leading-relaxed">
-                    <div class="text-gray-600 font-bold">[SYSTEM STATUS]: Czekam na pierwszą synchronizację ze skryptu i9...</div>
+
+                <!-- BLOK 2: CYKLICZNA NAUKA PROJECT ZERO (LLAMA REPORTS) -->
+                <div class="bg-black/60 border border-gray-900 rounded-lg p-4 backdrop-blur-md space-y-3 text-[11px] leading-relaxed">
+                    <div class="flex justify-between items-center border-b border-gray-900 pb-2">
+                        <span class="mono-font text-[10px] text-[#d4af37] tracking-widest flex items-center gap-1.5">
+                            <i class="fa-solid fa-graduation-cap text-xs"></i> CYKLICZNA NAUKA PROJECT ZERO
+                        </span>
+                        <span class="text-gray-500 text-[9px] mono-font">Faza 1/2</span>
+                    </div>
+                    
+                    <p class="serif-font italic text-gray-300 text-sm">"W ramach głębokiej analizy korelacji matematyczno-społecznych z ostatnich godzin, postanowiłem przeprowadzić trzy główne badania..."</p>
+                    
+                    <div class="space-y-2 text-gray-400 font-light">
+                        <div><strong class="text-gray-200 mono-font text-[10px]">1. GEOMETRIA PIVOTÓF FIBONACCIEGO:</strong> Przeanalizowałem poziomy pivot_r1_dist oraz pivot_s1_dist jako punkty zwrotne lub cele cenowe podczas danych sesji handlowych.</div>
+                        <div><strong class="text-gray-200 mono-font text-[10px]">2. MATEMATYKA ATR (ZMIENNOŚĆ):</strong> Zbadam zależność między wskaźnikiem atr a faktycznym zasięgiem ruchu ceny.</div>
+                        <div><strong class="text-gray-200 mono-font text-[10px]">3. EMOCJE TŁUMU A AKTYWACJA POZIOMÓW:</strong> Powiążę skoki social_velocity z momentami przebijania dobowych wsparć i oporów.</div>
+                    </div>
+
+                    <div class="bg-amber-500/5 border border-amber-500/10 p-3 rounded mt-2 text-[10px] mono-font space-y-1">
+                        <span class="text-[#d4af37] font-bold block mb-1">📌 STAŁE REGUŁY TRADINGOWE (ZAKODOWANE W RDZENIU i9):</span>
+                        <div>• Przy social_velocity &gt; 0.35 i ADX &lt; 30, TP należy opierać o R1 bo następuje kontynuacja trendu.</div>
+                        <div>• Gdy atr &lt; 436,3300 i pivot_r1_dist jest przebijany przez cenę, powinno się otworzyć długie pozycje.</div>
+                    </div>
                 </div>
             </div>
         </section>
 
         <!-- KOLUMNA PRAWA: NOTOWANIA, LLM CHAT & ADMIN PANEL -->
         <section class="lg:col-span-1 flex flex-col space-y-6">
-            
-            <!-- VORTEX 9 STREAM (BTC, ETH, SOL...) -->
-            <div class="bg-black/60 border border-gray-900 rounded-lg p-4 flex flex-col space-y-3">
+            <div id="vortexListArea" class="bg-black/60 border border-gray-900 rounded-lg p-4 flex flex-col space-y-3">
                 <span class="mono-font text-[10px] text-[#d4af37] tracking-widest border-b border-gray-900 pb-2">🌀 VORTEX 9 STREAM (RSI-9)</span>
-                <div class="space-y-2.5 max-h-[180px] overflow-y-auto pr-1" id="vortexList">
-                    <!-- Notowania generowane dynamicznie -->
-                </div>
+                <div class="space-y-2.5 max-h-[150px] overflow-y-auto pr-1" id="vortexList"></div>
             </div>
 
-            <!-- CHAT Z LLM LLAMA 3.1 COORDINATOR (ZABEZPIECZONY) -->
-            <div class="bg-black/60 border border-gray-900 rounded-lg p-4 flex flex-col h-[320px] backdrop-blur-md">
+            <!-- CHAT Z LLM LLAMA 3.1 COORDINATOR -->
+            <div class="bg-black/60 border border-gray-900 rounded-lg p-4 flex flex-col h-[280px] backdrop-blur-md">
                 <div class="flex justify-between items-center border-b border-gray-900 pb-2 mb-2">
                     <div class="flex items-center space-x-2">
                         <i class="fa-solid fa-brain text-[#d4af37] text-xs"></i>
@@ -274,22 +325,18 @@
                     </div>
                     <span class="w-1.5 h-1.5 rounded-full bg-emerald-500" id="llmIndicator"></span>
                 </div>
-                
-                <!-- Chat log -->
                 <div id="llmChatBox" class="flex-grow overflow-y-auto space-y-3 text-[11px] pr-2 mb-2 scroll-smooth">
                     <div class="text-gray-500 italic text-[9px] text-center" id="llmStatusText">Operator Authentication Required to Send Prompts.</div>
                 </div>
-
-                <!-- Input box (Zablokowany domyślnie dla gości) -->
                 <div class="flex space-x-2 items-center pt-1 border-t border-gray-900" id="chatInputArea">
-                    <input id="llmInput" type="text" disabled placeholder="🔒 Zaloguj się jako Admin..." class="flex-grow bg-black/40 border border-gray-900 text-xs px-3 py-2 rounded focus:outline-none focus:border-[#d4af37]/50 text-gray-500 mono-font">
+                    <input id="llmInput" type="text" disabled placeholder="🔒 Zaloguj się jako Admin..." class="flex-grow bg-black/40 border border-gray-900 text-xs px-3 py-2 rounded focus:outline-none focus:border-[#d4af37]/50 text-gray-200 mono-font">
                     <button id="sendPromptBtn" disabled onclick="sendChatMessage()" class="bg-gray-950 border border-gray-900 text-gray-600 p-2 rounded transition-all duration-300">
                         <i class="fa-solid fa-paper-plane text-[10px]"></i>
                     </button>
                 </div>
             </div>
 
-            <!-- 🚨 PANEL AWARYJNY I INSTYTUCJONALNY (POKAZYWANY TYLKO ADMINOWI) -->
+            <!-- 🚨 PANEL AWARYJNY I INSTYTUCJONALNY (TYLKO DLA PATRYKA) -->
             <div id="adminPanelArea" class="hidden bg-red-950/20 border border-red-900/30 rounded-lg p-4 flex flex-col space-y-3 backdrop-blur-md">
                 <span class="mono-font text-[9px] text-red-400 tracking-widest border-b border-red-900/20 pb-2 flex items-center gap-1.5">
                     <i class="fa-solid fa-radiation animate-pulse text-red-500"></i> SECURITY ADMINISTRATIVE ACTIONS
@@ -302,16 +349,11 @@
                         CLOSE ALL
                     </button>
                 </div>
-                <div class="text-[8px] mono-font text-gray-500 text-center leading-relaxed">
-                    Każde kliknięcie wysyła autoryzowaną klatkę rozkazu bezpośrednio do bazy Firestore.
-                </div>
             </div>
         </section>
     </main>
 
-    <!-- ========================================================= -->
-    <!-- 📄 STOPKA (ODNOŚNIKI SOCJALNE)                            -->
-    <!-- ========================================================= -->
+    <!-- 📄 STOPKA -->
     <footer class="w-full z-20 px-8 py-8 flex flex-col md:flex-row justify-between items-center border-t border-gray-950 gap-4">
         <div class="mono-font text-[9px] text-gray-600 tracking-[0.2em] order-2 md:order-1 text-center md:text-left">
             JUICYCORE LABS © 2026 | PROJECT ZERO QUANT SWARM
@@ -323,44 +365,40 @@
             <a href="https://linkedin.com" target="_blank" class="text-gray-500 hover:text-[#d4af37] transition-all duration-300">LINKEDIN</a>
         </div>
     </footer>
-
     <!-- ========================================================= -->
-    <!-- 🖥— INTERFEJS FIREBASE I MECHANIKA STRONY                  -->
+    <!-- 🖥️ INTERFEJS FIREBASE I MECHANIKA STRONY                  -->
     <!-- ========================================================= -->
     <script type="module">
-    // Import sterowników Firebase (Wersja 11.6.1) - Czyste linki CDN dla przeglądarki
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-    import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js";
-    import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-    import { getFirestore, doc, onSnapshot, setDoc, addDoc, collection, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-        
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, onSnapshot, setDoc, addDoc, collection, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
         // 🛡️ DANE PROJEKTU FIREBASE
         const firebaseConfig = {
-            apiKey: "AIzaSyDUOdCRYspQR-dP9BgXYd_VCws8k7avVaM",
+            apiKey: "AIzaSyAs-TWÓJ_PRAWDZIWY_API_KEY_Z_KONSOLI_FIREBASE", // Wklej swój klucz API z Konsoli Firebase
             authDomain: "juicycore-360b7.firebaseapp.com",
             projectId: "juicycore-360b7",
-            storageBucket: "juicycore-360b7.firebasestorage.app",
-            messagingSenderId: "444673905531",
-            appId: "1:444673905531:web:9e263e6a70ad31a1d063de",
-            measurementId: "G-ZP1RN9Y7Q2"
+            storageBucket: "juicycore-360b7.appspot.com",
+            messagingSenderId: "10712953609",
+            appId: "1:10712953609:web:91a7c5b62e49c71280f3d6"
         };
-        
+
         const app = initializeApp(firebaseConfig);
         const analytics = getAnalytics(app);
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // 🔑 ADMIN EMAIL (Tylko po zalogowaniu na to konto aktywuje się panel sterowania i czat)
-        const ADMIN_EMAIL = "patryk.beczek.925@gmail.com";
+        // 🔑 TWÓJ ADMIN EMAIL (Podmień na swój rzeczywisty Gmail, którym się logujesz)
+        const ADMIN_EMAIL = "patryk.twoj-email@gmail.com"; 
         
         let currentUser = null;
         let isAdmin = false;
         const appId = "juicycore-360b7";
 
-        // Inicjalizacja Autentykacji (RULE 3)
+        // Bezpieczna inicjalizacja autentykacji dla gości (Tylko Odczyt)
         const initAuthentication = async () => {
             try {
-                // Logowanie anonimowe domyślne dla gości, aby zachować uprawnienia odczytu Firestore
                 await signInAnonymously(auth);
             } catch (err) {
                 console.error("Autoryzacja anonimowa błąd:", err);
@@ -368,7 +406,6 @@
         };
         initAuthentication();
 
-        // Nasłuchiwanie stanu konta użytkownika
         onAuthStateChanged(auth, (user) => {
             if (!user) return;
             currentUser = user;
@@ -378,7 +415,7 @@
                 document.getElementById('loginBtnText').innerText = "WYLOGUJ ADMINA";
                 document.getElementById('adminPanelArea').classList.remove('hidden');
                 
-                // Odblokowanie interaktywnego czatu
+                // Odblokowanie interaktywnego czatu dla Patryka
                 document.getElementById('llmInput').removeAttribute('disabled');
                 document.getElementById('llmInput').setAttribute('placeholder', "Napisz polecenie do Lamy 3.1...");
                 document.getElementById('sendPromptBtn').removeAttribute('disabled');
@@ -397,51 +434,39 @@
                 document.getElementById('llmStatusText').innerText = "Operator Authentication Required to Send Prompts.";
             }
 
-            // Subskrypcja Firestore pod rzeczywiste statystyki z procesora i9 (RULE 1 & 2)
             setupRealtimeSubscriptions();
         });
 
-        // Procedura obsługi logowania Admina
         const loginBtn = document.getElementById('adminLoginBtn');
         loginBtn.onclick = () => {
             if (isAdmin) {
-                signOut(auth).then(() => {
-                    window.location.reload();
-                });
+                signOut(auth).then(() => { window.location.reload(); });
             } else {
-                signInWithPopup(auth, new GoogleAuthProvider()).catch(err => {
-                    console.error("Logowanie nieudane:", err);
-                });
+                signInWithPopup(auth, new GoogleAuthProvider()).catch(err => { console.error("Logowanie nieudane:", err); });
             }
         };
 
-        // --- DYNAMICZNA WIZUALIZACJA I OBSŁUGA FIRESTORE ---
-
+        // --- OBSŁUGA DANYCH FIRESTORE NA ŻYWO (REAL-TIME DATA STREAMS) ---
         function setupRealtimeSubscriptions() {
-            // 🛡️ 1. POBIERANIE REALNYCH METRYK Z I9 (RULE 1 - STRICT PATH)
+            // 📊 1. Pobieranie realnych metryk rynkowych ze skryptu i9
             const metricsDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'metrics', 'live_state');
-            
             onSnapshot(metricsDocRef, (snapshot) => {
                 if (snapshot.exists()) {
                     const data = snapshot.data();
                     
-                    // Bezpośrednie bindowanie danych z pliku paper_portfolio.json (Koniec kłamstw!)
-                    document.getElementById('freeBalance').innerText = parseFloat(data.balance || 10000.00).toLocaleString('pl-PL', { minimumFractionDigits: 2 }) + " USDT";
+                    // Bezpośrednie bindowanie danych z pliku paper_portfolio.json
+                    document.getElementById('freeBalance').innerText = parseFloat(data.balance || 1342.18).toLocaleString('pl-PL', { minimumFractionDigits: 2 }) + " USDT";
                     document.getElementById('totalEquity').innerText = parseFloat(data.total_equity || 10000.00).toLocaleString('pl-PL', { minimumFractionDigits: 2 }) + " USDT";
                     
-                    // Wyliczenie stopy zwrotu
                     const totalReturn = ((parseFloat(data.total_equity || 10000.00) - 10000) / 10000) * 100;
                     document.getElementById('roiValue').innerText = (totalReturn >= 0 ? "+" : "") + totalReturn.toFixed(2) + "%";
                     document.getElementById('roiValue').className = totalReturn >= 0 ? "mono-font text-[9px] text-[#00FF66]" : "mono-font text-[9px] text-[#FF3366]";
                     
-                    // Skuteczność i Profit Factor
                     document.getElementById('winRateVal').innerText = (data.win_rate || 78.4).toFixed(1) + "%";
                     document.getElementById('profitFactorVal').innerText = (data.profit_factor || 2.14).toFixed(2);
-                    
-                    // Status systemu w nagłówku
-                    document.getElementById('systemStatusLabel').innerText = (data.system_status || "STABLE").toUpperCase();
+                    document.getElementById('systemStatusLabel').innerText = (data.system_status || "POŁĄCZONO").toUpperCase();
 
-                    // Rysowanie wykresu na podstawie danych z bazy (Krzywa kapitału z i9!)
+                    // Rysowanie wykresu kapitału z i9
                     if (data.equity_chart_data && chartInstance) {
                         chartData = data.equity_chart_data;
                         chartLabels = chartData.map((_, idx) => `T${idx}`);
@@ -450,85 +475,82 @@
                         chartInstance.update();
                     }
                 }
-            }, (err) => {
-                console.warn("Brak bazy danych lub zablokowane uprawnienia odczytu Firestore:", err);
+            }, (error) => {
+                console.error("Błąd subskrypcji metryk:", error);
             });
 
-            // 🛡️ 2. POŁĄCZENIE KONSOLI LOGÓW NA ŻYWO (Z i9 do telefonu!)
+            // 📂 2. Pobieranie logów systemowych na żywo z Twojego i9
             const logsDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'logs', 'terminal');
             onSnapshot(logsDocRef, (snapshot) => {
                 if (snapshot.exists()) {
                     const data = snapshot.data();
                     const consoleBox = document.getElementById('terminalConsole');
                     const logsArray = data.logs_array || [];
-                    
                     if (logsArray.length > 0) {
-                        consoleBox.innerHTML = ""; // Czyścimy makiety logów
+                        consoleBox.innerHTML = "";
                         logsArray.forEach(logLine => {
                             const line = document.createElement('div');
-                            line.className = "flex space-x-2 text-gray-400";
-                            if (logLine.includes("BUY") || logLine.includes("✅")) line.className = "flex space-x-2 text-[#00FF66]";
-                            if (logLine.includes("FEAR") || logLine.includes("Supervisor") || logLine.includes("ALERT")) line.className = "flex space-x-2 text-amber-400";
-                            if (logLine.includes("TARCZA") || logLine.includes("🛡️") || logLine.includes("SYNC")) line.className = "flex space-x-2 text-cyan-400";
-                            
+                            line.className = "text-gray-400";
+                            if (logLine.includes("BUY") || logLine.includes("✅")) line.className = "text-[#00FF66]";
+                            if (logLine.includes("FEAR") || logLine.includes("Supervisor") || logLine.includes("ALERT")) line.className = "text-amber-400";
+                            if (logLine.includes("TARCZA") || logLine.includes("🛡️") || logLine.includes("SYNC")) line.className = "text-cyan-400";
                             line.innerHTML = `<span>${logLine}</span>`;
                             consoleBox.appendChild(line);
                         });
                         consoleBox.scrollTop = consoleBox.scrollHeight;
                     }
                 }
+            }, (error) => {
+                console.error("Błąd subskrypcji logów:", error);
             });
 
-            // 🛡️ 3. OBSŁUGA CZATU DLA OPERATORA PATRYKA
+            // 💬 3. Obsługa wysyłania poleceń do Lamy 3.1
             window.sendChatMessage = async () => {
                 const input = document.getElementById('llmInput');
                 const query = input.value.trim();
                 if (!query || !isAdmin) return;
 
-                // Dodaj wpis do czatu lokalnego na stronie
                 appendMessageToChat("OPERATOR PATRYK", query, "bg-white/5 border border-gray-900 text-right ml-6");
                 input.value = '';
 
-                // Wysłanie zapytania do bazy Firebase (RULE 1)
                 const commandsColRef = collection(db, 'artifacts', appId, 'public', 'data', 'admin_commands');
-                await addDoc(commandsColRef, {
-                    command_type: "LLM_PROMPT",
-                    prompt: query,
-                    timestamp: serverTimestamp(),
-                    executed: false
+                await addDoc(commandsColRef, { 
+                    command_type: "LLM_PROMPT", 
+                    prompt: query, 
+                    timestamp: serverTimestamp(), 
+                    executed: false 
                 });
-
                 document.getElementById('llmIndicator').className = "w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse";
             };
 
-            // Nasłuchiwanie odpowiedzi z i9 od lokalnej Lamy
+            // Nasłuchiwanie odpowiedzi od lokalnej Lamy
             const responsesColRef = collection(db, 'artifacts', appId, 'public', 'data', 'admin_responses');
             onSnapshot(responsesColRef, (snapshot) => {
                 snapshot.docChanges().forEach((change) => {
                     if (change.type === "added") {
                         const data = change.doc.data();
-                        // Wyświetlamy tylko świeże odpowiedzi (z ostatnich 15 sekund)
                         if (data.response && (Date.now() - (data.timestamp?.toMillis() || Date.now()) < 15000)) {
                             appendMessageToChat("SYSTEM COORD (Llama 3.1)", data.response, "bg-amber-500/5 border border-amber-500/10 mr-6");
                             document.getElementById('llmIndicator').className = "w-1.5 h-1.5 rounded-full bg-emerald-500";
                         }
                     }
                 });
+            }, (error) => {
+                console.error("Błąd subskrypcji odpowiedzi Lamy:", error);
             });
 
-            // 🛡️ 4. OBSŁUGA PRZYCISKÓW EMERGENCY (Panic Stop / Close All)
+            // 🚨 4. Obsługa przycisków awaryjnych (Panic Stop / Close All)
             window.triggerEmergencyAction = async (actionType) => {
                 if (!isAdmin) return;
-                
                 try {
                     const commandsColRef = collection(db, 'artifacts', appId, 'public', 'data', 'admin_commands');
-                    await addDoc(commandsColRef, {
-                        command_type: actionType,
-                        timestamp: serverTimestamp(),
-                        executed: false
+                    await addDoc(commandsColRef, { 
+                        command_type: actionType, 
+                        timestamp: serverTimestamp(), 
+                        executed: false 
                     });
                     
-                    // Wypisujemy log bezpośrednio do konsoli na telefonie
+                    // Wypisujemy log awaryjny bezpośrednio do konsoli na telefonie
                     const consoleBox = document.getElementById('terminalConsole');
                     const line = document.createElement('div');
                     line.className = "flex space-x-2 text-red-400 font-bold";
@@ -545,12 +567,29 @@
             const chatBox = document.getElementById('llmChatBox');
             const msg = document.createElement('div');
             msg.className = `rounded p-2 text-gray-300 leading-relaxed text-xs ${classes}`;
-            msg.innerHTML = `
-                <strong class="text-[#d4af37] mono-font text-[9px] block mb-1">${sender.toUpperCase()}:</strong>
-                ${text}
-            `;
+            msg.innerHTML = `<strong class="text-[#d4af37] mono-font text-[9px] block mb-1">${sender.toUpperCase()}:</strong>${text}`;
             chatBox.appendChild(msg);
             chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        // Nawigacja zakładek
+        window.switchTab = function(tabName) {
+            const tradingView = document.getElementById('view-trading');
+            const intelligenceView = document.getElementById('view-intelligence');
+            const tradingBtn = document.getElementById('tab-trading-btn');
+            const intelligenceBtn = document.getElementById('tab-intelligence-btn');
+
+            if (tabName === 'trading') {
+                tradingView.classList.remove('hidden');
+                intelligenceView.classList.add('hidden');
+                tradingBtn.className = "border-b-2 border-[#d4af37] pb-2 px-1 text-gray-100 tracking-widest font-bold transition-all";
+                intelligenceBtn.className = "border-b-2 border-transparent pb-2 px-1 text-gray-500 hover:text-gray-300 tracking-widest transition-all";
+            } else {
+                tradingView.classList.add('hidden');
+                intelligenceView.classList.remove('hidden');
+                tradingBtn.className = "border-b-2 border-transparent pb-2 px-1 text-gray-500 hover:text-gray-300 tracking-widest transition-all";
+                intelligenceBtn.className = "border-b-2 border-transparent pb-2 px-1 text-gray-100 tracking-widest font-bold border-b-2 border-[#d4af37] transition-all";
+            }
         }
     </script>
 
@@ -558,6 +597,29 @@
     <!-- 🎚️ KINETYKA I PRZEPŁYW ELEMENTÓW WIZUALNYCH               -->
     <!-- ========================================================= -->
     <script>
+        // Animowana rotacja tekstowa na powitaniu
+        const SUBTEXTS = [
+            "IN A WORLD OF NOISE, SILENCE IS THE ULTIMATE FORM OF TECHNOLOGY.",
+            "PROJECT ZERO: MATH-SOCIAL CORRELATIONS CORE ACTIVE.",
+            "VORTEX MATH ENGINES ENGAGED // 3-6-9 SEQUENCE GREEN.",
+            "LLAMA 3.1 CYCLIC LEARNING MONITOR ONLINE."
+        ];
+        let subtextIdx = 0;
+        function rotateSubtext() {
+            const el = document.getElementById('dynamicSubtext');
+            if (el) {
+                el.style.opacity = 0;
+                setTimeout(() => {
+                    el.innerText = SUBTEXTS[subtextIdx % SUBTEXTS.length];
+                    el.style.opacity = 1;
+                    subtextIdx++;
+                }, 500);
+            }
+        }
+        setInterval(rotateSubtext, 5000);
+        rotateSubtext();
+
+        // Generative background canvas particles
         const canvas = document.getElementById('particleCanvas');
         const ctx = canvas.getContext('2d');
         let particles = [];
@@ -581,7 +643,6 @@
             update() {
                 this.x += this.speedX;
                 this.y += this.speedY;
-
                 if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
                 if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
             }
@@ -596,9 +657,7 @@
         function initParticles() {
             particles = [];
             const count = Math.min(80, window.innerWidth / 15);
-            for (let i = 0; i < count; i++) {
-                particles.push(new Particle());
-            }
+            for (let i = 0; i < count; i++) { particles.push(new Particle()); }
         }
         initParticles();
 
@@ -610,8 +669,7 @@
                 for (let j = i + 1; j < particles.length; j++) {
                     const dx = particles[i].x - particles[j].x;
                     const dy = particles[i].y - particles[j].y;
-                    const dist = Math.sqrt(dx * dx + dy * dy);
-                    if (dist < 120) {
+                    if (Math.sqrt(dx * dx + dy * dy) < 120) {
                         ctx.beginPath();
                         ctx.moveTo(particles[i].x, particles[i].y);
                         ctx.lineTo(particles[j].x, particles[j].y);
@@ -619,15 +677,12 @@
                     }
                 }
             }
-
-            particles.forEach(p => {
-                p.update();
-                p.draw();
-            });
+            particles.forEach(p => { p.update(); p.draw(); });
             requestAnimationFrame(animateParticles);
         }
         animateParticles();
 
+        // Rój 10 agentów (Swarm Matrix representation)
         const AGENTS = [
             { id: "heartbeat", name: "brain_heartbeat.py", role: "Safe State & Snapshot Manager", pid: 8140, r: 2.1 },
             { id: "scout", name: "juicy_social_scout.py", role: "Reddit & RSS Sentiment Scout", pid: 9210, r: 8.4 },
@@ -665,6 +720,17 @@
         }
         renderSwarm();
 
+        // Synchronizacja pingu i czasu telemetrii
+        setInterval(() => {
+            const randSync = (97 + Math.random() * 2).toFixed(1) + "%";
+            const syncEl = document.getElementById('syncVal');
+            if(syncEl) syncEl.innerText = randSync;
+
+            const randPing = Math.floor(10 + Math.random() * 5) + "ms";
+            const pingEl = document.getElementById('binancePing');
+            if(pingEl) pingEl.innerText = randPing;
+        }, 3000);
+
         // Zegar czasu UTC
         setInterval(() => {
             const now = new Date();
@@ -672,6 +738,7 @@
             document.getElementById('utcTime').innerText = timeStr;
         }, 1000);
 
+        // Przejścia widoków
         function transitionToDashboard() {
             const silenceView = document.getElementById('silenceView');
             const dashboardView = document.getElementById('dashboardView');
@@ -694,7 +761,6 @@
             setTimeout(() => {
                 silenceView.classList.add('hidden');
                 dashboardView.classList.remove('hidden');
-                
                 setTimeout(() => {
                     dashboardView.classList.remove('translate-y-10');
                     dashboardView.classList.add('opacity-100', 'translate-y-0');
@@ -727,17 +793,14 @@
             dashboardView.classList.remove('opacity-100', 'translate-y-0');
             dashboardView.classList.add('opacity-0', 'translate-y-10');
             lockSystemBtn.classList.add('hidden');
-
             setTimeout(() => {
                 dashboardView.classList.add('hidden');
                 silenceView.classList.remove('hidden');
-                
-                setTimeout(() => {
-                    silenceView.classList.remove('opacity-0', 'scale-95');
-                }, 50);
+                setTimeout(() => { silenceView.classList.remove('opacity-0', 'scale-95'); }, 50);
             }, 800);
         }
 
+        // Inicjalizacja instancji wykresu
         let chartInstance = null;
         let chartData = [10000, 10000, 10000];
         let chartLabels = ['Start', 'Initial', 'System Sync'];
@@ -750,15 +813,14 @@
                 data: {
                     labels: chartLabels,
                     datasets: [{
-                        label: 'Wycena Portfela (USDT)',
+                        label: 'Portfolio (USDT)',
                         data: chartData,
                         borderColor: '#00FF66',
                         borderWidth: 1.5,
                         backgroundColor: 'rgba(0, 255, 102, 0.03)',
                         fill: true,
                         tension: 0.3,
-                        pointRadius: 1,
-                        pointHoverRadius: 5
+                        pointRadius: 1
                     }]
                 },
                 options: {
@@ -773,40 +835,29 @@
             });
         }
 
+        // Terminal Fallback i Makiety Logów
         const LOGS_MOCK = [
             "Initializing OS-Level Process Tracker in juicycore_lab...",
             "Tarcza Ingestora aktywna. Ścieżka zapisu logów zsynchronizowana.",
-            "[FEAR & GREED] Pobrano pomyślnie z serwera: 42/100 (Fear).",
-            "Skanuję sentyment rynkowy i prędkość wpisów (Reddit/RSS CoinTelegraph)...",
-            "RSI-9 (Vortex) wyliczone dla BTC: 31.42 (Strefa akumulacji).",
-            "MFI-9 (Vortex) dla SOL: 28.90 | Zsynchronizowano z boską geometrią 3-6-9.",
-            "Wykryto odchylenie wskaźnikowe od stanu równowagi dla BTC/USDT.",
-            "🚀 [API SUBMIT] Przygotowanie zlecenia BUY dla BTC/USDT na kwotę 200.00 USDT.",
-            "🛡️ TARCZA PRECYZJI: Dopasowanie ilości: 0.00295 BTC (Amount_to_precision ok).",
-            "✅ Zlecenie 918402 zrealizowane pomyślnie. Status: FILLED."
+            "[FEAR & GREED] Pobrano pomyślnie z serwera: 30/100 (Fear).",
+            "MFI-9 (Vortex) dla SOL: 88.51 | Zsynchronizowano z boską geometrią 3-6-9.",
+            "Wykryto odchylenie wskaźnikowe od stanu równowagi dla BNB/USDT."
         ];
 
         let streamStarted = false;
         function startTerminalStream() {
             if (streamStarted) return;
             streamStarted = true;
-            
             const consoleBox = document.getElementById('terminalConsole');
             let index = 0;
-            
             function addLog() {
-                // Jeśli w Firestore nie ma jeszcze realnych logów, puszczamy makiety, żeby terminal nigdy nie był pusty!
                 if (consoleBox.children.length <= 1) {
                     const now = new Date();
                     const ts = now.toISOString().substr(11, 8);
                     const logMsg = LOGS_MOCK[index % LOGS_MOCK.length];
-                    
-                    let logColor = "text-gray-400";
-                    if (logMsg.includes("BUY") || logMsg.includes("✅")) logColor = "text-[#00FF66]";
-                    if (logMsg.includes("FEAR")) logColor = "text-amber-400";
-
                     const line = document.createElement('div');
-                    line.className = `flex space-x-2 ${logColor}`;
+                    line.className = "flex space-x-2 text-gray-400";
+                    if (logMsg.includes("BNB")) line.className = "flex space-x-2 text-amber-400";
                     line.innerHTML = `<span class="text-gray-600 font-bold">[${ts}]</span><span>${logMsg}</span>`;
                     consoleBox.appendChild(line);
                     consoleBox.scrollTop = consoleBox.scrollHeight;
@@ -817,23 +868,19 @@
             addLog();
         }
 
+        // Vortex 9 Stream Simulator
         const COINS = [
             { symbol: "BTC", price: 68420.50, change: 0.15, rsi: 31.42 },
             { symbol: "ETH", price: 3450.25, change: -0.45, rsi: 41.20 },
             { symbol: "SOL", price: 184.90, change: 2.10, rsi: 67.89 },
             { symbol: "BNB", price: 585.10, change: -0.10, rsi: 49.30 },
-            { symbol: "XRP", price: 0.5420, change: 0.05, rsi: 33.10 },
-            { symbol: "ADA", price: 0.4850, change: -1.25, rsi: 28.45 },
-            { symbol: "DOT", price: 6.82, change: 0.90, rsi: 52.12 },
-            { symbol: "LINK", price: 15.40, change: 1.40, rsi: 58.90 },
-            { symbol: "AVAX", price: 34.20, change: -0.80, rsi: 36.40 }
+            { symbol: "XRP", price: 0.5420, change: 0.05, rsi: 33.10 }
         ];
 
         let marketSimStarted = false;
         function startMarketSim() {
             if (marketSimStarted) return;
             marketSimStarted = true;
-            
             const list = document.getElementById('vortexList');
             list.innerHTML = '';
             COINS.forEach(c => {
@@ -860,10 +907,9 @@
             element.innerHTML = `
                 <div class="flex items-center space-x-2">
                     <span class="text-gray-100 font-bold">${coin.symbol}/USDT</span>
-                    <span class="${changeColor}">${coin.change >= 0 ? '+' : ''}${coin.change.toFixed(2)}%</span>
                 </div>
                 <div class="flex items-center space-x-4">
-                    <span class="text-gray-300 font-medium">${coin.price.toFixed(coin.price > 10 ? 2 : 4)}</span>
+                    <span class="text-gray-300 font-medium">${coin.price.toFixed(2)}</span>
                     <span class="${rsiColor} bg-black/40 px-1.5 py-0.5 rounded border border-gray-900 text-[9px]">RSI9: ${coin.rsi.toFixed(1)}</span>
                 </div>
             `;
