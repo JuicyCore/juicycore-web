@@ -129,7 +129,7 @@
         <div class="mono-font text-[10px] tracking-[0.2em] text-gray-500 text-right flex flex-col items-end gap-1.5">
             <div id="utcTime" class="select-none pointer-events-none">12:00:00 UTC</div>
             <div class="select-none pointer-events-none">PING: <span class="text-emerald-400" id="binancePing">11ms</span></div>
-            <div class="select-none pointer-events-none">SYS_TEMP: <span class="text-amber-500">42°C</span></div>
+            <div class="select-none pointer-events-none">SYS_TEMP: <span class="text-amber-500" id="sysTemp">42.0°C</span></div>
             
             <div class="flex gap-2 mt-1">
                 <!-- Logowanie dla Patryka -->
@@ -476,6 +476,9 @@
                         chartInstance.data.labels = chartLabels;
                         chartInstance.data.datasets[0].data = chartData;
                         chartInstance.update();
+                    }
+                    if (data && data.sys_temp !== undefined) {
+                        document.getElementById('sysTemp').innerText = parseFloat(data.sys_temp).toFixed(1) + "°C";
                     }
                 }
             }, (error) => {
