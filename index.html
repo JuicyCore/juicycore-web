@@ -4,13 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>JuicyCore | Project Zero Master Terminal</title>
-    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='gold' x1='0' y1='0' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23d4af37'/%3E%3Cstop offset='100%25' stop-color='%238c6b22'/%3E%3C/linearGradient%3E%3C/defs%3E%3Ccircle cx='50' cy='50' r='45' fill='none' stroke='url(%23gold)' stroke-width='6'/%3E%3Cpath d='M50 85 C30 65 20 50 20 35 A15 15 0 0 1 50 35 A15 15 0 0 1 80 35 C80 50 70 65 50 85' fill='url(%23gold)'/%3E%3C/svg%3E">
+    <link class="heart-pulse" rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='gold' x1='0' y1='0' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23d4af37'/%3E%3Cstop offset='100%25' stop-color='%238c6b22'/%3E%3C/linearGradient%3E%3C/defs%3E%3Ccircle cx='50' cy='50' r='45' fill='none' stroke='url(%23gold)' stroke-width='6'/%3E%3Cpath d='M50 85 C30 65 20 50 20 35 A15 15 0 0 1 50 35 A15 15 0 0 1 80 35 C80 50 70 65 50 85' fill='url(%23gold)'/%3E%3C/svg%3E">
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Chart.js dla wykresów wydajnościowych -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- Google Fonts: Cormorant Garamond i JetBrains Mono -->
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght=0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@300;400;500;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght=0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght=300;400;500;700&family=Inter:wght=300;400;500;600&display=swap" rel="stylesheet">
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -115,7 +115,7 @@
     <!-- Ambientne złote światło -->
     <div class="ambient-glow"></div>
 
-    <!-- 🌐 PANEL GÓRNY (TELEMETRIA - DOKŁADNIE JAK NA SCREENIE) -->
+    <!-- 🌐 PANEL GÓRNY (TELEMETRIA) -->
     <header class="w-full z-20 px-6 md:px-8 py-6 flex justify-between items-start">
         <div class="mono-font text-[10px] tracking-[0.2em] text-gray-500 space-y-1 select-none pointer-events-none">
             <div class="flex items-center space-x-2">
@@ -129,7 +129,7 @@
         <div class="mono-font text-[10px] tracking-[0.2em] text-gray-500 text-right flex flex-col items-end gap-1.5">
             <div id="utcTime" class="select-none pointer-events-none">12:00:00 UTC</div>
             <div class="select-none pointer-events-none">PING: <span class="text-emerald-400" id="binancePing">11ms</span></div>
-            <div class="select-none pointer-events-none">SYS_TEMP: <span class="text-amber-500" id="sysTemp">42.0°C</span></div>
+            <div class="select-none pointer-events-none">SYS_TEMP: <span class="text-amber-500" id="sysTemp">--.-°C</span></div>
             
             <div class="flex gap-2 mt-1">
                 <!-- Logowanie dla Patryka -->
@@ -200,35 +200,36 @@
             </div>
             <div id="swarmContainer" class="space-y-3"></div>
         </section>
-
-        <!-- KORPUS CENTRALNY: NAWIGACJA ZAKŁADEK -->
+        <!-- ========================================================= -->
+        <!-- KORPUS CENTRALNY: NAWIGACJA ZAKŁADEK                      -->
+        <!-- ========================================================= -->
         <section class="lg:col-span-2 flex flex-col space-y-6">
             
             <!-- PANEL KONTROLI PORTFELA (FINANCIAL METRICS BLOCK - REAL LIVE DATA) -->
             <div class="grid grid-cols-3 gap-2 md:gap-4 bg-black/60 border border-gray-900 rounded-lg p-3 md:p-4 backdrop-blur-md">
                 <div class="text-center space-y-1">
                     <span class="mono-font text-[8px] md:text-[9px] text-gray-500 tracking-wider">SALDO WOLNE (USDC)</span>
-                    <div class="text-base md:text-xl font-bold text-gray-200 tracking-wide" id="freeBalance">1 342.18</div>
+                    <div class="text-base md:text-xl font-bold text-gray-200 tracking-wide" id="freeBalance">----.-- USDC</div>
                     <span class="mono-font text-[8px] md:text-[9px] text-emerald-400">100% płynności</span>
                 </div>
                 <div class="text-center space-y-1 border-x border-gray-900">
                     <span class="mono-font text-[8px] md:text-[9px] text-gray-500 tracking-wider">TOTAL EQUITY (USDC)</span>
-                    <div class="text-base md:text-xl font-bold text-[#d4af37] tracking-wide glow-text" id="totalEquity">10 000.00</div>
+                    <div class="text-base md:text-xl font-bold text-[#d4af37] tracking-wide glow-text" id="totalEquity">----.-- USDC</div>
                     <span class="mono-font text-[8px] md:text-[9px] text-[#00FF66]" id="roiValue">+0.00%</span>
                 </div>
                 <div class="text-center space-y-1">
                     <span class="mono-font text-[8px] md:text-[9px] text-gray-500 tracking-wider">SKUTECZNOŚĆ (WIN RATE)</span>
-                    <div class="text-base md:text-xl font-bold text-emerald-400 tracking-wide" id="winRateVal">78.4%</div>
+                    <div class="text-base md:text-xl font-bold text-emerald-400 tracking-wide" id="winRateVal">--.-%</div>
                     <span class="mono-font text-[8px] md:text-[9px] text-gray-500">PF: <strong class="text-gray-300" id="profitFactorVal">2.14</strong></span>
                 </div>
             </div>
 
             <!-- NAWIGATOR ZAKŁADEK SYSTEMOWYCH -->
             <div class="flex border-b border-gray-900 text-xs mono-font gap-4">
-                <button onclick="switchTab('trading')" id="tab-trading-btn" class="border-b-2 border-[#d4af37] pb-2 px-1 text-gray-100 tracking-widest font-bold transition-all">
+                <button onclick="window.switchTab('trading')" id="tab-trading-btn" class="border-b-2 border-[#d4af37] pb-2 px-1 text-gray-100 tracking-widest font-bold transition-all">
                     🎛️ LIVE QUANT TRADING
                 </button>
-                <button onclick="switchTab('intelligence')" id="tab-intelligence-btn" class="border-b-2 border-transparent pb-2 px-1 text-gray-500 hover:text-gray-300 tracking-widest transition-all flex items-center gap-1.5">
+                <button onclick="window.switchTab('intelligence')" id="tab-intelligence-btn" class="border-b-2 border-transparent pb-2 px-1 text-gray-500 hover:text-gray-300 tracking-widest transition-all flex items-center gap-1.5">
                     🧠 QUANT INTELLIGENCE &amp; AI HUB
                 </button>
             </div>
@@ -250,10 +251,10 @@
                 </div>
             </div>
 
-            <!-- ZAKŁADKA 2: INTEL & AI HUB (RAPORTY NAUKI I INTEGRACJA DISCORDA) -->
+            <!-- ZAKŁADKA 2: INTEL & AI HUB -->
             <div id="view-intelligence" class="hidden space-y-6 flex-grow overflow-y-auto max-h-[50vh] pr-1">
                 
-                <!-- BLOK 1: DETEKCJA ANOMALII (TITANIUM BEAST CLONE Z DISCORDA) -->
+                <!-- BLOK 1: DETEKCJA ANOMALII (TITANIUM BEAST) -->
                 <div class="bg-gradient-to-r from-red-950/10 to-black/40 border border-red-900/20 rounded-lg p-4 backdrop-blur-md space-y-3">
                     <div class="flex justify-between items-center border-b border-red-900/20 pb-2">
                         <span class="mono-font text-[10px] text-red-400 font-bold tracking-widest flex items-center gap-1.5">
@@ -309,9 +310,12 @@
                 </div>
             </div>
         </section>
-
-        <!-- KOLUMNA PRAWA: NOTOWANIA, LLM CHAT & ADMIN PANEL -->
+        <!-- ========================================================= -->
+        <!-- KOLUMNA PRAWA: NOTOWANIA, LLM CHAT & ADMIN PANEL         -->
+        <!-- ========================================================= -->
         <section class="lg:col-span-1 flex flex-col space-y-6">
+            
+            <!-- STRUMIEŃ SYGNAŁÓW VORTEX-9 -->
             <div id="vortexListArea" class="bg-black/60 border border-gray-900 rounded-lg p-4 flex flex-col space-y-3">
                 <span class="mono-font text-[10px] text-[#d4af37] tracking-widest border-b border-gray-900 pb-2">🌀 VORTEX 9 STREAM (RSI-9)</span>
                 <div class="space-y-2.5 max-h-[150px] overflow-y-auto pr-1" id="vortexList"></div>
@@ -354,7 +358,7 @@
         </section>
     </main>
 
-    <!-- 📄 STOPKA -->
+    <!-- 📄 STOPKA BEZPIECZEŃSTWA BRNDOWEGO -->
     <footer class="w-full z-20 px-8 py-8 flex flex-col md:flex-row justify-between items-center border-t border-gray-950 gap-4">
         <div class="mono-font text-[9px] text-gray-600 tracking-[0.2em] order-2 md:order-1 text-center md:text-left">
             JUICYCORE LABS © 2026 | PROJECT ZERO QUANT SWARM
@@ -367,7 +371,7 @@
         </div>
     </footer>
     <!-- ========================================================= -->
-    <!-- 🖥️ INTERFEJS FIREBASE I MECHANIKA STRONY                  -->
+    <!-- 🖥️ ZUNIFIKOWANY, PANCERNY INTERFEJS SCRIPTINGU           -->
     <!-- ========================================================= -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
@@ -384,7 +388,6 @@
             messagingSenderId: "444673905531",
             appId: "1:444673905531:web:9e263e6a70ad31a1d063de",
             measurementId: "G-ZP1RN9Y7Q2"
-            
         };
         
         const app = initializeApp(firebaseConfig);
@@ -392,12 +395,111 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // 🔑 TWÓJ ADMIN EMAIL (Podmień na swój rzeczywisty Gmail, którym się logujesz)
+        // 🔑 TWÓJ ADMIN EMAIL (Logowanie Google)
         const ADMIN_EMAIL = "patryk.beczek.925@gmail.com"; 
         
         let currentUser = null;
         let isAdmin = false;
         const appId = "juicycore-360b7";
+
+        // Rój 10 agentów (Swarm Matrix)
+        const AGENTS = [
+            { id: "heartbeat", name: "brain_heartbeat.py", role: "Safe State & Snapshot Manager", pid: 8140, r: 2.1 },
+            { id: "scout", name: "juicy_social_scout.py", role: "Reddit & RSS Sentiment Scout", pid: 9210, r: 8.4 },
+            { id: "godzilla", name: "juicy_godzilla.py", role: "Titanium Market Ingestor (OHLCV)", pid: 1402, r: 4.8 },
+            { id: "analyst", name: "juicy_analyst_brain.py", role: "ML Engine & Discord Bot Suite", pid: 3609, r: 24.5 },
+            { id: "guardian", name: "juicy_code_guardian.py", role: "AST Structure & Backup Protector", pid: 4812, r: 1.8 },
+            { id: "innovator", name: "juicy_innovator.py", role: "AI Code Self-Optimizer (LLM Patches)", pid: 7412, r: 3.2 },
+            { id: "awake", name: "juicy_keep_awake.py", role: "Modern Standby & Throttling Guard", pid: 1204, r: 0.8 },
+            { id: "trader", name: "juicy_logic_decision.py", role: "Quant Execution Core (Trader Engine)", pid: 3080, r: 12.1 },
+            { id: "reporter", name: "juicy_reporter.py", role: "Performance & PnL Visualizer", pid: 5690, r: 5.4 },
+            { id: "supervisor", name: "juicy_supervisor.py", role: "Orchestration & Heartbeat Watchdog", pid: 9001, r: 1.1 }
+        ];
+
+        // Wygenerowanie Swarm Matrix
+        function renderSwarm() {
+            const container = document.getElementById('swarmContainer');
+            if (!container) return;
+            container.innerHTML = '';
+            AGENTS.forEach(a => {
+                const card = document.createElement('div');
+                card.className = "bg-black/40 border border-gray-950 rounded-md p-3 flex justify-between items-center gold-bg-hover transition-all duration-300";
+                
+                // TARCZA OPERACYJNA: Przycisk RESTART widoczny tylko i wyłącznie dla zalogowanego Admina
+                const restartButtonHTML = isAdmin 
+                    ? `<button onclick="window.sendAgentCommand('${a.name}', 'RESTART')" class="mono-font text-[8px] font-bold px-2.5 py-1 bg-gray-950 hover:bg-[#d4af37]/20 border border-gray-900 hover:border-[#d4af37]/40 rounded text-gray-400 hover:text-[#d4af37] transition-all duration-300 uppercase cursor-pointer">RESTART</button>` 
+                    : '';
+
+                card.innerHTML = `
+                    <div class="space-y-1">
+                        <div class="flex items-center space-x-2">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 agent-active-glow animate-pulse" id="dot_${a.id}"></span>
+                            <span class="mono-font text-[10px] font-bold text-gray-200">${a.name}</span>
+                        </div>
+                        <p class="text-[9px] text-gray-500 tracking-wide">${a.role}</p>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <div class="text-right mono-font text-[9px] text-gray-400 space-y-0.5">
+                            <div class="text-[#d4af37]">PID: ${a.pid}</div>
+                            <div>RAM: ${a.r.toFixed(1)} MB</div>
+                        </div>
+                        ${restartButtonHTML}
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // System dynamicznego wstrzykiwania zaawansowanej telemetrii sprzętowej i9 & RTX dla Admina
+        function injectAdvancedStatsUI() {
+            if (document.getElementById('adminStatsPanel')) return;
+            
+            const adminPanelArea = document.getElementById('adminPanelArea');
+            if (!adminPanelArea) return;
+            
+            const statsDiv = document.createElement('div');
+            statsDiv.id = 'adminStatsPanel';
+            statsDiv.className = 'mt-4 pt-3 border-t border-red-950/40 space-y-2.5 text-[10px] mono-font';
+            statsDiv.innerHTML = `
+                <div class="text-gray-500 tracking-wider text-[8px] uppercase mb-1 flex justify-between">
+                    <span>📊 SYSTEM QUANT TELEMETRY (ADMIN ONLY)</span>
+                    <span class="text-[#d4af37] animate-pulse">● SECURE STREAM</span>
+                </div>
+                <div class="grid grid-cols-2 gap-2 text-gray-400">
+                    <div class="bg-black/40 border border-gray-950 p-2 rounded">
+                        <span class="text-gray-600 block text-[8px]">SHARPE RATIO</span>
+                        <span class="font-bold text-emerald-400" id="adminSharpe">--</span>
+                    </div>
+                    <div class="bg-black/40 border border-gray-950 p-2 rounded">
+                        <span class="text-gray-600 block text-[8px]">MAX DRAWDOWN</span>
+                        <span class="font-bold text-rose-400" id="adminDrawdown">--</span>
+                    </div>
+                    <div class="bg-black/40 border border-gray-950 p-2 rounded">
+                        <span class="text-gray-600 block text-[8px]">CPU LOAD (i9-12900HX)</span>
+                        <span class="font-bold text-gray-200" id="adminCpu">--</span>
+                    </div>
+                    <div class="bg-black/40 border border-gray-950 p-2 rounded">
+                        <span class="text-gray-600 block text-[8px]">ACTIVE CORES / THREADS</span>
+                        <span class="font-bold text-[#d4af37]" id="adminThreads">9 Active</span>
+                    </div>
+                </div>
+            `;
+            adminPanelArea.insertBefore(statsDiv, adminPanelArea.firstChild);
+        }
+
+        // Drukowanie logów administracyjnych bezpośrednio do Twojej konsoli CRT
+        function printAdminLog(message, isError = false) {
+            const consoleBox = document.getElementById('terminalConsole');
+            if (consoleBox) {
+                const line = document.createElement('div');
+                line.className = isError ? "text-red-400 font-bold" : "text-[#d4af37] font-bold";
+                const now = new Date();
+                const ts = now.toISOString().substr(11, 8);
+                line.innerHTML = `<span>[${ts} ADMIN] ${message}</span>`;
+                consoleBox.appendChild(line);
+                consoleBox.scrollTop = consoleBox.scrollHeight;
+            }
+        }
 
         // Bezpieczna inicjalizacja autentykacji dla gości (Tylko Odczyt)
         const initAuthentication = async () => {
@@ -448,7 +550,7 @@
             setupRealtimeSubscriptions();
         });
 
-
+        // Logowanie Google
         const loginBtn = document.getElementById('adminLoginBtn');
         loginBtn.onclick = () => {
             if (isAdmin) {
@@ -486,11 +588,15 @@
                         chartInstance.data.datasets[0].data = chartData;
                         chartInstance.update();
                     }
+                    
+                    // BEZPIECZNE BINDOWANIE TEMPERATURY (NAPRAWIONY ZATOR KLAMRY)
                     if (data && data.sys_temp !== undefined) {
                         document.getElementById('sysTemp').innerText = parseFloat(data.sys_temp).toFixed(1) + "°C";
                     }
+                    
+                    // Dynamiczna alokacja telemetryczna statystyk zaawansowanych (ADMIN ONLY - ODSEPAROWANA OD TEMPERATURY)
                     if (isAdmin) {
-                        injectAdvancedStatsUI(); // Sprawdza i wstrzykuje strukturę pól jeśli brak
+                        injectAdvancedStatsUI(); 
                         
                         const sharpeEl = document.getElementById('adminSharpe');
                         if (sharpeEl && data.sharpe_ratio !== undefined) {
@@ -583,7 +689,6 @@
                         executed: false 
                     });
                     
-                    // Wypisujemy log awaryjny bezpośrednio do konsoli na telefonie
                     const consoleBox = document.getElementById('terminalConsole');
                     const line = document.createElement('div');
                     line.className = "flex space-x-2 text-red-400 font-bold";
@@ -598,6 +703,7 @@
 
         function appendMessageToChat(sender, text, classes) {
             const chatBox = document.getElementById('llmChatBox');
+            if (!chatBox) return;
             const msg = document.createElement('div');
             msg.className = `rounded p-2 text-gray-300 leading-relaxed text-xs ${classes}`;
             msg.innerHTML = `<strong class="text-[#d4af37] mono-font text-[9px] block mb-1">${sender.toUpperCase()}:</strong>${text}`;
@@ -605,6 +711,7 @@
             chatBox.scrollTop = chatBox.scrollHeight;
         }
 
+        // Zabezpieczony system wysyłania komendy restartu do bazy i9
         window.sendAgentCommand = async function(agentName, action) {
             if (!isAdmin) {
                 printAdminLog("BLOCKED: Próba nieautoryzowanej kontroli agentów!", true);
@@ -625,6 +732,7 @@
                 printAdminLog("Wystąpił błąd podczas komunikacji z Firebase.", true);
             }
         };
+
         // Nawigacja zakładek
         window.switchTab = function(tabName) {
             const tradingView = document.getElementById('view-trading');
@@ -647,13 +755,35 @@
                 initInteractiveLearning();
             }
         }
+
+        // --- INICJALIZACJA ELEMENTÓW GLOBALNYCH ---
+        renderSwarm();
+        
+        // Zegar czasu UTC
+        setInterval(() => {
+            const now = new Date();
+            const timeStr = now.toISOString().substr(11, 8) + " UTC";
+            const utcTimeEl = document.getElementById('utcTime');
+            if (utcTimeEl) utcTimeEl.innerText = timeStr;
+        }, 1000);
+
+        // Synchronizacja pingu i czasu telemetrii
+        setInterval(() => {
+            const randSync = (97 + Math.random() * 2).toFixed(1) + "%";
+            const syncEl = document.getElementById('syncVal');
+            if(syncEl) syncEl.innerText = randSync;
+
+            const randPing = Math.floor(10 + Math.random() * 5) + "ms";
+            const pingEl = document.getElementById('binancePing');
+            if(pingEl) pingEl.innerText = randPing;
+        }, 3000);
     </script>
 
     <!-- ========================================================= -->
     <!-- 🎚️ KINETYKA I PRZEPŁYW ELEMENTÓW WIZUALNYCH               -->
     <!-- ========================================================= -->
     <script>
-        // Automatyczny system wstrzykiwania przycisków i dynamicznego bindowania treści
+        // Automatyczny system wstrzykiwania przycisków i bindowania treści
         function initInteractiveLearning() {
             const aiHub = document.getElementById('view-intelligence');
             if (!aiHub) return;
@@ -788,7 +918,7 @@
         setInterval(rotateSubtext, 5000);
         rotateSubtext();
 
-        // Generative background canvas particles
+        // Generatywne cząsteczki tła (Wektorowy Canvas)
         const canvas = document.getElementById('particleCanvas');
         const ctx = canvas.getContext('2d');
         let particles = [];
@@ -850,252 +980,6 @@
             requestAnimationFrame(animateParticles);
         }
         animateParticles();
-
-        // Rój 10 agentów (Swarm Matrix representation)
-        const AGENTS = [
-            { id: "heartbeat", name: "brain_heartbeat.py", role: "Safe State & Snapshot Manager", pid: 8140, r: 2.1 },
-            { id: "scout", name: "juicy_social_scout.py", role: "Reddit & RSS Sentiment Scout", pid: 9210, r: 8.4 },
-            { id: "godzilla", name: "juicy_godzilla.py", role: "Titanium Market Ingestor (OHLCV)", pid: 1402, r: 4.8 },
-            { id: "analyst", name: "juicy_analyst_brain.py", role: "ML Engine & Discord Bot Suite", pid: 3609, r: 24.5 },
-            { id: "guardian", name: "juicy_code_guardian.py", role: "AST Structure & Backup Protector", pid: 4812, r: 1.8 },
-            { id: "innovator", name: "juicy_innovator.py", role: "AI Code Self-Optimizer (LLM Patches)", pid: 7412, r: 3.2 },
-            { id: "awake", name: "juicy_keep_awake.py", role: "Modern Standby & Throttling Guard", pid: 1204, r: 0.8 },
-            { id: "trader", name: "juicy_logic_decision.py", role: "Quant Execution Core (Trader Engine)", pid: 3080, r: 12.1 },
-            { id: "reporter", name: "juicy_reporter.py", role: "Performance & PnL Visualizer", pid: 5690, r: 5.4 },
-            { id: "supervisor", name: "juicy_supervisor.py", role: "Orchestration & Heartbeat Watchdog", pid: 9001, r: 1.1 }
-        ];
-
-        function injectAdvancedStatsUI() {
-            if (document.getElementById('adminStatsPanel')) return;
-            
-            const adminPanelArea = document.getElementById('adminPanelArea');
-            if (!adminPanelArea) return;
-            
-            const statsDiv = document.createElement('div');
-            statsDiv.id = 'adminStatsPanel';
-            statsDiv.className = 'mt-4 pt-3 border-t border-red-950/40 space-y-2.5 text-[10px] mono-font';
-            statsDiv.innerHTML = `
-                <div class="text-gray-500 tracking-wider text-[8px] uppercase mb-1 flex justify-between">
-                    <span>📊 SYSTEM QUANT TELEMETRY (ADMIN ONLY)</span>
-                    <span class="text-[#d4af37] animate-pulse">● SECURE STREAM</span>
-                </div>
-                <div class="grid grid-cols-2 gap-2 text-gray-400">
-                    <div class="bg-black/40 border border-gray-950 p-2 rounded">
-                        <span class="text-gray-600 block text-[8px]">SHARPE RATIO</span>
-                        <span class="font-bold text-emerald-400" id="adminSharpe">--</span>
-                    </div>
-                    <div class="bg-black/40 border border-gray-950 p-2 rounded">
-                        <span class="text-gray-600 block text-[8px]">MAX DRAWDOWN</span>
-                        <span class="font-bold text-rose-400" id="adminDrawdown">--</span>
-                    </div>
-                    <div class="bg-black/40 border border-gray-950 p-2 rounded">
-                        <span class="text-gray-600 block text-[8px]">CPU LOAD (i9-12900HX)</span>
-                        <span class="font-bold text-gray-200" id="adminCpu">--</span>
-                    </div>
-                    <div class="bg-black/40 border border-gray-950 p-2 rounded">
-                        <span class="text-gray-600 block text-[8px]">ACTIVE CORES / THREADS</span>
-                        <span class="font-bold text-[#d4af37]" id="adminThreads">9 Active</span>
-                    </div>
-                </div>
-            `;
-            adminPanelArea.insertBefore(statsDiv, adminPanelArea.firstChild);
-        }
-
-        // Pomocniczy druk logów administracyjnych bezpośrednio do Twojej konsoli CRT
-        function printAdminLog(message, isError = false) {
-            const consoleBox = document.getElementById('terminalConsole');
-            if (consoleBox) {
-                const line = document.createElement('div');
-                line.className = isError ? "text-red-400 font-bold" : "text-[#d4af37] font-bold";
-                const now = new Date();
-                const ts = now.toISOString().substr(11, 8);
-                line.innerHTML = `<span>[${ts} ADMIN] ${message}</span>`;
-                consoleBox.appendChild(line);
-                consoleBox.scrollTop = consoleBox.scrollHeight;
-            }
-        }
-        
-        function renderSwarm() {
-            const container = document.getElementById('swarmContainer');
-            if (!container) return;
-            container.innerHTML = '';
-            AGENTS.forEach(a => {
-                const card = document.createElement('div');
-                card.className = "bg-black/40 border border-gray-950 rounded-md p-3 flex justify-between items-center gold-bg-hover transition-all duration-300";
-                
-                // TARCZA SENSORYCZNA: Przycisk restartu wstrzykiwany wyłącznie zalogowanemu Adminowi
-                const restartButtonHTML = isAdmin 
-                    ? `<button onclick="window.sendAgentCommand('${a.name}', 'RESTART')" class="mono-font text-[8px] font-bold px-2 py-1 bg-gray-950 hover:bg-[#d4af37]/20 border border-gray-900 hover:border-[#d4af37]/40 rounded text-gray-400 hover:text-[#d4af37] transition-all duration-300 uppercase cursor-pointer">RESTART</button>` 
-                    : '';
-
-                card.innerHTML = `
-                    <div class="space-y-1">
-                        <div class="flex items-center space-x-2">
-                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 agent-active-glow animate-pulse" id="dot_${a.id}"></span>
-                            <span class="mono-font text-[10px] font-bold text-gray-200">${a.name}</span>
-                        </div>
-                        <p class="text-[9px] text-gray-500 tracking-wide">${a.role}</p>
-                    </div>
-                    <div class="flex items-center space-x-4">
-                        <div class="text-right mono-font text-[9px] text-gray-400 space-y-0.5">
-                            <div class="text-[#d4af37]">PID: ${a.pid}</div>
-                            <div>RAM: ${a.r.toFixed(1)} MB</div>
-                        </div>
-                        ${restartButtonHTML}
-                    </div>
-                `;
-                container.appendChild(card);
-            });
-        }
-        renderSwarm();
-
-        // Synchronizacja pingu i czasu telemetrii
-        setInterval(() => {
-            const randSync = (97 + Math.random() * 2).toFixed(1) + "%";
-            const syncEl = document.getElementById('syncVal');
-            if(syncEl) syncEl.innerText = randSync;
-
-            const randPing = Math.floor(10 + Math.random() * 5) + "ms";
-            const pingEl = document.getElementById('binancePing');
-            if(pingEl) pingEl.innerText = randPing;
-        }, 3000);
-
-        // Zegar czasu UTC
-        setInterval(() => {
-            const now = new Date();
-            const timeStr = now.toISOString().substr(11, 8) + " UTC";
-            document.getElementById('utcTime').innerText = timeStr;
-        }, 1000);
-
-        // Przejścia widoków
-        function transitionToDashboard() {
-            const silenceView = document.getElementById('silenceView');
-            const dashboardView = document.getElementById('dashboardView');
-            const lockSystemBtn = document.getElementById('lockSystemBtn');
-            
-            try {
-                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
-                osc.connect(gain);
-                gain.connect(audioCtx.destination);
-                osc.frequency.value = 120;
-                gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
-                osc.start();
-                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
-                osc.stop(audioCtx.currentTime + 0.3);
-            } catch(e) {}
-
-            silenceView.classList.add('opacity-0', 'scale-95');
-            setTimeout(() => {
-                silenceView.classList.add('hidden');
-                dashboardView.classList.remove('hidden');
-                setTimeout(() => {
-                    dashboardView.classList.remove('translate-y-10');
-                    dashboardView.classList.add('opacity-100', 'translate-y-0');
-                    lockSystemBtn.classList.remove('hidden');
-                    initEquityChart();
-                    startTerminalStream();
-                    startMarketSim();
-                }, 50);
-            }, 800);
-        }
-
-        function transitionToSilence() {
-            const silenceView = document.getElementById('silenceView');
-            const dashboardView = document.getElementById('dashboardView');
-            const lockSystemBtn = document.getElementById('lockSystemBtn');
-            
-            try {
-                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
-                osc.connect(gain);
-                gain.connect(audioCtx.destination);
-                osc.frequency.value = 80;
-                gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
-                osc.start();
-                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
-                osc.stop(audioCtx.currentTime + 0.3);
-            } catch(e) {}
-
-            dashboardView.classList.remove('opacity-100', 'translate-y-0');
-            dashboardView.classList.add('opacity-0', 'translate-y-10');
-            lockSystemBtn.classList.add('hidden');
-            setTimeout(() => {
-                dashboardView.classList.add('hidden');
-                silenceView.classList.remove('hidden');
-                setTimeout(() => { silenceView.classList.remove('opacity-0', 'scale-95'); }, 50);
-            }, 800);
-        }
-
-        // Inicjalizacja instancji wykresu
-        let chartInstance = null;
-        let chartData = [10000, 10000, 10000];
-        let chartLabels = ['Start', 'Initial', 'System Sync'];
-
-        function initEquityChart() {
-            if (chartInstance) return;
-            const ctx = document.getElementById('equityChart').getContext('2d');
-            chartInstance = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: chartLabels,
-                    datasets: [{
-                        label: 'Portfolio (USDC)',
-                        data: chartData,
-                        borderColor: '#00FF66',
-                        borderWidth: 1.5,
-                        backgroundColor: 'rgba(0, 255, 102, 0.03)',
-                        fill: true,
-                        tension: 0.3,
-                        pointRadius: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        x: { grid: { color: 'rgba(255, 255, 255, 0.02)' }, ticks: { color: '#888', font: { family: 'JetBrains Mono', size: 8 } } },
-                        y: { grid: { color: 'rgba(255, 255, 255, 0.02)' }, ticks: { color: '#888', font: { family: 'JetBrains Mono', size: 8 } } }
-                    }
-                }
-            });
-        }
-
-        // Terminal Fallback i Makiety Logów
-        const LOGS_MOCK = [
-            "Initializing OS-Level Process Tracker in juicycore_lab...",
-            "Tarcza Ingestora aktywna. Ścieżka zapisu logów zsynchronizowana.",
-            "[FEAR & GREED] Pobrano pomyślnie z serwera: 30/100 (Fear).",
-            "MFI-9 (Vortex) dla SOL: 88.51 | Zsynchronizowano z boską geometrią 3-6-9.",
-            "Wykryto odchylenie wskaźnikowe od stanu równowagi dla BNB/USDC."
-        ];
-
-        let streamStarted = false;
-        function startTerminalStream() {
-            if (streamStarted) return;
-            streamStarted = true;
-            const consoleBox = document.getElementById('terminalConsole');
-            let index = 0;
-            function addLog() {
-                if (consoleBox.children.length <= 1) {
-                    const now = new Date();
-                    const ts = now.toISOString().substr(11, 8);
-                    const logMsg = LOGS_MOCK[index % LOGS_MOCK.length];
-                    const line = document.createElement('div');
-                    line.className = "flex space-x-2 text-gray-400";
-                    if (logMsg.includes("BNB")) line.className = "flex space-x-2 text-amber-400";
-                    line.innerHTML = `<span class="text-gray-600 font-bold">[${ts}]</span><span>${logMsg}</span>`;
-                    consoleBox.appendChild(line);
-                    consoleBox.scrollTop = consoleBox.scrollHeight;
-                }
-                index++;
-                setTimeout(addLog, 5000 + Math.random() * 3000);
-            }
-            addLog();
-        }
 
         // Vortex 9 Stream Simulator
         const COINS = [
