@@ -595,29 +595,29 @@
                     if (data && data.vortex_rsi) {
                         const list = document.getElementById('vortexList');
                         if (list) {
-                            list.innerHTML = '';
+                            list.innerHTML = ''; // Czyścimy przed nadpisaniem
                             Object.entries(data.vortex_rsi).forEach(([symbolPair, coinData]) => {
-                                const rsiVal = coinData.rsi !== undefined ? coinData.rsi : coinData; 
-                                const priceVal = coinData.price !== undefined ? coinData.price : 0.00;
-                        
+            // coinData to teraz obiekt {price: ..., rsi: ...}
+                                const price = coinData.price || 0.00;
+                                const rsi = coinData.rsi || 0.0;
+            
                                 const div = document.createElement('div');
                                 div.className = "flex justify-between items-center text-[10px] mono-font border-b border-gray-950 pb-1.5 hover:bg-white/5 px-2 py-1 rounded transition-all duration-300";
-                        
-                                const rsiColor = rsiVal < 35 ? "text-emerald-400 font-bold" : (rsiVal > 65 ? "text-rose-400 font-bold" : "text-gray-400");
-                        
+            
+                                const rsiColor = rsi < 35 ? "text-emerald-400" : (rsi > 65 ? "text-rose-400" : "text-gray-400");
+            
                                 div.innerHTML = `
-                                    <div class="flex items-center space-x-2">
-                                        <span class="text-gray-100 font-bold">${symbolPair}</span>
-                                    </div>
-                                    <div class="flex items-center space-x-4">
-                                        <span class="text-gray-300 font-medium">${parseFloat(priceVal).toLocaleString('pl-PL', { minimumFractionDigits: 2 })}</span>
-                                        <span class="${rsiColor} bg-black/40 px-1.5 py-0.5 rounded border border-gray-900 text-[9px]">RSI9: ${parseFloat(rsiVal).toFixed(1)}</span>
+                                    <span class="text-gray-100 font-bold">${symbolPair}</span>
+                                    <div class="flex items-center space-x-3">
+                                        <span class="text-gray-300">${parseFloat(price).toFixed(2)}</span>
+                                        <span class="${rsiColor} bg-black/40 px-1.5 py-0.5 rounded border border-gray-900">RSI: ${parseFloat(rsi).toFixed(1)}</span>
                                     </div>
                                 `;
                                 list.appendChild(div);
                             });
                         }
-                    }   
+                    }
+   
                     // Dynamiczna alokacja telemetryczna statystyk zaawansowanych (ADMIN ONLY - ODSEPAROWANA OD TEMPERATURY)
                     if (isAdmin) {
                     injectAdvancedStatsUI(); 
