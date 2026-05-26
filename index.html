@@ -593,6 +593,7 @@
 
                 //🌀 SYNCHRONIZACJA CEN I RSI VORTEX-9 BEZPOŚREDNIO Z FIREBASE!
                     if (data && data.vortex_rsi) {
+                        console.log("DEBUG: Otrzymano dane Vortex:", data.vortex_rsi);
                         const list = document.getElementById('vortexList');
                         if (list) {
                             list.innerHTML = ''; // Czyścimy przed nadpisaniem
