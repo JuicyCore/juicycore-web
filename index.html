@@ -1178,7 +1178,7 @@
           //  { symbol: "SOL", price: 184.90, change: 2.10, rsi: 67.89 },
           //  { symbol: "BNB", price: 585.10, change: -0.10, rsi: 49.30 },
            // { symbol: "XRP", price: 0.5420, change: 0.05, rsi: 33.10 }
-        ];
+        //];
 
         //let marketSimStarted = false;
         //function startMarketSim() {
@@ -1204,19 +1204,19 @@
          //   }, 2500);
      //   }
 
-        function updateCoinRow(element, coin) {
-            const changeColor = coin.change >= 0 ? "text-[#00FF66]" : "text-[#FF3366]";
-            const rsiColor = coin.rsi < 35 ? "text-emerald-400 font-bold" : (coin.rsi > 65 ? "text-rose-400 font-bold" : "text-gray-400");
-            element.innerHTML = `
-                <div class="flex items-center space-x-2">
-                    <span class="text-gray-100 font-bold">${coin.symbol}/USDC</span>
-                </div>
-                <div class="flex items-center space-x-4">
-                    <span class="text-gray-300 font-medium">${coin.price.toFixed(2)}</span>
-                    <span class="${rsiColor} bg-black/40 px-1.5 py-0.5 rounded border border-gray-900 text-[9px]">RSI9: ${coin.rsi.toFixed(1)}</span>
-                </div>
-            `;
-        }
+       // function updateCoinRow(element, coin) {
+         //   const changeColor = coin.change >= 0 ? "text-[#00FF66]" : "text-[#FF3366]";
+           // const rsiColor = coin.rsi < 35 ? "text-emerald-400 font-bold" : (coin.rsi > 65 ? "text-rose-400 font-bold" : "text-gray-400");
+            //element.innerHTML = `
+              //  <div class="flex items-center space-x-2">
+                //    <span class="text-gray-100 font-bold">${coin.symbol}/USDC</span>
+               // </div>
+                //<div class="flex items-center space-x-4">
+                  //  <span class="text-gray-300 font-medium">${coin.price.toFixed(2)}</span>
+                    //<span class="${rsiColor} bg-black/40 px-1.5 py-0.5 rounded border border-gray-900 text-[9px]">RSI9: ${coin.rsi.toFixed(1)}</span>
+                //</div>
+           // `;
+        //}
     </script>
 </body>
 </html>
