@@ -207,12 +207,12 @@
             <!-- PANEL KONTROLI PORTFELA (FINANCIAL METRICS BLOCK - REAL LIVE DATA) -->
             <div class="grid grid-cols-3 gap-2 md:gap-4 bg-black/60 border border-gray-900 rounded-lg p-3 md:p-4 backdrop-blur-md">
                 <div class="text-center space-y-1">
-                    <span class="mono-font text-[8px] md:text-[9px] text-gray-500 tracking-wider">SALDO WOLNE (USDT)</span>
+                    <span class="mono-font text-[8px] md:text-[9px] text-gray-500 tracking-wider">SALDO WOLNE (USDC)</span>
                     <div class="text-base md:text-xl font-bold text-gray-200 tracking-wide" id="freeBalance">1 342.18</div>
                     <span class="mono-font text-[8px] md:text-[9px] text-emerald-400">100% płynności</span>
                 </div>
                 <div class="text-center space-y-1 border-x border-gray-900">
-                    <span class="mono-font text-[8px] md:text-[9px] text-gray-500 tracking-wider">TOTAL EQUITY (USDT)</span>
+                    <span class="mono-font text-[8px] md:text-[9px] text-gray-500 tracking-wider">TOTAL EQUITY (USDC)</span>
                     <div class="text-base md:text-xl font-bold text-[#d4af37] tracking-wide glow-text" id="totalEquity">10 000.00</div>
                     <span class="mono-font text-[8px] md:text-[9px] text-[#00FF66]" id="roiValue">+0.00%</span>
                 </div>
@@ -263,7 +263,7 @@
                     </div>
                     
                     <div class="grid grid-cols-2 md:grid-cols-3 gap-3 text-[10px] mono-font text-gray-400">
-                        <div>• Aktywne aktywo: <strong class="text-gray-100">BNB/USDT</strong></div>
+                        <div>• Aktywne aktywo: <strong class="text-gray-100">BNB/USDC</strong></div>
                         <div>• Główny trend: <strong class="text-[#00FF66]">HOSSA (STRONG)</strong></div>
                         <div>• Sesja: <strong class="text-amber-400">EUROPA / US OVERLAP</strong></div>
                     </div>
@@ -458,8 +458,8 @@
                     const data = snapshot.data();
                     
                     // Bezpośrednie bindowanie danych z pliku paper_portfolio.json
-                    document.getElementById('freeBalance').innerText = parseFloat(data.balance || 1342.18).toLocaleString('pl-PL', { minimumFractionDigits: 2 }) + " USDT";
-                    document.getElementById('totalEquity').innerText = parseFloat(data.total_equity || 10000.00).toLocaleString('pl-PL', { minimumFractionDigits: 2 }) + " USDT";
+                    document.getElementById('freeBalance').innerText = parseFloat(data.balance || 1342.18).toLocaleString('pl-PL', { minimumFractionDigits: 2 }) + " USDC";
+                    document.getElementById('totalEquity').innerText = parseFloat(data.total_equity || 10000.00).toLocaleString('pl-PL', { minimumFractionDigits: 2 }) + " USDC";
                     
                     const totalReturn = ((parseFloat(data.total_equity || 10000.00) - 10000) / 10000) * 100;
                     document.getElementById('roiValue').innerText = (totalReturn >= 0 ? "+" : "") + totalReturn.toFixed(2) + "%";
@@ -932,7 +932,7 @@
                 data: {
                     labels: chartLabels,
                     datasets: [{
-                        label: 'Portfolio (USDT)',
+                        label: 'Portfolio (USDC)',
                         data: chartData,
                         borderColor: '#00FF66',
                         borderWidth: 1.5,
@@ -960,7 +960,7 @@
             "Tarcza Ingestora aktywna. Ścieżka zapisu logów zsynchronizowana.",
             "[FEAR & GREED] Pobrano pomyślnie z serwera: 30/100 (Fear).",
             "MFI-9 (Vortex) dla SOL: 88.51 | Zsynchronizowano z boską geometrią 3-6-9.",
-            "Wykryto odchylenie wskaźnikowe od stanu równowagi dla BNB/USDT."
+            "Wykryto odchylenie wskaźnikowe od stanu równowagi dla BNB/USDC."
         ];
 
         let streamStarted = false;
@@ -1025,7 +1025,7 @@
             const rsiColor = coin.rsi < 35 ? "text-emerald-400 font-bold" : (coin.rsi > 65 ? "text-rose-400 font-bold" : "text-gray-400");
             element.innerHTML = `
                 <div class="flex items-center space-x-2">
-                    <span class="text-gray-100 font-bold">${coin.symbol}/USDT</span>
+                    <span class="text-gray-100 font-bold">${coin.symbol}/USDC</span>
                 </div>
                 <div class="flex items-center space-x-4">
                     <span class="text-gray-300 font-medium">${coin.price.toFixed(2)}</span>
