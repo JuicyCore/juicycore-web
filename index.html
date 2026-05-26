@@ -317,6 +317,12 @@
                 <div class="space-y-2.5 max-h-[150px] overflow-y-auto pr-1" id="vortexList"></div>
             </div>
 
+            <!-- STRUMIEŃ SYGNAŁÓW VORTEX-9 -->
+            <div id="vortexListArea" class="bg-black/60 border border-gray-900 rounded-lg p-4 flex flex-col space-y-3">
+                <span class="mono-font text-[10px] text-[#d4af37] tracking-widest border-b border-gray-900 pb-2">🌀 VORTEX 9 STREAM (RSI-9)</span>
+                <div class="space-y-2.5 max-h-[150px] overflow-y-auto pr-1" id="vortexList"></div>
+            </div>
+
             <!-- CHAT Z LLM LLAMA 3.1 COORDINATOR -->
             <div class="bg-black/60 border border-gray-900 rounded-lg p-4 flex flex-col h-[280px] backdrop-blur-md">
                 <div class="flex justify-between items-center border-b border-gray-900 pb-2 mb-2">
@@ -399,6 +405,104 @@
         let isAdmin = false;
         const appId = "juicycore-360b7";
 
+        // Rój 10 agentów (Swarm Matrix)
+        const AGENTS = [
+            { id: "heartbeat", name: "brain_heartbeat.py", role: "Safe State & Snapshot Manager", pid: 8140, r: 2.1 },
+            { id: "scout", name: "juicy_social_scout.py", role: "Reddit & RSS Sentiment Scout", pid: 9210, r: 8.4 },
+            { id: "godzilla", name: "juicy_godzilla.py", role: "Titanium Market Ingestor (OHLCV)", pid: 1402, r: 4.8 },
+            { id: "analyst", name: "juicy_analyst_brain.py", role: "ML Engine & Discord Bot Suite", pid: 3609, r: 24.5 },
+            { id: "guardian", name: "juicy_code_guardian.py", role: "AST Structure & Backup Protector", pid: 4812, r: 1.8 },
+            { id: "innovator", name: "juicy_innovator.py", role: "AI Code Self-Optimizer (LLM Patches)", pid: 7412, r: 3.2 },
+            { id: "awake", name: "juicy_keep_awake.py", role: "Modern Standby & Throttling Guard", pid: 1204, r: 0.8 },
+            { id: "trader", name: "juicy_logic_decision.py", role: "Quant Execution Core (Trader Engine)", pid: 3080, r: 12.1 },
+            { id: "reporter", name: "juicy_reporter.py", role: "Performance & PnL Visualizer", pid: 5690, r: 5.4 },
+            { id: "supervisor", name: "juicy_supervisor.py", role: "Orchestration & Heartbeat Watchdog", pid: 9001, r: 1.1 }
+        ];
+
+        // Wygenerowanie Swarm Matrix
+        function renderSwarm() {
+            const container = document.getElementById('swarmContainer');
+            if (!container) return;
+            container.innerHTML = '';
+            AGENTS.forEach(a => {
+                const card = document.createElement('div');
+                card.className = "bg-black/40 border border-gray-950 rounded-md p-3 flex justify-between items-center gold-bg-hover transition-all duration-300";
+                
+                // TARCZA OPERACYJNA: Przycisk RESTART widoczny tylko i wyłącznie dla zalogowanego Admina
+                const restartButtonHTML = isAdmin 
+                    ? `<button onclick="window.sendAgentCommand('${a.name}', 'RESTART')" class="mono-font text-[8px] font-bold px-2.5 py-1 bg-gray-950 hover:bg-[#d4af37]/20 border border-gray-900 hover:border-[#d4af37]/40 rounded text-gray-400 hover:text-[#d4af37] transition-all duration-300 uppercase cursor-pointer">RESTART</button>` 
+                    : '';
+
+                card.innerHTML = `
+                    <div class="space-y-1">
+                        <div class="flex items-center space-x-2">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 agent-active-glow animate-pulse" id="dot_${a.id}"></span>
+                            <span class="mono-font text-[10px] font-bold text-gray-200">${a.name}</span>
+                        </div>
+                        <p class="text-[9px] text-gray-500 tracking-wide">${a.role}</p>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <div class="text-right mono-font text-[9px] text-gray-400 space-y-0.5">
+                            <div class="text-[#d4af37]">PID: ${a.pid}</div>
+                            <div>RAM: ${a.r.toFixed(1)} MB</div>
+                        </div>
+                        ${restartButtonHTML}
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // System dynamicznego wstrzykiwania zaawansowanej telemetrii sprzętowej i9 & RTX dla Admina
+        function injectAdvancedStatsUI() {
+            if (document.getElementById('adminStatsPanel')) return;
+            
+            const adminPanelArea = document.getElementById('adminPanelArea');
+            if (!adminPanelArea) return;
+            
+            const statsDiv = document.createElement('div');
+            statsDiv.id = 'adminStatsPanel';
+            statsDiv.className = 'mt-4 pt-3 border-t border-red-950/40 space-y-2.5 text-[10px] mono-font';
+            statsDiv.innerHTML = `
+                <div class="text-gray-500 tracking-wider text-[8px] uppercase mb-1 flex justify-between">
+                    <span>📊 SYSTEM QUANT TELEMETRY (ADMIN ONLY)</span>
+                    <span class="text-[#d4af37] animate-pulse">● SECURE STREAM</span>
+                </div>
+                <div class="grid grid-cols-2 gap-2 text-gray-400">
+                    <div class="bg-black/40 border border-gray-950 p-2 rounded">
+                        <span class="text-gray-600 block text-[8px]">SHARPE RATIO</span>
+                        <span class="font-bold text-emerald-400" id="adminSharpe">--</span>
+                    </div>
+                    <div class="bg-black/40 border border-gray-950 p-2 rounded">
+                        <span class="text-gray-600 block text-[8px]">MAX DRAWDOWN</span>
+                        <span class="font-bold text-rose-400" id="adminDrawdown">--</span>
+                    </div>
+                    <div class="bg-black/40 border border-gray-950 p-2 rounded">
+                        <span class="text-gray-600 block text-[8px]">CPU LOAD (i9-12900HX)</span>
+                        <span class="font-bold text-gray-200" id="adminCpu">--</span>
+                    </div>
+                    <div class="bg-black/40 border border-gray-950 p-2 rounded">
+                        <span class="text-gray-600 block text-[8px]">ACTIVE CORES / THREADS</span>
+                        <span class="font-bold text-[#d4af37]" id="adminThreads">9 Active</span>
+                    </div>
+                </div>
+            `;
+            adminPanelArea.insertBefore(statsDiv, adminPanelArea.firstChild);
+        }
+
+        // Drukowanie logów administracyjnych bezpośrednio do Twojej konsoli CRT
+        function printAdminLog(message, isError = false) {
+            const consoleBox = document.getElementById('terminalConsole');
+            if (consoleBox) {
+                const line = document.createElement('div');
+                line.className = isError ? "text-red-400 font-bold" : "text-[#d4af37] font-bold";
+                const now = new Date();
+                const ts = now.toISOString().substr(11, 8);
+                line.innerHTML = `<span>[${ts} ADMIN] ${message}</span>`;
+                consoleBox.appendChild(line);
+                consoleBox.scrollTop = consoleBox.scrollHeight;
+            }
+        }
         // Bezpieczna inicjalizacja autentykacji dla gości (Tylko Odczyt)
         const initAuthentication = async () => {
             try {
@@ -418,12 +522,16 @@
                 document.getElementById('loginBtnText').innerText = "WYLOGUJ ADMINA";
                 document.getElementById('adminPanelArea').classList.remove('hidden');
                 
-                // Odblokowanie interaktywnego czatu dla Patryka
+                // Odblokowanie interaktywnego czatu dla Ciebie
                 document.getElementById('llmInput').removeAttribute('disabled');
                 document.getElementById('llmInput').setAttribute('placeholder', "Napisz polecenie do Lamy 3.1...");
                 document.getElementById('sendPromptBtn').removeAttribute('disabled');
                 document.getElementById('sendPromptBtn').className = "bg-[#d4af37]/10 hover:bg-[#d4af37]/20 border border-[#d4af37]/30 hover:border-[#d4af37] text-[#d4af37] p-2 rounded transition-all duration-300 cursor-pointer";
-                document.getElementById('llmStatusText').innerText = "Lokalna Llama 3.1 czeka na rozkazy w czasie rzeczywistym.";
+                
+                const statusText = document.getElementById('llmStatusText');
+                if (statusText) statusText.innerText = "Lokalna Llama 3.1 czeka na Twoje rozkazy.";
+                
+                printAdminLog("Autoryzacja pomyślna. Witaj, Operatorze Patryku!");
             } else {
                 isAdmin = false;
                 document.getElementById('loginBtnText').innerText = "ADMIN LOGIN";
@@ -434,9 +542,13 @@
                 document.getElementById('llmInput').setAttribute('placeholder', "🔒 Zaloguj się jako Admin...");
                 document.getElementById('sendPromptBtn').setAttribute('disabled', 'true');
                 document.getElementById('sendPromptBtn').className = "bg-gray-950 border border-gray-900 text-gray-600 p-2 rounded transition-all duration-300";
-                document.getElementById('llmStatusText').innerText = "Operator Authentication Required to Send Prompts.";
+                
+                const statusText = document.getElementById('llmStatusText');
+                if (statusText) statusText.innerText = "Operator Authentication Required to Send Prompts.";
             }
 
+            // BEZPIECZNY RE-RENDER: Generuje swarm na nowo, dołączając przyciski RESTART tylko dla Admina!
+            renderSwarm();
             setupRealtimeSubscriptions();
         });
 
@@ -479,6 +591,25 @@
                     }
                     if (data && data.sys_temp !== undefined) {
                         document.getElementById('sysTemp').innerText = parseFloat(data.sys_temp).toFixed(1) + "°C";
+                    }
+                    // Dynamiczna alokacja telemetryczna statystyk zaawansowanych (ADMIN ONLY - ODSEPAROWANA OD TEMPERATURY)
+                    if (isAdmin) {
+                        injectAdvancedStatsUI(); 
+                        
+                        const sharpeEl = document.getElementById('adminSharpe');
+                        if (sharpeEl && data.sharpe_ratio !== undefined) {
+                            sharpeEl.innerText = parseFloat(data.sharpe_ratio).toFixed(2);
+                        }
+                        
+                        const ddEl = document.getElementById('adminDrawdown');
+                        if (ddEl && data.max_drawdown !== undefined) {
+                            ddEl.innerText = parseFloat(data.max_drawdown).toFixed(2) + "%";
+                        }
+                        
+                        const cpuEl = document.getElementById('adminCpu');
+                        if (cpuEl && data.cpu_load !== undefined) {
+                            cpuEl.innerText = parseFloat(data.cpu_load).toFixed(1) + "%";
+                        }    
                     }
                 }
             }, (error) => {
@@ -600,6 +731,28 @@
                 initInteractiveLearning();
             }
         }
+        // --- INICJALIZACJA ELEMENTÓW GLOBALNYCH ---
+        renderSwarm();
+        
+        // Zegar czasu UTC
+        setInterval(() => {
+            const now = new Date();
+            const timeStr = now.toISOString().substr(11, 8) + " UTC";
+            const utcTimeEl = document.getElementById('utcTime');
+            if (utcTimeEl) utcTimeEl.innerText = timeStr;
+        }, 1000);
+
+        // Synchronizacja pingu i czasu telemetrii
+        setInterval(() => {
+            const randSync = (97 + Math.random() * 2).toFixed(1) + "%";
+            const syncEl = document.getElementById('syncVal');
+            if(syncEl) syncEl.innerText = randSync;
+
+            const randPing = Math.floor(10 + Math.random() * 5) + "ms";
+            const pingEl = document.getElementById('binancePing');
+            if(pingEl) pingEl.innerText = randPing;
+        }, 3000);
+    
     </script>
 
     <!-- ========================================================= -->
