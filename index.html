@@ -313,9 +313,11 @@
 
             <!-- STRUMIEŃ SYGNAŁÓW VORTEX-9 -->
             <div id="vortexListArea" class="bg-black/60 border border-gray-900 rounded-lg p-4 flex flex-col space-y-3">
-                <span class="mono-font text-[10px] text-[#d4af37] tracking-widest border-b border-gray-900 pb-2">🌀 VORTEX 9 STREAM (RSI-9)</span>
+                <span class="mono-font text-[10px] text-[#d4af37] tracking-widest border-b border-gray-900 pb-2 flex items-center gap-2">
+                    <i class="fa-solid fa-wind animate-pulse text-[#d4af37]"></i> 🌀 VORTEX 9 STREAM (RSI-9)
+                </span>
                 <div class="space-y-2.5 max-h-[150px] overflow-y-auto pr-1" id="vortexList"></div>
-            </div>
+            </div
 
             <!-- CHAT Z LLM LLAMA 3.1 COORDINATOR -->
             <div class="bg-black/60 border border-gray-900 rounded-lg p-4 flex flex-col h-[280px] backdrop-blur-md">
@@ -371,7 +373,7 @@
     <!-- ========================================================= -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js";
+        // USUNĘLIŚMY IMPORT ANALYTICS - chroni to przed blokadami uBlock / Brave i zapobiega crashom!
         import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, onSnapshot, setDoc, addDoc, collection, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
@@ -384,20 +386,21 @@
             messagingSenderId: "444673905531",
             appId: "1:444673905531:web:9e263e6a70ad31a1d063de",
             measurementId: "G-ZP1RN9Y7Q2"
-            
         };
         
         const app = initializeApp(firebaseConfig);
-        const analytics = getAnalytics(app);
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // 🔑 TWÓJ ADMIN EMAIL (Podmień na swój rzeczywisty Gmail, którym się logujesz)
+        // 🔑 PRZENIESIONE DEKLARACJE NA SAMĄ GÓRĘ (Zapobiega błędom wczytywania przed inicjalizacją)
         const ADMIN_EMAIL = "patryk.beczek.925@gmail.com"; 
-        
         let currentUser = null;
         let isAdmin = false;
         const appId = "juicycore-360b7";
+
+        let chartInstance = null;
+        let chartData = [10000, 10000, 10000];
+        let chartLabels = ['Start', 'Initial', 'System Sync'];
 
         // Rój 10 agentów (Swarm Matrix)
         const AGENTS = [
