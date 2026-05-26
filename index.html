@@ -1172,37 +1172,37 @@
         }
 
         // Vortex 9 Stream Simulator
-        const COINS = [
-            { symbol: "BTC", price: 68420.50, change: 0.15, rsi: 31.42 },
-            { symbol: "ETH", price: 3450.25, change: -0.45, rsi: 41.20 },
-            { symbol: "SOL", price: 184.90, change: 2.10, rsi: 67.89 },
-            { symbol: "BNB", price: 585.10, change: -0.10, rsi: 49.30 },
-            { symbol: "XRP", price: 0.5420, change: 0.05, rsi: 33.10 }
+       // const COINS = [
+           // { symbol: "BTC", price: 68420.50, change: 0.15, rsi: 31.42 },
+          //  { symbol: "ETH", price: 3450.25, change: -0.45, rsi: 41.20 },
+          //  { symbol: "SOL", price: 184.90, change: 2.10, rsi: 67.89 },
+          //  { symbol: "BNB", price: 585.10, change: -0.10, rsi: 49.30 },
+           // { symbol: "XRP", price: 0.5420, change: 0.05, rsi: 33.10 }
         ];
 
-        let marketSimStarted = false;
+        //let marketSimStarted = false;
         //function startMarketSim() {
-            if (marketSimStarted) return;
-            marketSimStarted = true;
-            const list = document.getElementById('vortexList');
-            list.innerHTML = '';
-            COINS.forEach(c => {
-                const div = document.createElement('div');
-                div.id = `coin-${c.symbol}`;
-                div.className = "flex justify-between items-center text-[10px] mono-font border-b border-gray-950 pb-1.5 hover:bg-white/5 px-2 py-1 rounded transition-all duration-300";
-                updateCoinRow(div, c);
-                list.appendChild(div);
-            });
+           // if (marketSimStarted) return;
+           // marketSimStarted = true;
+            //const list = document.getElementById('vortexList');
+           // list.innerHTML = '';
+         //   COINS.forEach(c => {
+             //   const div = document.createElement('div');
+             //   div.id = `coin-${c.symbol}`;
+             //   div.className = "flex justify-between items-center text-[10px] mono-font border-b border-gray-950 pb-1.5 hover:bg-white/5 px-2 py-1 rounded transition-all duration-300";
+             //   updateCoinRow(div, c);
+              //  list.appendChild(div);
+           // });
 
-            setInterval(() => {
-                COINS.forEach(c => {
-                    c.price *= (1 + (Math.random() * 0.2 - 0.1) / 100);
-                    c.rsi = Math.max(10, Math.min(90, c.rsi + (Math.random() * 2 - 1)));
-                    const div = document.getElementById(`coin-${c.symbol}`);
-                    if (div) updateCoinRow(div, c);
-                });
-            }, 2500);
-        }
+          //  setInterval(() => {
+           //     COINS.forEach(c => {
+            //        c.price *= (1 + (Math.random() * 0.2 - 0.1) / 100);
+           //        c.rsi = Math.max(10, Math.min(90, c.rsi + (Math.random() * 2 - 1)));
+            //        const div = document.getElementById(`coin-${c.symbol}`);
+           //         if (div) updateCoinRow(div, c);
+          //      });
+         //   }, 2500);
+     //   }
 
         function updateCoinRow(element, coin) {
             const changeColor = coin.change >= 0 ? "text-[#00FF66]" : "text-[#FF3366]";
