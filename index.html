@@ -596,6 +596,8 @@ function setupRealtimeSubscriptions() {
             //🌀 SYNCHRONIZACJA CEN I RSI VORTEX-9 BEZPOŚREDNIO Z FIREBASE (BINANCE TESTNET)
             if (data && data.vortex_rsi) {
                 console.log("DEBUG: Otrzymano dane Vortex:", data.vortex_rsi);
+                // Flaga używana przez fallback-symulację marketu (jeśli Firebase już dostarcza dane, symulacja się nie uruchomi).
+                window.__VORTEX_LIVE = true;
                 const list = document.getElementById('vortexList');
                 if (list) {
                     list.innerHTML = ''; 
@@ -726,6 +728,24 @@ function setupRealtimeSubscriptions() {
             consoleBox.scrollTop = consoleBox.scrollHeight;
         } catch (e) {
             console.error("Problem z wysłaniem rozkazu awaryjnego:", e);
+        }
+    };
+
+    // 🚀 Restart pojedynczego agenta (obsługa przycisku RESTART w Swarm Matrix)
+    window.sendAgentCommand = async (agentName, actionType) => {
+        if (!isAdmin) return;
+        if (!agentName || !actionType) return;
+        try {
+            const commandsColRef = collection(db, 'artifacts', appId, 'public', 'data', 'admin_commands');
+            await addDoc(commandsColRef, {
+                command_type: "AGENT_CONTROL",
+                agent_name: agentName,
+                action: actionType,
+                timestamp: serverTimestamp(),
+                executed: false
+            });
+        } catch (e) {
+            console.error("Problem z wysłaniem komendy agenta:", e);
         }
     };
 } // <--- TA KLAMRA PRECYZYJNIE DOMYKA CAŁĄ FUNKCJĘ
@@ -988,7 +1008,7 @@ function setupRealtimeSubscriptions() {
         animateParticles();
 
         // Rój 10 agentów (Swarm Matrix representation)
-        const AGENTS = [
+        const PLAIN_AGENTS = [
             { id: "heartbeat", name: "brain_heartbeat.py", role: "Safe State & Snapshot Manager", pid: 8140, r: 2.1 },
             { id: "scout", name: "juicy_social_scout.py", role: "Reddit & RSS Sentiment Scout", pid: 9210, r: 8.4 },
             { id: "godzilla", name: "juicy_godzilla.py", role: "Titanium Market Ingestor (OHLCV)", pid: 1402, r: 4.8 },
@@ -1004,7 +1024,7 @@ function setupRealtimeSubscriptions() {
         function renderSwarm() {
             const container = document.getElementById('swarmContainer');
             container.innerHTML = '';
-            AGENTS.forEach(a => {
+            PLAIN_AGENTS.forEach(a => {
                 const card = document.createElement('div');
                 card.className = "bg-black/40 border border-gray-950 rounded-md p-3 flex justify-between items-center gold-bg-hover transition-all duration-300";
                 card.innerHTML = `
@@ -1106,20 +1126,20 @@ function setupRealtimeSubscriptions() {
         }
 
         // Inicjalizacja instancji wykresu
-        let chartInstance = null;
-        let chartData = [10000, 10000, 10000];
-        let chartLabels = ['Start', 'Initial', 'System Sync'];
+        let plainChartInstance = null;
+        let plainChartData = [10000, 10000, 10000];
+        let plainChartLabels = ['Start', 'Initial', 'System Sync'];
 
         function initEquityChart() {
-            if (chartInstance) return;
+            if (plainChartInstance) return;
             const ctx = document.getElementById('equityChart').getContext('2d');
-            chartInstance = new Chart(ctx, {
+            plainChartInstance = new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: chartLabels,
+                    labels: plainChartLabels,
                     datasets: [{
                         label: 'Portfolio (USDC)',
-                        data: chartData,
+                        data: plainChartData,
                         borderColor: '#00FF66',
                         borderWidth: 1.5,
                         backgroundColor: 'rgba(0, 255, 102, 0.03)',
@@ -1174,7 +1194,7 @@ function setupRealtimeSubscriptions() {
         }
 
         // Vortex 9 Stream Simulator
-        //const COINS = [
+        const COINS = [
             { symbol: "BTC", price: 68420.50, change: 0.15, rsi: 31.42 },
             { symbol: "ETH", price: 3450.25, change: -0.45, rsi: 41.20 },
             { symbol: "SOL", price: 184.90, change: 2.10, rsi: 67.89 },
@@ -1183,10 +1203,17 @@ function setupRealtimeSubscriptions() {
         ];
 
         let marketSimStarted = false;
-        //function startMarketSim() {
-            //if (marketSimStarted) return;
-            //marketSimStarted = true;
+        function startMarketSim() {
             const list = document.getElementById('vortexList');
+            if (!list) return;
+
+            // Jeśli Firebase już dostarcza dane, fallback-symulacja nie ma sensu (unikamy konfliktu update'ów).
+            if (window.__VORTEX_LIVE === true) return;
+            if (list.children.length > 0) return;
+
+            if (marketSimStarted) return;
+            marketSimStarted = true;
+
             list.innerHTML = '';
             COINS.forEach(c => {
                 const div = document.createElement('div');
