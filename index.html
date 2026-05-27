@@ -1285,22 +1285,7 @@ function setupRealtimeSubscriptions() {
             console.error("Problem z wysłaniem rozkazu awaryjnego:", e);
         }
     };
-} // <--- TA KLAMRA PRECYZYJNIE DOMYKA CAŁĄ FUNKCJĘ
-        function transitionToDashboard() {
-            console.log("Nawigacja: Przechodzę do panelu głównego...");
     
-            const landingSection = document.getElementById('landingSection') || document.getElementById('welcomeScreen');
-            const dashboardSection = document.getElementById('dashboardSection') || document.getElementById('mainDashboard');
-    
-                if (landingSection && dashboardSection) {
-                    landingSection.classList.add('hidden');
-                    dashboardSection.classList.remove('hidden');
-                } else {
-        // Fallback jeśli Twoje sekcje nazywają się inaczej, po prostu odświeżamy widok widoczności
-                    const appContainer = document.getElementById('app');
-                    if (appContainer) appContainer.style.display = 'block';
-    }
-    window.transitionToDashboard = transitionToDashboard;     
         function appendMessageToChat(sender, text, classes) {
             const chatBox = document.getElementById('llmChatBox');
             const msg = document.createElement('div');
