@@ -391,6 +391,71 @@
             </div>
         </section>
 
+        <!-- KOLUMNA PRAWA: MARKET INTEL + VORTEX + LLM -->
+        <section class="lg:col-span-1 flex flex-col space-y-4 max-h-[82vh] overflow-y-auto pl-0 lg:pl-1">
+
+            <!-- MARKET PULSE + FEAR & GREED -->
+            <div class="bg-black/60 border border-gray-900 rounded-lg p-4 space-y-3">
+                <span class="mono-font text-[10px] text-cyan-400 tracking-widest border-b border-gray-900 pb-2 flex items-center gap-2">
+                    <i class="fa-solid fa-satellite-dish animate-pulse"></i> MARKET PULSE
+                </span>
+                <div id="fearGreedGauge" class="bg-black/40 rounded border border-gray-950 p-3 text-center">
+                    <span class="text-gray-600 text-[9px] mono-font">Ładowanie Fear &amp; Greed...</span>
+                </div>
+                <div class="grid grid-cols-2 gap-2 text-[10px] mono-font">
+                    <div class="bg-black/40 p-2 rounded border border-gray-950 text-center">
+                        <span class="text-[8px] text-gray-500 block">BTC DOMINANCE</span>
+                        <span id="btcDominance" class="text-[#d4af37] text-sm font-bold">—</span>
+                    </div>
+                    <div class="bg-black/40 p-2 rounded border border-gray-950 text-center">
+                        <span class="text-[8px] text-gray-500 block">CAP 24H</span>
+                        <span id="mktCapChange" class="text-sm font-bold">—</span>
+                    </div>
+                </div>
+                <div id="trendingStrip" class="flex flex-wrap gap-1"></div>
+            </div>
+
+            <!-- MINI EQUITY SPARKLINE -->
+            <div class="bg-black/60 border border-gray-900 rounded-lg p-4">
+                <div class="flex justify-between items-center border-b border-gray-900 pb-2 mb-2">
+                    <span class="mono-font text-[10px] text-[#00FF66] tracking-widest flex items-center gap-2">
+                        <i class="fa-solid fa-chart-line"></i> EQUITY SPARKLINE
+                    </span>
+                    <span id="miniEquityRoi" class="mono-font text-[8px] text-gray-500">ROI —</span>
+                </div>
+                <div class="flex justify-between items-baseline mb-1">
+                    <span id="miniEquityValue" class="mono-font text-sm text-[#d4af37] font-bold glow-text">— USDC</span>
+                    <span id="miniEquityDelta" class="mono-font text-[9px] text-gray-500">Δ —</span>
+                </div>
+                <div class="relative h-[72px] w-full">
+                    <canvas id="miniEquityChart"></canvas>
+                </div>
+            </div>
+
+            <!-- TRADING SESSION -->
+            <div class="bg-black/60 border border-gray-900 rounded-lg p-4">
+                <span class="mono-font text-[10px] text-amber-400 tracking-widest border-b border-gray-900 pb-2 flex items-center gap-2 mb-2">
+                    <i class="fa-solid fa-globe"></i> TRADING SESSION
+                </span>
+                <div id="sessionClock" class="space-y-2 text-[10px] mono-font text-gray-400">
+                    <div class="flex justify-between items-center">
+                        <span id="sessionUtcTime" class="text-gray-500">—</span>
+                        <span id="sessionLabel" class="text-amber-400 font-bold text-[9px]">—</span>
+                    </div>
+                    <div class="grid grid-cols-4 gap-1" id="sessionFlags"></div>
+                </div>
+            </div>
+
+            <!-- SOCIAL SENTIMENT MATRIX -->
+            <div class="bg-black/60 border border-gray-900 rounded-lg p-4 flex flex-col space-y-2">
+                <span class="mono-font text-[10px] text-purple-400 tracking-widest border-b border-gray-900 pb-2 flex items-center gap-2">
+                    <i class="fa-solid fa-users-viewfinder"></i> SOCIAL SENTIMENT (9 COINS)
+                </span>
+                <div id="socialSentimentMatrix" class="space-y-1.5 max-h-[140px] overflow-y-auto pr-1">
+                    <span class="text-gray-600 text-[9px] mono-font">Oczekiwanie na Scout...</span>
+                </div>
+                <div id="scoutSourceStats" class="text-[8px] mono-font text-gray-600 border-t border-gray-950 pt-1">RSS · Reddit · HN · CoinGecko</div>
+            </div>
 
             <!-- STRUMIEŃ SYGNAŁÓW VORTEX-9 -->
             <div id="vortexListArea" class="bg-black/60 border border-gray-900 rounded-lg p-4 flex flex-col space-y-3">
@@ -398,6 +463,16 @@
                     <i class="fa-solid fa-wind animate-pulse text-[#d4af37]"></i> 🌀 VORTEX 9 STREAM (RSI-9)
                 </span>
                 <div class="space-y-2.5 max-h-[150px] overflow-y-auto pr-1" id="vortexList"></div>
+            </div>
+
+            <!-- RECENT TRADES -->
+            <div class="bg-black/60 border border-gray-900 rounded-lg p-4">
+                <span class="mono-font text-[10px] text-emerald-400 tracking-widest border-b border-gray-900 pb-2 flex items-center gap-2 mb-2">
+                    <i class="fa-solid fa-receipt"></i> RECENT TRADES
+                </span>
+                <div id="recentTradesTicker" class="space-y-1 max-h-[110px] overflow-y-auto text-[9px] mono-font">
+                    <span class="text-gray-600">Brak transakcji</span>
+                </div>
             </div>
 
             <!-- CHAT Z LLM LLAMA 3.1 COORDINATOR -->
@@ -484,6 +559,7 @@
         const appId = "juicycore-360b7";
 
         let chartInstance = null;
+        let miniEquityChartInstance = null;
         let pnlChartInstance = null;
         let winLossChartInstance = null;
         let lastAdminMetrics = null;
@@ -546,6 +622,241 @@
                 `;
                 list.appendChild(div);
             });
+        }
+
+        function fearGreedColorClass(value) {
+            const v = parseInt(value, 10);
+            if (v <= 25) return 'text-rose-400';
+            if (v <= 45) return 'text-orange-400';
+            if (v <= 55) return 'text-gray-300';
+            if (v <= 75) return 'text-emerald-400';
+            return 'text-amber-400';
+        }
+
+        function fearGreedBarColor(value) {
+            const v = parseInt(value, 10);
+            if (v <= 25) return '#f87171';
+            if (v <= 45) return '#fb923c';
+            if (v <= 55) return '#9ca3af';
+            if (v <= 75) return '#34d399';
+            return '#fbbf24';
+        }
+
+        function renderFearGreed(fg) {
+            const el = document.getElementById('fearGreedGauge');
+            if (!el || !fg || fg.value === undefined) return;
+            const val = parseInt(fg.value, 10);
+            const cls = fg.classification || 'Neutral';
+            const pct = Math.min(100, Math.max(0, val));
+            el.innerHTML = `
+                <div class="flex justify-between items-center mb-1">
+                    <span class="text-[9px] text-gray-500 mono-font">FEAR &amp; GREED INDEX</span>
+                    <span class="text-[9px] mono-font ${fearGreedColorClass(val)}">${cls}</span>
+                </div>
+                <div class="text-2xl font-bold mono-font ${fearGreedColorClass(val)}">${val}</div>
+                <div class="w-full h-1.5 bg-gray-900 rounded-full mt-2 overflow-hidden">
+                    <div class="h-full rounded-full transition-all duration-700" style="width:${pct}%;background:${fearGreedBarColor(val)}"></div>
+                </div>`;
+        }
+
+        function renderMarketPulse(pulse, trending) {
+            if (!pulse) return;
+            const btcEl = document.getElementById('btcDominance');
+            const capEl = document.getElementById('mktCapChange');
+            if (btcEl && pulse.btc_dominance != null) {
+                btcEl.innerText = parseFloat(pulse.btc_dominance).toFixed(1) + '%';
+            }
+            if (capEl && pulse.market_cap_change_24h_pct != null) {
+                const ch = parseFloat(pulse.market_cap_change_24h_pct);
+                capEl.innerText = (ch >= 0 ? '+' : '') + ch.toFixed(2) + '%';
+                capEl.className = 'text-sm font-bold mono-font ' + (ch >= 0 ? 'text-emerald-400' : 'text-rose-400');
+            }
+            const strip = document.getElementById('trendingStrip');
+            if (strip && Array.isArray(trending) && trending.length) {
+                strip.innerHTML = trending.slice(0, 8).map(sym =>
+                    `<span class="text-[8px] mono-font px-1.5 py-0.5 rounded border border-amber-900/30 bg-amber-950/20 text-amber-300/90">${sym}</span>`
+                ).join('');
+            }
+        }
+
+        function renderSocialSentiment(socialIntel) {
+            const matrix = document.getElementById('socialSentimentMatrix');
+            if (!matrix || !socialIntel || !socialIntel.symbols) return;
+            const entries = Object.entries(socialIntel.symbols).sort((a, b) => a[0].localeCompare(b[0]));
+            if (!entries.length) return;
+            matrix.innerHTML = '';
+            entries.forEach(([sym, data]) => {
+                const score = parseFloat(data.social_sentiment || 0);
+                const vel = parseInt(data.social_velocity || 0, 10);
+                const pct = Math.min(100, Math.round((score + 1) * 50));
+                const barColor = score > 0.15 ? 'bg-emerald-500' : (score < -0.15 ? 'bg-rose-500' : 'bg-gray-600');
+                const scoreColor = score > 0.15 ? 'text-emerald-400' : (score < -0.15 ? 'text-rose-400' : 'text-gray-400');
+                const row = document.createElement('div');
+                row.className = 'flex items-center gap-2 text-[9px] mono-font';
+                row.innerHTML = `
+                    <span class="w-10 text-gray-200 font-bold">${sym}</span>
+                    <div class="flex-grow h-1.5 bg-gray-900 rounded-full overflow-hidden">
+                        <div class="h-full ${barColor} transition-all duration-500" style="width:${pct}%"></div>
+                    </div>
+                    <span class="w-10 text-right ${scoreColor}">${score >= 0 ? '+' : ''}${score.toFixed(2)}</span>
+                    <span class="w-6 text-right text-gray-600" title="velocity">${vel}</span>`;
+                matrix.appendChild(row);
+            });
+            const statsEl = document.getElementById('scoutSourceStats');
+            if (statsEl && socialIntel.source_stats) {
+                const s = socialIntel.source_stats;
+                const updated = socialIntel.scout_updated_at
+                    ? new Date(socialIntel.scout_updated_at * 1000).toLocaleTimeString('pl-PL')
+                    : '—';
+                statsEl.textContent = `RSS ${s.rss || 0} · Reddit ${s.reddit || 0} · HN ${s.hn || 0} · aktualizacja ${updated}`;
+            }
+        }
+
+        function computeTradingSessionClient() {
+            const now = new Date();
+            const utcHour = now.getUTCHours();
+            const asia = utcHour >= 0 && utcHour < 9;
+            const europe = utcHour >= 8 && utcHour < 16;
+            const us = utcHour >= 13 && utcHour < 21;
+            const overlap = (europe && us) || (asia && europe);
+            const labels = [];
+            if (asia) labels.push('AZJA');
+            if (europe) labels.push('EUROPA');
+            if (us) labels.push('AMERYKA');
+            if (overlap) labels.push('OVERLAP');
+            return {
+                utc_time: now.toISOString().slice(11, 19) + ' UTC',
+                asia, europe, us, overlap,
+                label: labels.length ? labels.join(' | ') : 'PRZERWA',
+            };
+        }
+
+        function renderSessionClock(session) {
+            if (!session) session = computeTradingSessionClient();
+            const timeEl = document.getElementById('sessionUtcTime');
+            const labelEl = document.getElementById('sessionLabel');
+            const flagsEl = document.getElementById('sessionFlags');
+            if (timeEl) timeEl.innerText = session.utc_time || '—';
+            if (labelEl) labelEl.innerText = session.label || '—';
+            if (!flagsEl) return;
+            const flags = [
+                { key: 'asia', label: 'AZJA', emoji: '🇯🇵' },
+                { key: 'europe', label: 'EU', emoji: '🇬🇧' },
+                { key: 'us', label: 'US', emoji: '🇺🇸' },
+                { key: 'overlap', label: 'OVL', emoji: '🔥' },
+            ];
+            flagsEl.innerHTML = flags.map(f => {
+                const active = session[f.key];
+                return `<div class="text-center p-1.5 rounded border ${active ? 'border-amber-700/50 bg-amber-950/30 text-amber-300' : 'border-gray-950 bg-black/30 text-gray-600'}">
+                    <div class="text-[10px]">${f.emoji}</div>
+                    <div class="text-[7px] mt-0.5">${f.label}</div>
+                </div>`;
+            }).join('');
+        }
+
+        function renderRecentTrades(trades) {
+            const el = document.getElementById('recentTradesTicker');
+            if (!el) return;
+            if (!Array.isArray(trades) || !trades.length) {
+                el.innerHTML = '<span class="text-gray-600">Brak transakcji</span>';
+                return;
+            }
+            el.innerHTML = '';
+            trades.slice(0, 6).forEach(t => {
+                const pnl = parseFloat(t.pnl || 0);
+                const pnlClass = pnl > 0 ? 'text-emerald-400' : (pnl < 0 ? 'text-rose-400' : 'text-gray-500');
+                const action = (t.action || '').replace('_', ' ');
+                const row = document.createElement('div');
+                row.className = 'flex justify-between items-center border-b border-gray-950 pb-1';
+                row.innerHTML = `
+                    <span class="text-gray-500 truncate max-w-[45%]" title="${t.timestamp || ''}">${(t.timestamp || '').slice(11, 19) || '—'} ${t.symbol || ''}</span>
+                    <span class="text-gray-400">${action}</span>
+                    <span class="${pnlClass} font-bold">${pnl >= 0 ? '+' : ''}${pnl.toFixed(2)}</span>`;
+                el.appendChild(row);
+            });
+        }
+
+        function initMiniEquityChart() {
+            if (miniEquityChartInstance || window.miniEquityChartInstance) return;
+            const canvas = document.getElementById('miniEquityChart');
+            if (!canvas || typeof Chart === 'undefined') return;
+            miniEquityChartInstance = new Chart(canvas.getContext('2d'), {
+                type: 'line',
+                data: {
+                    labels: ['0', '1', '2'],
+                    datasets: [{
+                        label: 'Equity',
+                        data: [10000, 10000, 10000],
+                        borderColor: '#d4af37',
+                        borderWidth: 1.5,
+                        backgroundColor: 'rgba(212, 175, 55, 0.1)',
+                        fill: true,
+                        tension: 0.35,
+                        pointRadius: 0,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    animation: { duration: 400 },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            enabled: true,
+                            backgroundColor: 'rgba(0,0,0,0.85)',
+                            titleFont: { family: 'JetBrains Mono', size: 9 },
+                            bodyFont: { family: 'JetBrains Mono', size: 9 },
+                            callbacks: {
+                                label: (ctx) => parseFloat(ctx.parsed.y).toLocaleString('pl-PL', { minimumFractionDigits: 2 }) + ' USDC'
+                            }
+                        }
+                    },
+                    scales: {
+                        x: { display: false },
+                        y: { display: false }
+                    },
+                    interaction: { intersect: false, mode: 'index' },
+                }
+            });
+            window.miniEquityChartInstance = miniEquityChartInstance;
+        }
+
+        function renderMiniEquityChart(equityData, totalEquity) {
+            initMiniEquityChart();
+            const chart = miniEquityChartInstance || window.miniEquityChartInstance;
+            if (!chart || !Array.isArray(equityData) || equityData.length < 2) return;
+
+            const nums = equityData.map(v => parseFloat(v)).filter(Number.isFinite);
+            if (nums.length < 2) return;
+
+            chart.data.labels = nums.map((_, i) => String(i));
+            chart.data.datasets[0].data = nums;
+
+            const first = nums[0];
+            const last = nums[nums.length - 1];
+            const up = last >= first;
+            chart.data.datasets[0].borderColor = up ? '#00FF66' : '#FF3366';
+            chart.data.datasets[0].backgroundColor = up ? 'rgba(0, 255, 102, 0.12)' : 'rgba(255, 51, 102, 0.1)';
+            chart.update('none');
+
+            const equity = totalEquity != null ? parseFloat(totalEquity) : last;
+            const valEl = document.getElementById('miniEquityValue');
+            const roiEl = document.getElementById('miniEquityRoi');
+            const deltaEl = document.getElementById('miniEquityDelta');
+
+            if (valEl) {
+                valEl.innerText = equity.toLocaleString('pl-PL', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' USDC';
+            }
+            const roiPct = ((equity - 10000) / 10000) * 100;
+            if (roiEl) {
+                roiEl.innerText = (roiPct >= 0 ? '+' : '') + roiPct.toFixed(2) + '% ROI';
+                roiEl.className = 'mono-font text-[8px] ' + (roiPct >= 0 ? 'text-[#00FF66]' : 'text-[#FF3366]');
+            }
+            const delta = last - first;
+            if (deltaEl) {
+                deltaEl.innerText = 'Δ ' + (delta >= 0 ? '+' : '') + delta.toLocaleString('pl-PL', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                deltaEl.className = 'mono-font text-[9px] ' + (delta >= 0 ? 'text-emerald-400/80' : 'text-rose-400/80');
+            }
         }
 
         function swarmStatusDotClass(status) {
@@ -723,6 +1034,10 @@
             // BEZPIECZNY RE-RENDER: Generuje swarm na nowo, dołączając przyciski RESTART tylko dla Admina!
             renderSwarm();
             setupRealtimeSubscriptions();
+            renderSessionClock(computeTradingSessionClient());
+            if (!window.__SESSION_CLOCK_IV) {
+                window.__SESSION_CLOCK_IV = setInterval(() => renderSessionClock(computeTradingSessionClient()), 1000);
+            }
         });
 
         const loginBtn = document.getElementById('adminLoginBtn');
@@ -836,11 +1151,19 @@
                 const mode = (exec.mode || 'paper').toUpperCase();
                 const modeCls = exec.live_armed ? 'text-rose-400 font-bold' : (mode === 'TESTNET' ? 'text-cyan-400' : 'text-gray-300');
                 const lr = exec.live_readiness || {};
+                const fp = exec.fee_profile || {};
+                const feeSource = fp.source === 'binance_api' ? 'API ✓' : '.env';
+                const takerTxt = fp.taker_effective_pct != null
+                    ? `${fp.taker_effective_pct}% (base ${fp.taker_rate_pct || '—'}%)`
+                    : '—';
                 const checks = [
                     ['Tryb', mode, modeCls],
                     ['Trader', exec.trader_script || '—', 'text-gray-300'],
                     ['Portfolio', exec.portfolio_file || '—', 'text-gray-400'],
                     ['Sandbox', exec.sandbox ? 'TAK' : 'NIE', exec.sandbox ? 'text-amber-400' : 'text-rose-400'],
+                    ['Prowizja taker', takerTxt, fp.source === 'binance_api' ? 'text-[#d4af37]' : 'text-gray-500'],
+                    ['Fee source', feeSource, fp.source === 'binance_api' ? 'text-emerald-400' : 'text-gray-600'],
+                    ['BNB burn', fp.spot_bnb_burn ? 'TAK' : 'NIE', fp.spot_bnb_burn ? 'text-emerald-400' : 'text-amber-400'],
                     ['Klucze Live', exec.has_live_credentials ? '✓' : '✗', exec.has_live_credentials ? 'text-emerald-400' : 'text-gray-600'],
                     ['LIVE armed', exec.live_armed ? '🚨 TAK' : 'NIE', exec.live_armed ? 'text-rose-400 font-bold' : 'text-emerald-400'],
                     ['Go-live ready', lr.ready_for_live_orders ? '✓' : '✗', lr.ready_for_live_orders ? 'text-emerald-400' : 'text-gray-500'],
@@ -1073,6 +1396,10 @@ function setupRealtimeSubscriptions() {
                 equityChart.update();
             }
 
+            if (data.equity_chart_data && data.equity_chart_data.length >= 2) {
+                renderMiniEquityChart(data.equity_chart_data, data.total_equity);
+            }
+
             if (data && data.sys_temp !== undefined) {
                 document.getElementById('sysTemp').innerText = parseFloat(data.sys_temp).toFixed(1) + "°C";
             }
@@ -1085,6 +1412,20 @@ function setupRealtimeSubscriptions() {
 
             if (data && data.vortex_rsi && Object.keys(data.vortex_rsi).length > 0) {
                 renderVortexList(data.vortex_rsi);
+            }
+
+            if (data && data.social_intel && Object.keys(data.social_intel).length > 0) {
+                renderFearGreed(data.social_intel.fear_greed_index);
+                renderMarketPulse(data.social_intel.market_pulse, data.social_intel.trending_coins);
+                renderSocialSentiment(data.social_intel);
+            }
+
+            if (data && data.trading_session) {
+                renderSessionClock(data.trading_session);
+            }
+
+            if (data && Array.isArray(data.recent_trades)) {
+                renderRecentTrades(data.recent_trades);
             }
 
             if (data && Array.isArray(data.swarm_telemetry)) {
@@ -1536,6 +1877,7 @@ function setupRealtimeSubscriptions() {
                     dashboardView.classList.add('opacity-100', 'translate-y-0');
                     lockSystemBtn.classList.remove('hidden');
                     initEquityChart();
+                    initMiniEquityChart();
                     startTerminalStream();
                     // Ceny Vortex z Firebase (firebase_sync.py) — bez symulacji
                 }, 50);
