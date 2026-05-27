@@ -232,6 +232,9 @@
                 <button onclick="switchTab('intelligence')" id="tab-intelligence-btn" class="border-b-2 border-transparent pb-2 px-1 text-gray-500 hover:text-gray-300 tracking-widest transition-all flex items-center gap-1.5">
                     🧠 QUANT INTELLIGENCE &amp; AI HUB
                 </button>
+                <button onclick="switchTab('admin')" id="tab-admin-btn" class="hidden border-b-2 border-transparent pb-2 px-1 text-red-400/80 hover:text-red-300 tracking-widest transition-all flex items-center gap-1.5">
+                    🛡️ ADMIN COMMAND CENTER
+                </button>
             </div>
 
             <!-- ZAKŁADKA 1: TRADING SUITE (WYKRES I LOGI SYSTEMOWE) -->
@@ -309,6 +312,66 @@
                     </div>
                 </div>
             </div>
+
+            <!-- ZAKŁADKA 3: ADMIN COMMAND CENTER (TYLKO PO LOGOWANIU) -->
+            <div id="view-admin" class="hidden space-y-4 flex-grow overflow-y-auto max-h-[70vh] pr-1">
+                <div class="bg-red-950/10 border border-red-900/30 rounded-lg p-4 space-y-3">
+                    <div class="flex justify-between items-center border-b border-red-900/20 pb-2">
+                        <span class="mono-font text-[10px] text-red-300 font-bold tracking-widest">🛡️ RISK ENGINE &amp; TRADING CONFIG</span>
+                        <span class="text-[8px] mono-font text-gray-500" id="adminConfigSaved">—</span>
+                    </div>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-[10px] mono-font">
+                        <div class="bg-black/40 p-2 rounded border border-gray-950"><span class="text-gray-500 block text-[8px]">Ekspozycja</span><span id="admExposure" class="text-[#d4af37] font-bold">—</span></div>
+                        <div class="bg-black/40 p-2 rounded border border-gray-950"><span class="text-gray-500 block text-[8px]">Pozycje</span><span id="admPositions" class="text-emerald-400 font-bold">—</span></div>
+                        <div class="bg-black/40 p-2 rounded border border-gray-950"><span class="text-gray-500 block text-[8px]">Alokacja</span><span id="admAllocated" class="text-gray-200 font-bold">—</span></div>
+                        <div class="bg-black/40 p-2 rounded border border-gray-950"><span class="text-gray-500 block text-[8px]">Total PnL</span><span id="admTotalPnl" class="font-bold">—</span></div>
+                    </div>
+                    <form id="adminConfigForm" class="grid grid-cols-2 md:grid-cols-3 gap-2 text-[10px] mono-font" onsubmit="return false;">
+                        <label class="space-y-1"><span class="text-gray-500 text-[8px]">Tryb</span>
+                            <select id="cfgAggressiveness" class="w-full bg-black/60 border border-gray-900 rounded px-2 py-1 text-gray-200">
+                                <option value="CONSERVATIVE">CONSERVATIVE</option><option value="BALANCED">BALANCED</option><option value="AGGRESSIVE">AGGRESSIVE</option>
+                            </select></label>
+                        <label class="space-y-1"><span class="text-gray-500 text-[8px]">Min confidence %</span>
+                            <input id="cfgMinConfidence" type="number" min="50" max="99" class="w-full bg-black/60 border border-gray-900 rounded px-2 py-1 text-gray-200"/></label>
+                        <label class="space-y-1"><span class="text-gray-500 text-[8px]">Max pozycja %</span>
+                            <input id="cfgMaxPosPct" type="number" min="0.5" max="50" step="0.5" class="w-full bg-black/60 border border-gray-900 rounded px-2 py-1 text-gray-200"/></label>
+                        <label class="space-y-1"><span class="text-gray-500 text-[8px]">Max równoległe</span>
+                            <input id="cfgMaxConcurrent" type="number" min="1" max="20" class="w-full bg-black/60 border border-gray-900 rounded px-2 py-1 text-gray-200"/></label>
+                        <label class="space-y-1"><span class="text-gray-500 text-[8px]">Max ekspozycja %</span>
+                            <input id="cfgMaxExposure" type="number" min="10" max="100" step="1" class="w-full bg-black/60 border border-gray-900 rounded px-2 py-1 text-gray-200"/></label>
+                        <label class="space-y-1 flex items-end gap-2 pb-1"><input id="cfgRequireApproval" type="checkbox" class="accent-amber-500"/> <span class="text-gray-400">Wymagaj aprobaty</span></label>
+                    </form>
+                    <button onclick="window.saveTradingConfig()" class="w-full bg-amber-950/40 hover:bg-amber-900/40 border border-amber-800/40 text-amber-200 text-[10px] mono-font py-2 rounded cursor-pointer">💾 ZAPISZ KONFIGURACJĘ RYZYKA</button>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="bg-black/60 border border-gray-900 rounded-lg p-3 h-[200px]"><span class="mono-font text-[9px] text-gray-500 block mb-2">📊 PnL PER TRADE</span><canvas id="pnlChart"></canvas></div>
+                    <div class="bg-black/60 border border-gray-900 rounded-lg p-3 h-[200px]"><span class="mono-font text-[9px] text-gray-500 block mb-2">🎯 WIN / LOSS</span><canvas id="winLossChart"></canvas></div>
+                </div>
+                <div class="bg-black/60 border border-gray-900 rounded-lg p-4">
+                    <div class="flex justify-between items-center border-b border-gray-900 pb-2 mb-3">
+                        <span class="mono-font text-[10px] text-[#d4af37] tracking-widest">📈 PERFORMANCE REPORT</span>
+                        <button onclick="window.exportAdminReport()" class="text-[9px] mono-font text-cyan-400 hover:text-cyan-300 border border-cyan-900/40 px-2 py-0.5 rounded cursor-pointer">⬇ EKSPORT JSON</button>
+                    </div>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-[10px] mono-font" id="adminPerfGrid"></div>
+                </div>
+                <div class="bg-black/60 border border-gray-900 rounded-lg p-4 space-y-2">
+                    <span class="mono-font text-[10px] text-cyan-400 tracking-widest block border-b border-gray-900 pb-2">🧬 SWARM CONTROL</span>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
+                        <button onclick="window.swarmControl('RESTART_ALL')" class="bg-cyan-950/30 border border-cyan-900/40 text-cyan-200 text-[9px] mono-font py-2 rounded cursor-pointer">↻ RESTART ALL</button>
+                        <button onclick="window.swarmControl('STOP_ALL')" class="bg-gray-950/60 border border-gray-800 text-gray-300 text-[9px] mono-font py-2 rounded cursor-pointer">⏹ STOP ALL</button>
+                        <button onclick="window.swarmControl('START_SUPERVISOR')" class="bg-emerald-950/30 border border-emerald-900/40 text-emerald-200 text-[9px] mono-font py-2 rounded cursor-pointer">▶ SUPERVISOR</button>
+                        <button onclick="triggerEmergencyAction('CLOSE_POSITIONS')" class="bg-amber-950/40 border border-amber-800/40 text-amber-200 text-[9px] mono-font py-2 rounded cursor-pointer">⊘ CLOSE ALL</button>
+                    </div>
+                </div>
+                <div class="bg-black/60 border border-gray-900 rounded-lg p-4 overflow-x-auto">
+                    <span class="mono-font text-[10px] text-gray-400 block border-b border-gray-900 pb-2 mb-2">📦 AKTYWNE POZYCJE</span>
+                    <table class="w-full text-[9px] mono-font"><thead class="text-gray-500"><tr><th>Symbol</th><th>Typ</th><th>Entry</th><th>SL</th><th>TP</th><th>Alloc</th></tr></thead><tbody id="adminPositionsTable"></tbody></table>
+                </div>
+                <div class="bg-black/80 border border-gray-900 rounded-lg p-4 overflow-x-auto max-h-[220px] overflow-y-auto">
+                    <span class="mono-font text-[10px] text-gray-400 block border-b border-gray-900 pb-2 mb-2">📜 HISTORIA (ZAMKNIĘTE)</span>
+                    <table class="w-full text-[9px] mono-font"><thead class="text-gray-500 sticky top-0 bg-black"><tr><th>Czas</th><th>Symbol</th><th>Akcja</th><th>Cena</th><th>PnL</th></tr></thead><tbody id="adminTradesTable"></tbody></table>
+                </div>
+            </div>
         </section>
 
 
@@ -318,7 +381,7 @@
                     <i class="fa-solid fa-wind animate-pulse text-[#d4af37]"></i> 🌀 VORTEX 9 STREAM (RSI-9)
                 </span>
                 <div class="space-y-2.5 max-h-[150px] overflow-y-auto pr-1" id="vortexList"></div>
-            </div
+            </div>
 
             <!-- CHAT Z LLM LLAMA 3.1 COORDINATOR -->
             <div class="bg-black/60 border border-gray-900 rounded-lg p-4 flex flex-col h-[280px] backdrop-blur-md">
@@ -352,6 +415,10 @@
                     <button onclick="triggerEmergencyAction('CLOSE_POSITIONS')" class="bg-amber-950/40 hover:bg-amber-900/50 border border-amber-800/40 text-amber-200 text-[10px] mono-font py-2 rounded transition-all duration-300 cursor-pointer">
                         CLOSE ALL
                     </button>
+                </div>
+                <div id="adminQuickRisk" class="text-[9px] mono-font text-gray-500 space-y-1 pt-1 border-t border-red-900/20">
+                    <div>Ekspozycja: <span id="quickExposure" class="text-[#d4af37]">—</span></div>
+                    <div>Pozycje: <span id="quickPosCount" class="text-emerald-400">—</span></div>
                 </div>
             </div>
         </section>
@@ -400,6 +467,10 @@
         const appId = "juicycore-360b7";
 
         let chartInstance = null;
+        let pnlChartInstance = null;
+        let winLossChartInstance = null;
+        let lastAdminMetrics = null;
+        let adminConfigFormDirty = false;
         let chartData = [10000, 10000, 10000];
         let chartLabels = ['Start', 'Initial', 'System Sync'];
 
@@ -498,8 +569,11 @@
                 const card = document.createElement('div');
                 card.className = "bg-black/40 border border-gray-950 rounded-md p-3 flex justify-between items-center gold-bg-hover transition-all duration-300";
 
-                const restartButtonHTML = isAdmin
-                    ? `<button onclick="window.sendAgentCommand('${a.name}', 'RESTART')" class="mono-font text-[8px] font-bold px-2.5 py-1 bg-gray-950 hover:bg-[#d4af37]/20 border border-gray-900 hover:border-[#d4af37]/40 rounded text-gray-400 hover:text-[#d4af37] transition-all duration-300 uppercase cursor-pointer">RESTART</button>`
+                const adminButtonsHTML = isAdmin
+                    ? `<div class="flex items-center gap-1">
+                        <button onclick="window.sendAgentCommand('${a.name}', 'STOP')" class="mono-font text-[8px] font-bold px-2 py-1 bg-red-950/40 hover:bg-red-900/40 border border-red-900/40 rounded text-red-400/80 hover:text-red-300 transition-all duration-300 uppercase cursor-pointer">STOP</button>
+                        <button onclick="window.sendAgentCommand('${a.name}', 'RESTART')" class="mono-font text-[8px] font-bold px-2.5 py-1 bg-gray-950 hover:bg-[#d4af37]/20 border border-gray-900 hover:border-[#d4af37]/40 rounded text-gray-400 hover:text-[#d4af37] transition-all duration-300 uppercase cursor-pointer">RESTART</button>
+                       </div>`
                     : '';
 
                 card.innerHTML = `
@@ -517,7 +591,7 @@
                             <div class="text-[#d4af37]">PID: ${pid}</div>
                             <div>RAM: ${parseFloat(ram).toFixed(1)} MB</div>
                         </div>
-                        ${restartButtonHTML}
+                        ${adminButtonsHTML}
                     </div>
                 `;
                 container.appendChild(card);
@@ -596,6 +670,8 @@
                 isAdmin = true;
                 document.getElementById('loginBtnText').innerText = "WYLOGUJ ADMINA";
                 document.getElementById('adminPanelArea').classList.remove('hidden');
+                const adminTabBtn = document.getElementById('tab-admin-btn');
+                if (adminTabBtn) adminTabBtn.classList.remove('hidden');
                 
                 // Odblokowanie interaktywnego czatu dla Ciebie
                 document.getElementById('llmInput').removeAttribute('disabled');
@@ -611,6 +687,11 @@
                 isAdmin = false;
                 document.getElementById('loginBtnText').innerText = "ADMIN LOGIN";
                 document.getElementById('adminPanelArea').classList.add('hidden');
+                const adminTabBtn = document.getElementById('tab-admin-btn');
+                if (adminTabBtn) adminTabBtn.classList.add('hidden');
+                if (document.getElementById('view-admin')) {
+                    window.switchTab('trading');
+                }
                 
                 // Zablokowanie opcji interwencyjnych dla gości
                 document.getElementById('llmInput').setAttribute('disabled', 'true');
@@ -636,9 +717,261 @@
             }
         };
 
+        // --- ADMIN COMMAND CENTER ---
+        function bindTradingConfigForm(cfg) {
+            if (!cfg || adminConfigFormDirty) return;
+            const setVal = (id, val) => { const el = document.getElementById(id); if (el && val !== undefined) el.value = val; };
+            const setCheck = (id, val) => { const el = document.getElementById(id); if (el) el.checked = !!val; };
+            setVal('cfgAggressiveness', cfg.aggressiveness || 'BALANCED');
+            setVal('cfgMinConfidence', cfg.min_confidence ?? 70);
+            setVal('cfgMaxPosPct', cfg.max_position_size_pct ?? 20);
+            setVal('cfgMaxConcurrent', cfg.max_concurrent_positions ?? 4);
+            setVal('cfgMaxExposure', cfg.max_total_exposure_pct ?? 80);
+            setCheck('cfgRequireApproval', cfg.require_approval);
+        }
+
+        function updateAdminDashboard(data) {
+            if (!data || !isAdmin) return;
+            lastAdminMetrics = data;
+
+            const risk = data.risk_status || {};
+            const perf = data.performance_report || {};
+            const expPct = risk.exposure_pct ?? data.exposure_pct ?? 0;
+            const posCount = risk.active_count ?? data.active_trades_count ?? 0;
+            const maxPos = risk.max_concurrent_positions ?? 4;
+            const allocated = risk.allocated ?? data.allocated_capital ?? 0;
+            const totalPnl = perf.total_pnl ?? 0;
+
+            const setText = (id, text, cls) => {
+                const el = document.getElementById(id);
+                if (!el) return;
+                el.innerText = text;
+                if (cls) el.className = cls;
+            };
+
+            setText('admExposure', `${expPct}% / ${risk.max_total_exposure_pct ?? 80}%`);
+            setText('admPositions', `${posCount} / ${maxPos}`);
+            setText('admAllocated', `${parseFloat(allocated).toLocaleString('pl-PL', { minimumFractionDigits: 2 })} USDC`);
+            setText('admTotalPnl', `${totalPnl >= 0 ? '+' : ''}${parseFloat(totalPnl).toFixed(2)} USDC`,
+                totalPnl >= 0 ? 'font-bold text-emerald-400' : 'font-bold text-rose-400');
+
+            setText('quickExposure', `${expPct}%`);
+            setText('quickPosCount', `${posCount}/${maxPos}`);
+
+            bindTradingConfigForm(data.trading_config);
+
+            const perfGrid = document.getElementById('adminPerfGrid');
+            if (perfGrid) {
+                const items = [
+                    ['Transakcje', perf.total_trades ?? 0],
+                    ['Wygrane / Przegrane', `${perf.wins ?? 0} / ${perf.losses ?? 0}`],
+                    ['Śr. zysk', `+${(perf.avg_win ?? 0).toFixed(2)} USDC`],
+                    ['Śr. strata', `${(perf.avg_loss ?? 0).toFixed(2)} USDC`],
+                    ['Najlepszy trade', `+${(perf.best_trade ?? 0).toFixed(2)} USDC`],
+                    ['Najgorszy trade', `${(perf.worst_trade ?? 0).toFixed(2)} USDC`],
+                    ['Win rate', `${(data.win_rate ?? 0).toFixed(1)}%`],
+                    ['Profit factor', `${(data.profit_factor ?? 0).toFixed(2)}`],
+                ];
+                perfGrid.innerHTML = items.map(([label, val]) =>
+                    `<div class="bg-black/40 border border-gray-950 p-2 rounded"><span class="text-gray-600 block text-[8px]">${label}</span><span class="font-bold text-gray-200">${val}</span></div>`
+                ).join('');
+            }
+
+            const posTable = document.getElementById('adminPositionsTable');
+            if (posTable) {
+                const positions = data.active_positions_list || [];
+                posTable.innerHTML = positions.length === 0
+                    ? '<tr><td colspan="6" class="text-gray-600 py-2">Brak aktywnych pozycji</td></tr>'
+                    : positions.map(p => `<tr class="border-b border-gray-950">
+                        <td class="py-1 text-gray-200">${p.symbol}</td>
+                        <td class="py-1">${p.type}</td>
+                        <td class="py-1">${formatVortexPrice(p.entry_price)}</td>
+                        <td class="py-1 text-rose-400/80">${formatVortexPrice(p.sl)}</td>
+                        <td class="py-1 text-emerald-400/80">${formatVortexPrice(p.tp)}</td>
+                        <td class="py-1 text-[#d4af37]">${parseFloat(p.allocated_capital || 0).toFixed(2)}</td>
+                    </tr>`).join('');
+            }
+
+            const tradesTable = document.getElementById('adminTradesTable');
+            if (tradesTable) {
+                const history = data.trade_history || [];
+                tradesTable.innerHTML = history.length === 0
+                    ? '<tr><td colspan="5" class="text-gray-600 py-2">Brak historii zamkniętych pozycji</td></tr>'
+                    : history.map(t => {
+                        const pnl = parseFloat(t.pnl || 0);
+                        const pnlCls = pnl >= 0 ? 'text-emerald-400' : 'text-rose-400';
+                        return `<tr class="border-b border-gray-950">
+                            <td class="py-1 text-gray-500">${t.timestamp}</td>
+                            <td class="py-1">${t.symbol}</td>
+                            <td class="py-1">${t.action}</td>
+                            <td class="py-1">${formatVortexPrice(t.price)}</td>
+                            <td class="py-1 ${pnlCls}">${pnl >= 0 ? '+' : ''}${pnl.toFixed(2)}</td>
+                        </tr>`;
+                    }).join('');
+            }
+
+            updateAdminCharts(data);
+        }
+
+        window.initAdminCharts = function() {
+            const chartDefaults = {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+            };
+
+            if (!pnlChartInstance) {
+                const pnlCtx = document.getElementById('pnlChart');
+                if (pnlCtx) {
+                    pnlChartInstance = new Chart(pnlCtx.getContext('2d'), {
+                        type: 'bar',
+                        data: {
+                            labels: [],
+                            datasets: [{
+                                label: 'PnL',
+                                data: [],
+                                backgroundColor: [],
+                                borderWidth: 0,
+                            }]
+                        },
+                        options: {
+                            ...chartDefaults,
+                            scales: {
+                                x: { grid: { color: 'rgba(255,255,255,0.03)' }, ticks: { color: '#666', font: { size: 7 } } },
+                                y: { grid: { color: 'rgba(255,255,255,0.03)' }, ticks: { color: '#666', font: { size: 7 } } }
+                            }
+                        }
+                    });
+                }
+            }
+
+            if (!winLossChartInstance) {
+                const wlCtx = document.getElementById('winLossChart');
+                if (wlCtx) {
+                    winLossChartInstance = new Chart(wlCtx.getContext('2d'), {
+                        type: 'doughnut',
+                        data: {
+                            labels: ['Wygrane', 'Przegrane'],
+                            datasets: [{
+                                data: [0, 0],
+                                backgroundColor: ['rgba(0,255,102,0.7)', 'rgba(255,51,102,0.7)'],
+                                borderWidth: 0,
+                            }]
+                        },
+                        options: {
+                            ...chartDefaults,
+                            plugins: {
+                                legend: { display: true, labels: { color: '#888', font: { size: 9 } } }
+                            }
+                        }
+                    });
+                }
+            }
+
+            if (lastAdminMetrics) updateAdminCharts(lastAdminMetrics);
+        };
+
+        function updateAdminCharts(data) {
+            const perf = data.performance_report || {};
+            const pnlData = data.pnl_chart_data || [];
+
+            if (pnlChartInstance && pnlData.length > 0) {
+                const labels = pnlData.map((_, i) => `T${i + 1}`);
+                const colors = pnlData.map(v => v >= 0 ? 'rgba(0,255,102,0.6)' : 'rgba(255,51,102,0.6)');
+                pnlChartInstance.data.labels = labels;
+                pnlChartInstance.data.datasets[0].data = pnlData;
+                pnlChartInstance.data.datasets[0].backgroundColor = colors;
+                pnlChartInstance.update('none');
+            }
+
+            if (winLossChartInstance) {
+                winLossChartInstance.data.datasets[0].data = [perf.wins ?? 0, perf.losses ?? 0];
+                winLossChartInstance.update('none');
+            }
+        }
+
+        window.saveTradingConfig = async function() {
+            if (!isAdmin) return;
+            const updates = {
+                aggressiveness: document.getElementById('cfgAggressiveness').value,
+                min_confidence: parseInt(document.getElementById('cfgMinConfidence').value, 10),
+                max_position_size_pct: parseFloat(document.getElementById('cfgMaxPosPct').value),
+                max_concurrent_positions: parseInt(document.getElementById('cfgMaxConcurrent').value, 10),
+                max_total_exposure_pct: parseFloat(document.getElementById('cfgMaxExposure').value),
+                require_approval: document.getElementById('cfgRequireApproval').checked,
+            };
+            try {
+                const commandsColRef = collection(db, 'artifacts', appId, 'public', 'data', 'admin_commands');
+                await addDoc(commandsColRef, {
+                    command_type: 'UPDATE_TRADING_CONFIG',
+                    updates,
+                    timestamp: serverTimestamp(),
+                    executed: false
+                });
+                adminConfigFormDirty = false;
+                const savedEl = document.getElementById('adminConfigSaved');
+                if (savedEl) savedEl.innerText = 'Zapisano ' + new Date().toLocaleTimeString('pl-PL');
+                printAdminLog('Wysłano UPDATE_TRADING_CONFIG do firebase_sync.py');
+            } catch (e) {
+                console.error('Błąd zapisu konfiguracji:', e);
+                printAdminLog('Błąd zapisu konfiguracji ryzyka', true);
+            }
+        };
+
+        window.swarmControl = async function(action) {
+            if (!isAdmin) return;
+            const labels = { STOP_ALL: 'ZATRZYMAĆ WSZYSTKICH AGENTÓW', RESTART_ALL: 'ZRESTARTOWAĆ CAŁY RÓJ', START_SUPERVISOR: 'URUCHOMIĆ SUPERVISORA' };
+            if (!confirm(`Potwierdź: ${labels[action] || action}?`)) return;
+            try {
+                const commandsColRef = collection(db, 'artifacts', appId, 'public', 'data', 'admin_commands');
+                await addDoc(commandsColRef, {
+                    command_type: 'SWARM_CONTROL',
+                    action,
+                    timestamp: serverTimestamp(),
+                    executed: false
+                });
+                printAdminLog(`SWARM_CONTROL → ${action}`);
+            } catch (e) {
+                console.error('Błąd SWARM_CONTROL:', e);
+            }
+        };
+
+        window.exportAdminReport = function() {
+            if (!lastAdminMetrics) {
+                alert('Brak danych raportu — poczekaj na synchronizację z Firestore.');
+                return;
+            }
+            const report = {
+                exported_at: new Date().toISOString(),
+                performance_report: lastAdminMetrics.performance_report,
+                risk_status: lastAdminMetrics.risk_status,
+                trading_config: lastAdminMetrics.trading_config,
+                trade_history: lastAdminMetrics.trade_history,
+                active_positions_list: lastAdminMetrics.active_positions_list,
+                win_rate: lastAdminMetrics.win_rate,
+                profit_factor: lastAdminMetrics.profit_factor,
+                total_equity: lastAdminMetrics.total_equity,
+                balance: lastAdminMetrics.balance,
+            };
+            const blob = new Blob([JSON.stringify(report, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `project-zero-report-${Date.now()}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            printAdminLog('Wyeksportowano raport JSON');
+        };
+
+        (() => {
+            const form = document.getElementById('adminConfigForm');
+            if (form) {
+                form.addEventListener('input', () => { adminConfigFormDirty = true; });
+                form.addEventListener('change', () => { adminConfigFormDirty = true; });
+            }
+        })();
+
         // --- OBSŁUGA DANYCH FIRESTORE NA ŻYWO (REAL-TIME DATA STREAMS) ---
-        // --- OBSŁUGA DANYCH FIRESTORE NA ŻYWO (REAL-TIME DATA STREAMS) ---
-// --- OBSŁUGA DANYCH FIRESTORE NA ŻYWO (REAL-TIME DATA STREAMS) ---
 function setupRealtimeSubscriptions() {
     // 📊 1. Pobieranie realnych metryk rynkowych ze skryptu i9
     const metricsDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'metrics', 'live_state');
@@ -659,12 +992,13 @@ function setupRealtimeSubscriptions() {
             document.getElementById('systemStatusLabel').innerText = (data.system_status || "POŁĄCZONO").toUpperCase();
 
             // Rysowanie wykresu kapitału z i9
-            if (data.equity_chart_data && chartInstance) {
+            const equityChart = window.chartInstance || chartInstance;
+            if (data.equity_chart_data && equityChart) {
                 chartData = data.equity_chart_data;
                 chartLabels = chartData.map((_, idx) => `T${idx}`);
-                chartInstance.data.labels = chartLabels;
-                chartInstance.data.datasets[0].data = chartData;
-                chartInstance.update();
+                equityChart.data.labels = chartLabels;
+                equityChart.data.datasets[0].data = chartData;
+                equityChart.update();
             }
 
             if (data && data.sys_temp !== undefined) {
@@ -702,7 +1036,9 @@ function setupRealtimeSubscriptions() {
                 const cpuEl = document.getElementById('adminCpu');
                 if (cpuEl && data.cpu_load !== undefined) {
                     cpuEl.innerText = parseFloat(data.cpu_load).toFixed(1) + "%";
-                }    
+                }
+
+                updateAdminDashboard(data);
             }
         }
     }, (error) => {
@@ -823,21 +1159,32 @@ function setupRealtimeSubscriptions() {
         window.switchTab = function(tabName) {
             const tradingView = document.getElementById('view-trading');
             const intelligenceView = document.getElementById('view-intelligence');
+            const adminView = document.getElementById('view-admin');
             const tradingBtn = document.getElementById('tab-trading-btn');
             const intelligenceBtn = document.getElementById('tab-intelligence-btn');
+            const adminBtn = document.getElementById('tab-admin-btn');
+
+            const inactiveBtn = "border-b-2 border-transparent pb-2 px-1 text-gray-500 hover:text-gray-300 tracking-widest transition-all";
+            const inactiveFlex = inactiveBtn + " flex items-center gap-1.5";
+
+            tradingView.classList.add('hidden');
+            intelligenceView.classList.add('hidden');
+            if (adminView) adminView.classList.add('hidden');
+
+            tradingBtn.className = inactiveBtn;
+            intelligenceBtn.className = inactiveFlex;
+            if (adminBtn) adminBtn.className = inactiveFlex + " text-red-400/80 hover:text-red-300";
 
             if (tabName === 'trading') {
                 tradingView.classList.remove('hidden');
-                intelligenceView.classList.add('hidden');
                 tradingBtn.className = "border-b-2 border-[#d4af37] pb-2 px-1 text-gray-100 tracking-widest font-bold transition-all";
-                intelligenceBtn.className = "border-b-2 border-transparent pb-2 px-1 text-gray-500 hover:text-gray-300 tracking-widest transition-all";
+            } else if (tabName === 'admin' && isAdmin) {
+                if (adminView) adminView.classList.remove('hidden');
+                if (adminBtn) adminBtn.className = "border-b-2 border-red-500 pb-2 px-1 text-red-400 tracking-widest font-bold transition-all flex items-center gap-1.5";
+                window.initAdminCharts();
             } else {
-                tradingView.classList.add('hidden');
                 intelligenceView.classList.remove('hidden');
-                tradingBtn.className = "border-b-2 border-transparent pb-2 px-1 text-gray-500 hover:text-gray-300 tracking-widest transition-all";
-                intelligenceBtn.className = "border-b-2 border-transparent pb-2 px-1 text-gray-100 tracking-widest font-bold border-b-2 border-[#d4af37] transition-all";
-                
-                // Automatyczne wstrzyknięcie i aktywacja interaktywnego modułu nauki po kliknięciu AI Hub
+                intelligenceBtn.className = "border-b-2 border-[#d4af37] pb-2 px-1 text-gray-100 tracking-widest font-bold transition-all flex items-center gap-1.5";
                 initInteractiveLearning();
             }
         }
@@ -1151,15 +1498,13 @@ function setupRealtimeSubscriptions() {
             }, 800);
         }
 
-        // Inicjalizacja instancji wykresu
-        let plainChartInstance = null;
         let plainChartData = [10000, 10000, 10000];
         let plainChartLabels = ['Start', 'Initial', 'System Sync'];
 
         function initEquityChart() {
-            if (plainChartInstance) return;
+            if (window.chartInstance) return;
             const ctx = document.getElementById('equityChart').getContext('2d');
-            plainChartInstance = new Chart(ctx, {
+            window.chartInstance = new Chart(ctx, {
                 type: 'line',
                 data: {
                     labels: plainChartLabels,
