@@ -559,174 +559,178 @@
         };
 
         // --- OBSŁUGA DANYCH FIRESTORE NA ŻYWO (REAL-TIME DATA STREAMS) ---
-        function setupRealtimeSubscriptions() {
-            // 📊 1. Pobieranie realnych metryk rynkowych ze skryptu i9
-            const metricsDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'metrics', 'live_state');
-            onSnapshot(metricsDocRef, (snapshot) => {
-                if (snapshot.exists()) {
-                    const data = snapshot.data();
-                    
-                    // Bezpośrednie bindowanie danych z pliku paper_portfolio.json
-                    document.getElementById('freeBalance').innerText = parseFloat(data.balance || 1342.18).toLocaleString('pl-PL', { minimumFractionDigits: 2 }) + " USDC";
-                    document.getElementById('totalEquity').innerText = parseFloat(data.total_equity || 10000.00).toLocaleString('pl-PL', { minimumFractionDigits: 2 }) + " USDC";
-                    
-                    const totalReturn = ((parseFloat(data.total_equity || 10000.00) - 10000) / 10000) * 100;
-                    document.getElementById('roiValue').innerText = (totalReturn >= 0 ? "+" : "") + totalReturn.toFixed(2) + "%";
-                    document.getElementById('roiValue').className = totalReturn >= 0 ? "mono-font text-[9px] text-[#00FF66]" : "mono-font text-[9px] text-[#FF3366]";
-                    
-                    document.getElementById('winRateVal').innerText = (data.win_rate || 78.4).toFixed(1) + "%";
-                    document.getElementById('profitFactorVal').innerText = (data.profit_factor || 2.14).toFixed(2);
-                    document.getElementById('systemStatusLabel').innerText = (data.system_status || "POŁĄCZONO").toUpperCase();
-
-                    // Rysowanie wykresu kapitału z i9
-                    if (data.equity_chart_data && chartInstance) {
-                        chartData = data.equity_chart_data;
-                        chartLabels = chartData.map((_, idx) => `T${idx}`);
-                        chartInstance.data.labels = chartLabels;
-                        chartInstance.data.datasets[0].data = chartData;
-                        chartInstance.update();
-                    }
-
-                    if (data && data.sys_temp !== undefined) {
-                        document.getElementById('sysTemp').innerText = parseFloat(data.sys_temp).toFixed(1) + "°C";
-                    }
-
-                //🌀 SYNCHRONIZACJA CEN I RSI VORTEX-9 BEZPOŚREDNIO Z FIREBASE!
-                    if (data && data.vortex_rsi) {
-                        console.log("DEBUG: Otrzymano dane Vortex:", data.vortex_rsi);
-                        const list = document.getElementById('vortexList');
-                        if (list) {
-                            list.innerHTML = ''; // Czyścimy przed nadpisaniem
-                            Object.entries(data.vortex_rsi).forEach(([symbolPair, coinData]) => {
-            // coinData to teraz obiekt {price: ..., rsi: ...}
-                                const price = coinData.price || 0.00;
-                                const rsi = coinData.rsi || 0.0;
+        // --- OBSŁUGA DANYCH FIRESTORE NA ŻYWO (REAL-TIME DATA STREAMS) ---
+function setupRealtimeSubscriptions() {
+    // 📊 1. Pobieranie realnych metryk rynkowych ze skryptu i9
+    const metricsDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'metrics', 'live_state');
+    onSnapshot(metricsDocRef, (snapshot) => {
+        if (snapshot.exists()) {
+            const data = snapshot.data();
             
-                                const div = document.createElement('div');
-                                div.className = "flex justify-between items-center text-[10px] mono-font border-b border-gray-950 pb-1.5 hover:bg-white/5 px-2 py-1 rounded transition-all duration-300";
+            // Bezpośrednie bindowanie danych z pliku paper_portfolio.json
+            document.getElementById('freeBalance').innerText = parseFloat(data.balance || 1342.18).toLocaleString('pl-PL', { minimumFractionDigits: 2 }) + " USDC";
+            document.getElementById('totalEquity').innerText = parseFloat(data.total_equity || 10000.00).toLocaleString('pl-PL', { minimumFractionDigits: 2 }) + " USDC";
             
-                                const rsiColor = rsi < 35 ? "text-emerald-400" : (rsi > 65 ? "text-rose-400" : "text-gray-400");
+            const totalReturn = ((parseFloat(data.total_equity || 10000.00) - 10000) / 10000) * 100;
+            document.getElementById('roiValue').innerText = (totalReturn >= 0 ? "+" : "") + totalReturn.toFixed(2) + "%";
+            document.getElementById('roiValue').className = totalReturn >= 0 ? "mono-font text-[9px] text-[#00FF66]" : "mono-font text-[9px] text-[#FF3366]";
             
-                                div.innerHTML = `
-                                    <span class="text-gray-100 font-bold">${symbolPair}</span>
-                                    <div class="flex items-center space-x-3">
-                                        <span class="text-gray-300">${parseFloat(price).toFixed(2)}</span>
-                                        <span class="${rsiColor} bg-black/40 px-1.5 py-0.5 rounded border border-gray-900">RSI: ${parseFloat(rsi).toFixed(1)}</span>
-                                    </div>
-                                `;
-                                list.appendChild(div);
-                            });
-                        }
-                    }
-   
-                    // Dynamiczna alokacja telemetryczna statystyk zaawansowanych (ADMIN ONLY - ODSEPAROWANA OD TEMPERATURY)
-                    if (isAdmin) {
-                    injectAdvancedStatsUI(); 
+            document.getElementById('winRateVal').innerText = (data.win_rate || 78.4).toFixed(1) + "%";
+            document.getElementById('profitFactorVal').innerText = (data.profit_factor || 2.14).toFixed(2);
+            document.getElementById('systemStatusLabel').innerText = (data.system_status || "POŁĄCZONO").toUpperCase();
+
+            // Rysowanie wykresu kapitału z i9
+            if (data.equity_chart_data && chartInstance) {
+                chartData = data.equity_chart_data;
+                chartLabels = chartData.map((_, idx) => `T${idx}`);
+                chartInstance.data.labels = chartLabels;
+                chartInstance.data.datasets[0].data = chartData;
+                chartInstance.update();
+            }
+
+            if (data && data.sys_temp !== undefined) {
+                document.getElementById('sysTemp').innerText = parseFloat(data.sys_temp).toFixed(1) + "°C";
+            }
+
+            //🌀 SYNCHRONIZACJA CEN I RSI VORTEX-9 BEZPOŚREDNIO Z FIREBASE (BINANCE TESTNET)
+            if (data && data.vortex_rsi) {
+                console.log("DEBUG: Otrzymano dane Vortex:", data.vortex_rsi);
+                const list = document.getElementById('vortexList');
+                if (list) {
+                    list.innerHTML = ''; // Bezpieczne czyszczenie kontenera DOM
+                    
+                    Object.entries(data.vortex_rsi).forEach(([symbolPair, coinData]) => {
+                        // Pobieramy surowe wartości z Pythona z bezpiecznym fallbackiem
+                        const rawPrice = coinData.price !== undefined ? coinData.price : 0.00;
+                        const rawRsi = coinData.rsi !== undefined ? coinData.rsi : 0.0;
                         
-                        const sharpeEl = document.getElementById('adminSharpe');
-                        if (sharpeEl && data.sharpe_ratio !== undefined) {
-                        sharpeEl.innerText = parseFloat(data.sharpe_ratio).toFixed(2);
-                        }
+                        const div = document.createElement('div');
+                        div.className = "flex justify-between items-center text-[10px] mono-font border-b border-gray-950 pb-1.5 hover:bg-white/5 px-2 py-1 rounded transition-all duration-300";
                         
-                        const ddEl = document.getElementById('adminDrawdown');
-                        if (ddEl && data.max_drawdown !== undefined) {
-                        ddEl.innerText = parseFloat(data.max_drawdown).toFixed(2) + "%";
-                        }
+                        const rsiColor = rawRsi < 35 ? "text-emerald-400 font-bold" : (rawRsi > 65 ? "text-rose-400 font-bold" : "text-gray-400");
                         
-                        const cpuEl = document.getElementById('adminCpu');
-                        if (cpuEl && data.cpu_load !== undefined) {
-                            cpuEl.innerText = parseFloat(data.cpu_load).toFixed(1) + "%";
-                        }    
-                    }
-                }
-        
-            }, (error) => {
-                console.error("Błąd subskrypcji metryk:", error);
-            });
-        
-            // 📂 2. Pobieranie logów systemowych na żywo z Twojego i9
-            const logsDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'logs', 'terminal');
-            onSnapshot(logsDocRef, (snapshot) => {
-                if (snapshot.exists()) {
-                    const data = snapshot.data();
-                    const consoleBox = document.getElementById('terminalConsole');
-                    const logsArray = data.logs_array || [];
-                    if (logsArray.length > 0) {
-                        consoleBox.innerHTML = "";
-                        logsArray.forEach(logLine => {
-                            const line = document.createElement('div');
-                            line.className = "text-gray-400";
-                            if (logLine.includes("BUY") || logLine.includes("✅")) line.className = "text-[#00FF66]";
-                            if (logLine.includes("FEAR") || logLine.includes("Supervisor") || logLine.includes("ALERT")) line.className = "text-amber-400";
-                            if (logLine.includes("TARCZA") || logLine.includes("🛡️") || logLine.includes("SYNC")) line.className = "text-cyan-400";
-                            line.innerHTML = `<span>${logLine}</span>`;
-                            consoleBox.appendChild(line);
-                        });
-                        consoleBox.scrollTop = consoleBox.scrollHeight;
-                    }
-                }
-            }, (error) => {
-                console.error("Błąd subskrypcji logów:", error);
-            });
-        
-            // 💬 3. Obsługa wysyłania poleceń do Lamy 3.1
-            window.sendChatMessage = async () => {
-                const input = document.getElementById('llmInput');
-                const query = input.value.trim();
-                if (!query || !isAdmin) return;
-
-                appendMessageToChat("OPERATOR PATRYK", query, "bg-white/5 border border-gray-900 text-right ml-6");
-                input.value = '';
-
-                const commandsColRef = collection(db, 'artifacts', appId, 'public', 'data', 'admin_commands');
-                await addDoc(commandsColRef, { 
-                    command_type: "LLM_PROMPT", 
-                    prompt: query, 
-                    timestamp: serverTimestamp(), 
-                    executed: false 
-                });
-                document.getElementById('llmIndicator').className = "w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse";
-            };
-
-            // Nasłuchiwanie odpowiedzi od lokalnej Lamy
-            const responsesColRef = collection(db, 'artifacts', appId, 'public', 'data', 'admin_responses');
-            onSnapshot(responsesColRef, (snapshot) => {
-                snapshot.docChanges().forEach((change) => {
-                    if (change.type === "added") {
-                        const data = change.doc.data();
-                        if (data.response && (Date.now() - (data.timestamp?.toMillis() || Date.now()) < 15000)) {
-                            appendMessageToChat("SYSTEM COORD (Llama 3.1)", data.response, "bg-amber-500/5 border border-amber-500/10 mr-6");
-                            document.getElementById('llmIndicator').className = "w-1.5 h-1.5 rounded-full bg-emerald-500";
-                        }
-                    }
-                });
-            }, (error) => {
-                console.error("Błąd subskrypcji odpowiedzi Lamy:", error);
-            });
-
-            // 🚨 4. Obsługa przycisków awaryjnych (Panic Stop / Close All)
-            window.triggerEmergencyAction = async (actionType) => {
-                if (!isAdmin) return;
-                try {
-                    const commandsColRef = collection(db, 'artifacts', appId, 'public', 'data', 'admin_commands');
-                    await addDoc(commandsColRef, { 
-                        command_type: actionType, 
-                        timestamp: serverTimestamp(), 
-                        executed: false 
+                        // Renderowanie z wymuszeniem poprawnego formatowania walutowego giełdy
+                        div.innerHTML = `
+                            <div class="flex items-center space-x-2">
+                                <span class="text-gray-100 font-bold">${symbolPair}</span>
+                            </div>
+                            <div class="flex items-center space-x-4">
+                                <span class="text-gray-300 font-medium">${parseFloat(rawPrice).toLocaleString('pl-PL', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                                <span class="${rsiColor} bg-black/40 px-1.5 py-0.5 rounded border border-gray-900 text-[9px]">RSI9: ${parseFloat(rawRsi).toFixed(1)}</span>
+                            </div>
+                        `;
+                        list.appendChild(div);
                     });
-                    
-                    // Wypisujemy log awaryjny bezpośrednio do konsoli na telefonie
-                    const consoleBox = document.getElementById('terminalConsole');
-                    const line = document.createElement('div');
-                    line.className = "flex space-x-2 text-red-400 font-bold";
-                    line.innerHTML = `<span>[ALERT] Wywołano rozkaz natychmiastowy: ${actionType}. Transmitowanie sygnału do i9...</span>`;
-                    consoleBox.appendChild(line);
-                    consoleBox.scrollTop = consoleBox.scrollHeight;
-                } catch (e) {
-                    console.error("Problem z wysłaniem rozkazu awaryjnego:", e);
                 }
-            };
+            }
+
+            // Dynamiczna alokacja telemetryczna statystyk zaawansowanych (ADMIN ONLY)
+            if (isAdmin) {
+                injectAdvancedStatsUI(); 
+                
+                const sharpeEl = document.getElementById('adminSharpe');
+                if (sharpeEl && data.sharpe_ratio !== undefined) {
+                    sharpeEl.innerText = parseFloat(data.sharpe_ratio).toFixed(2);
+                }
+                
+                const ddEl = document.getElementById('adminDrawdown');
+                if (ddEl && data.max_drawdown !== undefined) {
+                    ddEl.innerText = parseFloat(data.max_drawdown).toFixed(2) + "%";
+                }
+                
+                const cpuEl = document.getElementById('adminCpu');
+                if (cpuEl && data.cpu_load !== undefined) {
+                    cpuEl.innerText = parseFloat(data.cpu_load).toFixed(1) + "%";
+                }    
+            }
         }
+
+    }, (error) => {
+        console.error("Błąd subskrypcji metryk:", error);
+    });
+
+    // 📂 2. Pobieranie logów systemowych na żywo z Twojego i9
+    const logsDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'logs', 'terminal');
+    onSnapshot(logsDocRef, (snapshot) => {
+        if (snapshot.exists()) {
+            const data = snapshot.data();
+            const consoleBox = document.getElementById('terminalConsole');
+            const logsArray = data.logs_array || [];
+            if (logsArray.length > 0) {
+                consoleBox.innerHTML = "";
+                logsArray.forEach(logLine => {
+                    const line = document.createElement('div');
+                    line.className = "text-gray-400";
+                    if (logLine.includes("BUY") || logLine.includes("✅")) line.className = "text-[#00FF66]";
+                    if (logLine.includes("FEAR") || logLine.includes("Supervisor") || logLine.includes("ALERT")) line.className = "text-amber-400";
+                    if (logLine.includes("TARCZA") || logLine.includes("🛡️") || logLine.includes("SYNC")) line.className = "text-cyan-400";
+                    line.innerHTML = `<span>${logLine}</span>`;
+                    consoleBox.appendChild(line);
+                });
+                consoleBox.scrollTop = consoleBox.scrollHeight;
+            }
+        }
+    }, (error) => {
+        console.error("Błąd subskrypcji logów:", error);
+    });
+
+    // 💬 3. Obsługa wysyłania poleceń do Lamy 3.1
+    window.sendChatMessage = async () => {
+        const input = document.getElementById('llmInput');
+        const query = input.value.trim();
+        if (!query || !isAdmin) return;
+
+        appendMessageToChat("OPERATOR PATRYK", query, "bg-white/5 border border-gray-900 text-right ml-6");
+        input.value = '';
+
+        const commandsColRef = collection(db, 'artifacts', appId, 'public', 'data', 'admin_commands');
+        await addDoc(commandsColRef, { 
+            command_type: "LLM_PROMPT", 
+            prompt: query, 
+            timestamp: serverTimestamp(), 
+            executed: false 
+        });
+        document.getElementById('llmIndicator').className = "w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse";
+    };
+
+    // Nasłuchiwanie odpowiedzi od lokalnej Lamy
+    const responsesColRef = collection(db, 'artifacts', appId, 'public', 'data', 'admin_responses');
+    onSnapshot(responsesColRef, (snapshot) => {
+        snapshot.docChanges().forEach((change) => {
+            if (change.type === "added") {
+                const data = change.doc.data();
+                if (data.response && (Date.now() - (data.timestamp?.toMillis() || Date.now()) < 15000)) {
+                    appendMessageToChat("SYSTEM COORD (Llama 3.1)", data.response, "bg-amber-500/5 border border-amber-500/10 mr-6");
+                    document.getElementById('llmIndicator').className = "w-1.5 h-1.5 rounded-full bg-emerald-500";
+                }
+            }
+        });
+    }, (error) => {
+        console.error("Błąd subskrypcji odpowiedzi Lamy:", error);
+    });
+
+    // 🚨 4. Obsługa przycisków awaryjnych (Panic Stop / Close All)
+    window.triggerEmergencyAction = async (actionType) => {
+        if (!isAdmin) return;
+        try {
+            const commandsColRef = collection(db, 'artifacts', appId, 'public', 'data', 'admin_commands');
+            await addDoc(commandsColRef, { 
+                command_type: actionType, 
+                timestamp: serverTimestamp(), 
+                executed: false 
+            });
+            
+            const consoleBox = document.getElementById('terminalConsole');
+            const line = document.createElement('div');
+            line.className = "flex space-x-2 text-red-400 font-bold";
+            line.innerHTML = `<span>[ALERT] Wywołano rozkaz natychmiastowy: ${actionType}. Transmitowanie sygnału do i9...</span>`;
+            consoleBox.appendChild(line);
+            consoleBox.scrollTop = consoleBox.scrollHeight;
+        } catch (e) {
+            console.error("Problem z wysłaniem rozkazu awaryjnego:", e);
+        }
+    };
+}
 
         function appendMessageToChat(sender, text, classes) {
             const chatBox = document.getElementById('llmChatBox');
@@ -1172,51 +1176,51 @@
         }
 
         // Vortex 9 Stream Simulator
-       // const COINS = [
-           // { symbol: "BTC", price: 68420.50, change: 0.15, rsi: 31.42 },
-          //  { symbol: "ETH", price: 3450.25, change: -0.45, rsi: 41.20 },
-          //  { symbol: "SOL", price: 184.90, change: 2.10, rsi: 67.89 },
-          //  { symbol: "BNB", price: 585.10, change: -0.10, rsi: 49.30 },
-           // { symbol: "XRP", price: 0.5420, change: 0.05, rsi: 33.10 }
-        //];
+        //const COINS = [
+            { symbol: "BTC", price: 68420.50, change: 0.15, rsi: 31.42 },
+            { symbol: "ETH", price: 3450.25, change: -0.45, rsi: 41.20 },
+            { symbol: "SOL", price: 184.90, change: 2.10, rsi: 67.89 },
+            { symbol: "BNB", price: 585.10, change: -0.10, rsi: 49.30 },
+            { symbol: "XRP", price: 0.5420, change: 0.05, rsi: 33.10 }
+        ];
 
-        //let marketSimStarted = false;
+        let marketSimStarted = false;
         //function startMarketSim() {
-           // if (marketSimStarted) return;
-           // marketSimStarted = true;
-            //const list = document.getElementById('vortexList');
-           // list.innerHTML = '';
-         //   COINS.forEach(c => {
-             //   const div = document.createElement('div');
-             //   div.id = `coin-${c.symbol}`;
-             //   div.className = "flex justify-between items-center text-[10px] mono-font border-b border-gray-950 pb-1.5 hover:bg-white/5 px-2 py-1 rounded transition-all duration-300";
-             //   updateCoinRow(div, c);
-              //  list.appendChild(div);
-           // });
+            //if (marketSimStarted) return;
+            //marketSimStarted = true;
+            const list = document.getElementById('vortexList');
+            list.innerHTML = '';
+            COINS.forEach(c => {
+                const div = document.createElement('div');
+                div.id = `coin-${c.symbol}`;
+                div.className = "flex justify-between items-center text-[10px] mono-font border-b border-gray-950 pb-1.5 hover:bg-white/5 px-2 py-1 rounded transition-all duration-300";
+                updateCoinRow(div, c);
+                list.appendChild(div);
+            });
 
-          //  setInterval(() => {
-           //     COINS.forEach(c => {
-            //        c.price *= (1 + (Math.random() * 0.2 - 0.1) / 100);
-           //        c.rsi = Math.max(10, Math.min(90, c.rsi + (Math.random() * 2 - 1)));
-            //        const div = document.getElementById(`coin-${c.symbol}`);
-           //         if (div) updateCoinRow(div, c);
-          //      });
-         //   }, 2500);
-     //   }
+            setInterval(() => {
+                COINS.forEach(c => {
+                    c.price *= (1 + (Math.random() * 0.2 - 0.1) / 100);
+                    c.rsi = Math.max(10, Math.min(90, c.rsi + (Math.random() * 2 - 1)));
+                    const div = document.getElementById(`coin-${c.symbol}`);
+                    if (div) updateCoinRow(div, c);
+                });
+            }, 2500);
+        }
 
-       // function updateCoinRow(element, coin) {
-         //   const changeColor = coin.change >= 0 ? "text-[#00FF66]" : "text-[#FF3366]";
-           // const rsiColor = coin.rsi < 35 ? "text-emerald-400 font-bold" : (coin.rsi > 65 ? "text-rose-400 font-bold" : "text-gray-400");
-            //element.innerHTML = `
-              //  <div class="flex items-center space-x-2">
-                //    <span class="text-gray-100 font-bold">${coin.symbol}/USDC</span>
-               // </div>
-                //<div class="flex items-center space-x-4">
-                  //  <span class="text-gray-300 font-medium">${coin.price.toFixed(2)}</span>
-                    //<span class="${rsiColor} bg-black/40 px-1.5 py-0.5 rounded border border-gray-900 text-[9px]">RSI9: ${coin.rsi.toFixed(1)}</span>
-                //</div>
-           // `;
-        //}
+        function updateCoinRow(element, coin) {
+            const changeColor = coin.change >= 0 ? "text-[#00FF66]" : "text-[#FF3366]";
+            const rsiColor = coin.rsi < 35 ? "text-emerald-400 font-bold" : (coin.rsi > 65 ? "text-rose-400 font-bold" : "text-gray-400");
+            element.innerHTML = `
+                <div class="flex items-center space-x-2">
+                    <span class="text-gray-100 font-bold">${coin.symbol}/USDC</span>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span class="text-gray-300 font-medium">${coin.price.toFixed(2)}</span>
+                    <span class="${rsiColor} bg-black/40 px-1.5 py-0.5 rounded border border-gray-900 text-[9px]">RSI9: ${coin.rsi.toFixed(1)}</span>
+                </div>
+            `;
+        }
     </script>
 </body>
 </html>
