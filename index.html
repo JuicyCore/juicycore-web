@@ -327,7 +327,12 @@
                         <div class="bg-black/40 p-2 rounded border border-gray-950"><span class="text-gray-500 block text-[8px]">Total PnL</span><span id="admTotalPnl" class="font-bold">—</span></div>
                     </div>
                     <form id="adminConfigForm" class="grid grid-cols-2 md:grid-cols-3 gap-2 text-[10px] mono-font" onsubmit="return false;">
-                        <label class="space-y-1"><span class="text-gray-500 text-[8px]">Tryb</span>
+                        <label class="space-y-1"><span class="text-gray-500 text-[8px]">Tryb wykonania</span>
+                            <select id="cfgExecutionMode" class="w-full bg-black/60 border border-gray-900 rounded px-2 py-1 text-gray-200">
+                                <option value="paper">PAPER (lokalny)</option>
+                                <option value="testnet">TESTNET</option>
+                            </select></label>
+                        <label class="space-y-1"><span class="text-gray-500 text-[8px]">Tryb agresywności</span>
                             <select id="cfgAggressiveness" class="w-full bg-black/60 border border-gray-900 rounded px-2 py-1 text-gray-200">
                                 <option value="CONSERVATIVE">CONSERVATIVE</option><option value="BALANCED">BALANCED</option><option value="AGGRESSIVE">AGGRESSIVE</option>
                             </select></label>
@@ -350,9 +355,21 @@
                 <div class="bg-black/60 border border-gray-900 rounded-lg p-4">
                     <div class="flex justify-between items-center border-b border-gray-900 pb-2 mb-3">
                         <span class="mono-font text-[10px] text-[#d4af37] tracking-widest">📈 PERFORMANCE REPORT</span>
-                        <button onclick="window.exportAdminReport()" class="text-[9px] mono-font text-cyan-400 hover:text-cyan-300 border border-cyan-900/40 px-2 py-0.5 rounded cursor-pointer">⬇ EKSPORT JSON</button>
+                        <div class="flex gap-2">
+                            <button onclick="window.generateAdminReport()" class="text-[9px] mono-font text-amber-400 hover:text-amber-300 border border-amber-900/40 px-2 py-0.5 rounded cursor-pointer">▶ GENERUJ RAPORT</button>
+                            <button onclick="window.exportAdminReport()" class="text-[9px] mono-font text-cyan-400 hover:text-cyan-300 border border-cyan-900/40 px-2 py-0.5 rounded cursor-pointer">⬇ EKSPORT JSON</button>
+                        </div>
                     </div>
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-[10px] mono-font" id="adminPerfGrid"></div>
+                    <div id="adminReportMeta" class="text-[9px] mono-font text-gray-500 mt-2">Ostatni raport: —</div>
+                    <div id="adminReportChartWrap" class="hidden mt-3 bg-black/40 border border-gray-950 rounded p-2">
+                        <img id="adminReportChartImg" alt="Equity Curve Report" class="w-full max-h-[220px] object-contain"/>
+                    </div>
+                </div>
+                <div class="bg-black/60 border border-gray-900 rounded-lg p-4 space-y-2">
+                    <span class="mono-font text-[10px] text-purple-400 tracking-widest block border-b border-gray-900 pb-2">🔐 TRYB WYKONANIA &amp; GO-LIVE</span>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-[9px] mono-font" id="adminExecProfileGrid"></div>
+                    <p class="text-[8px] text-gray-600 mono-font">Live wymaga: klucze BINANCE_LIVE_* w .env + LIVE_TRADING_ENABLED=True + restart supervisora.</p>
                 </div>
                 <div class="bg-black/60 border border-gray-900 rounded-lg p-4 space-y-2">
                     <span class="mono-font text-[10px] text-cyan-400 tracking-widest block border-b border-gray-900 pb-2">🧬 SWARM CONTROL</span>
@@ -485,7 +502,7 @@
             { id: "awake", name: "juicy_keep_awake.py", role: "Modern Standby & Throttling Guard", managed: true },
             { id: "heartbeat", name: "brain_heartbeat.py", role: "Safe State & Snapshot Manager", managed: false },
             { id: "innovator", name: "juicy_innovator.py", role: "AI Code Self-Optimizer (LLM Patches)", managed: false },
-            { id: "reporter", name: "juicy_reporter.py", role: "Performance & PnL Visualizer", managed: false },
+            { id: "reporter", name: "juicy_reporter.py", role: "On-demand PnL Report + Discord (nie daemon)", managed: false },
             { id: "sync", name: "firebase_sync.py", role: "Firebase Bridge (UI ↔ Backend)", managed: false }
         ];
 
@@ -722,6 +739,7 @@
             if (!cfg || adminConfigFormDirty) return;
             const setVal = (id, val) => { const el = document.getElementById(id); if (el && val !== undefined) el.value = val; };
             const setCheck = (id, val) => { const el = document.getElementById(id); if (el) el.checked = !!val; };
+            setVal('cfgExecutionMode', cfg.execution_mode || 'paper');
             setVal('cfgAggressiveness', cfg.aggressiveness || 'BALANCED');
             setVal('cfgMinConfidence', cfg.min_confidence ?? 70);
             setVal('cfgMaxPosPct', cfg.max_position_size_pct ?? 20);
@@ -811,6 +829,41 @@
             }
 
             updateAdminCharts(data);
+
+            const exec = data.execution_profile || {};
+            const execGrid = document.getElementById('adminExecProfileGrid');
+            if (execGrid) {
+                const mode = (exec.mode || 'paper').toUpperCase();
+                const modeCls = exec.live_armed ? 'text-rose-400 font-bold' : (mode === 'TESTNET' ? 'text-cyan-400' : 'text-gray-300');
+                const lr = exec.live_readiness || {};
+                const checks = [
+                    ['Tryb', mode, modeCls],
+                    ['Trader', exec.trader_script || '—', 'text-gray-300'],
+                    ['Portfolio', exec.portfolio_file || '—', 'text-gray-400'],
+                    ['Sandbox', exec.sandbox ? 'TAK' : 'NIE', exec.sandbox ? 'text-amber-400' : 'text-rose-400'],
+                    ['Klucze Live', exec.has_live_credentials ? '✓' : '✗', exec.has_live_credentials ? 'text-emerald-400' : 'text-gray-600'],
+                    ['LIVE armed', exec.live_armed ? '🚨 TAK' : 'NIE', exec.live_armed ? 'text-rose-400 font-bold' : 'text-emerald-400'],
+                    ['Go-live ready', lr.ready_for_live_orders ? '✓' : '✗', lr.ready_for_live_orders ? 'text-emerald-400' : 'text-gray-500'],
+                ];
+                execGrid.innerHTML = checks.map(([label, val, cls]) =>
+                    `<div class="bg-black/40 border border-gray-950 p-2 rounded"><span class="text-gray-600 block text-[8px]">${label}</span><span class="${cls || 'text-gray-200'}">${val}</span></div>`
+                ).join('');
+            }
+
+            const report = data.latest_report || {};
+            const metaEl = document.getElementById('adminReportMeta');
+            if (metaEl) {
+                const when = report.generated_at ? new Date(report.generated_at).toLocaleString('pl-PL') : '—';
+                metaEl.innerText = `Ostatni raport: ${when} | tryb: ${report.execution_mode || exec.mode || '—'}`;
+            }
+            const chartWrap = document.getElementById('adminReportChartWrap');
+            const chartImg = document.getElementById('adminReportChartImg');
+            if (chartWrap && chartImg && report.chart_base64) {
+                chartImg.src = 'data:image/png;base64,' + report.chart_base64;
+                chartWrap.classList.remove('hidden');
+            } else if (chartWrap && !report.chart_base64) {
+                chartWrap.classList.add('hidden');
+            }
         }
 
         window.initAdminCharts = function() {
@@ -893,6 +946,7 @@
         window.saveTradingConfig = async function() {
             if (!isAdmin) return;
             const updates = {
+                execution_mode: document.getElementById('cfgExecutionMode').value,
                 aggressiveness: document.getElementById('cfgAggressiveness').value,
                 min_confidence: parseInt(document.getElementById('cfgMinConfidence').value, 10),
                 max_position_size_pct: parseFloat(document.getElementById('cfgMaxPosPct').value),
@@ -933,6 +987,24 @@
                 printAdminLog(`SWARM_CONTROL → ${action}`);
             } catch (e) {
                 console.error('Błąd SWARM_CONTROL:', e);
+            }
+        };
+
+        window.generateAdminReport = async function() {
+            if (!isAdmin) return;
+            try {
+                const commandsColRef = collection(db, 'artifacts', appId, 'public', 'data', 'admin_commands');
+                await addDoc(commandsColRef, {
+                    command_type: 'GENERATE_REPORT',
+                    timestamp: serverTimestamp(),
+                    executed: false
+                });
+                printAdminLog('GENERATE_REPORT → juicy_reporter.py (Discord + wykres PNG)');
+                const metaEl = document.getElementById('adminReportMeta');
+                if (metaEl) metaEl.innerText = 'Generowanie raportu… (~30s)';
+            } catch (e) {
+                console.error('Błąd GENERATE_REPORT:', e);
+                printAdminLog('Błąd wywołania reportera', true);
             }
         };
 
