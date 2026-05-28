@@ -200,6 +200,20 @@
                 <span class="mono-font text-[9px] text-emerald-400 animate-pulse font-bold" id="swarmStateBadge">MONITORING</span>
             </div>
             <div id="swarmContainer" class="space-y-3"></div>
+            <div id="traderQuickLimits" class="hidden bg-black/60 border border-amber-900/30 rounded-lg p-3 space-y-2">
+                <span class="mono-font text-[9px] text-amber-300 tracking-widest block border-b border-gray-900 pb-1">⚙️ LIMITY TRADERA (PAPER)</span>
+                <div class="grid grid-cols-2 gap-2 text-[9px] mono-font">
+                    <label class="space-y-0.5"><span class="text-gray-500 text-[8px]">Max pozycja %</span>
+                        <input id="quickMaxPosPct" type="number" min="0.5" max="50" step="0.5" class="w-full bg-black/60 border border-gray-900 rounded px-2 py-1 text-gray-200"/></label>
+                    <label class="space-y-0.5"><span class="text-gray-500 text-[8px]">Max równoległe</span>
+                        <input id="quickMaxConcurrent" type="number" min="1" max="20" class="w-full bg-black/60 border border-gray-900 rounded px-2 py-1 text-gray-200"/></label>
+                    <label class="space-y-0.5 col-span-2"><span class="text-gray-500 text-[8px]">Max ekspozycja %</span>
+                        <input id="quickMaxExposure" type="number" min="10" max="100" step="1" class="w-full bg-black/60 border border-gray-900 rounded px-2 py-1 text-gray-200"/></label>
+                </div>
+                <button onclick="window.saveTradingConfig()" class="w-full bg-amber-950/40 hover:bg-amber-900/40 border border-amber-800/40 text-amber-200 text-[9px] mono-font py-1.5 rounded cursor-pointer">💾 ZAPISZ LIMITY</button>
+                <span class="text-[8px] text-gray-600 block" id="quickLimitsHint">Wymaga logowania admin + firebase_sync</span>
+            </div>
+            <div class="text-[8px] mono-font text-gray-600" id="firestoreSyncStatus">Firebase: oczekiwanie…</div>
         </section>
 
         <!-- KORPUS CENTRALNY: NAWIGACJA ZAKŁADEK -->
@@ -476,6 +490,16 @@
                 </div>
             </div>
 
+            <!-- HISTORIA ZAMKNIĘĆ -->
+            <div class="bg-black/60 border border-gray-900 rounded-lg p-4">
+                <span class="mono-font text-[10px] text-gray-400 tracking-widest border-b border-gray-900 pb-2 flex items-center gap-2 mb-2">
+                    <i class="fa-solid fa-clock-rotate-left"></i> HISTORIA POZYCJI (ZAMKNIĘTE)
+                </span>
+                <div id="closedTradesTicker" class="space-y-1 max-h-[110px] overflow-y-auto text-[9px] mono-font">
+                    <span class="text-gray-600">Ładowanie historii…</span>
+                </div>
+            </div>
+
             <!-- RECENT TRADES -->
             <div class="bg-black/60 border border-gray-900 rounded-lg p-4">
                 <span class="mono-font text-[10px] text-emerald-400 tracking-widest border-b border-gray-900 pb-2 flex items-center gap-2 mb-2">
@@ -593,7 +617,7 @@
             { id: "heartbeat", name: "brain_heartbeat.py", role: "Safe State & Snapshot Manager", managed: false },
             { id: "innovator", name: "juicy_innovator.py", role: "AI Code Self-Optimizer (LLM Patches)", managed: false },
             { id: "reporter", name: "juicy_reporter.py", role: "On-demand PnL Report + Discord (nie daemon)", managed: false },
-            { id: "sync", name: "firebase_sync.py", role: "Firebase Bridge (UI ↔ Backend)", managed: false }
+            { id: "sync", name: "firebase_sync.py", role: "Firebase Bridge (UI ↔ Backend)", managed: true }
         ];
 
         function formatVortexPrice(value) {
@@ -768,6 +792,28 @@
             }).join('');
         }
 
+        function renderClosedTrades(trades) {
+            const el = document.getElementById('closedTradesTicker');
+            if (!el) return;
+            if (!Array.isArray(trades) || !trades.length) {
+                el.innerHTML = '<span class="text-gray-600">Brak zamkniętych pozycji w historii</span>';
+                return;
+            }
+            el.innerHTML = trades.slice(0, 8).map(t => {
+                const pnl = parseFloat(t.pnl || 0);
+                const action = String(t.action || '').toUpperCase();
+                const isClose = action.includes('SELL') || action.includes('CLOSE');
+                const pnlClass = isClose ? (pnl > 0 ? 'text-emerald-400' : (pnl < 0 ? 'text-rose-400' : 'text-gray-500')) : 'text-cyan-400';
+                const ts = String(t.timestamp || '—');
+                const label = isClose ? `${pnl >= 0 ? '+' : ''}${pnl.toFixed(2)}` : action || 'OPEN';
+                return `<div class="flex justify-between items-center border-b border-gray-950 pb-1">
+                    <span class="text-gray-500 truncate max-w-[40%]" title="${ts}">${ts.length > 16 ? ts.slice(0, 16) : ts}</span>
+                    <span class="text-gray-300">${t.symbol || ''}</span>
+                    <span class="${pnlClass}">${label}</span>
+                </div>`;
+            }).join('');
+        }
+
         function renderActivePositions(positions) {
             const el = document.getElementById('activePositionsTicker');
             if (!el) return;
@@ -923,12 +969,16 @@
         function renderSwarm(telemetry = null) {
             const container = document.getElementById('swarmContainer');
             if (!container) return;
+
+            if (!Array.isArray(telemetry)) {
+                container.innerHTML = '<div class="text-[9px] mono-font text-gray-500 animate-pulse py-2">Oczekiwanie na telemetrię z firebase_sync…</div>';
+                return;
+            }
+
             container.innerHTML = '';
 
             const byId = {};
-            if (Array.isArray(telemetry)) {
-                telemetry.forEach(t => { byId[t.id] = t; });
-            }
+            telemetry.forEach(t => { byId[t.id] = t; });
 
             AGENTS.forEach(a => {
                 const live = byId[a.id] || {};
@@ -1042,6 +1092,8 @@
             if (user.email === ADMIN_EMAIL) {
                 isAdmin = true;
                 document.getElementById('loginBtnText').innerText = "WYLOGUJ ADMINA";
+                const ql = document.getElementById('traderQuickLimits');
+                if (ql) ql.classList.remove('hidden');
                 document.getElementById('adminPanelArea').classList.remove('hidden');
                 const adminTabBtn = document.getElementById('tab-admin-btn');
                 if (adminTabBtn) adminTabBtn.classList.remove('hidden');
@@ -1059,6 +1111,8 @@
             } else {
                 isAdmin = false;
                 document.getElementById('loginBtnText').innerText = "ADMIN LOGIN";
+                const ql = document.getElementById('traderQuickLimits');
+                if (ql) ql.classList.add('hidden');
                 document.getElementById('adminPanelArea').classList.add('hidden');
                 const adminTabBtn = document.getElementById('tab-admin-btn');
                 if (adminTabBtn) adminTabBtn.classList.add('hidden');
@@ -1105,6 +1159,9 @@
             setVal('cfgMaxPosPct', cfg.max_position_size_pct ?? 20);
             setVal('cfgMaxConcurrent', cfg.max_concurrent_positions ?? 4);
             setVal('cfgMaxExposure', cfg.max_total_exposure_pct ?? 80);
+            setVal('quickMaxPosPct', cfg.max_position_size_pct ?? 20);
+            setVal('quickMaxConcurrent', cfg.max_concurrent_positions ?? 4);
+            setVal('quickMaxExposure', cfg.max_total_exposure_pct ?? 80);
             setCheck('cfgRequireApproval', cfg.require_approval);
         }
 
@@ -1137,6 +1194,14 @@
             setText('quickPosCount', `${posCount}/${maxPos}`);
 
             bindTradingConfigForm(data.trading_config);
+
+            const fsStatus = document.getElementById('firestoreSyncStatus');
+            if (fsStatus) {
+                const mode = (data.execution_profile || {}).mode || (data.trading_config || {}).execution_mode || 'paper';
+                const lu = data.last_update || '—';
+                fsStatus.innerText = `Firebase OK · tryb: ${String(mode).toUpperCase()} · ${lu}`;
+                fsStatus.className = 'text-[8px] mono-font text-emerald-500/90';
+            }
 
             const perfGrid = document.getElementById('adminPerfGrid');
             if (perfGrid) {
@@ -1317,14 +1382,20 @@
                 const n = typeof raw === 'number' ? raw : parseFloat(String(raw).replace(',', '.'));
                 return Number.isFinite(n) ? n : fallback;
             };
+            const pick = (primaryId, fallbackId, fb) => {
+                const el = document.getElementById(primaryId);
+                if (el && el.value !== '') return num(el.value, fb);
+                const el2 = document.getElementById(fallbackId);
+                return num(el2 ? el2.value : fb, fb);
+            };
             const updates = {
-                execution_mode: document.getElementById('cfgExecutionMode').value,
-                aggressiveness: document.getElementById('cfgAggressiveness').value,
-                min_confidence: Math.round(num(document.getElementById('cfgMinConfidence').value, 70)),
-                max_position_size_pct: num(document.getElementById('cfgMaxPosPct').value, 20),
-                max_concurrent_positions: Math.round(num(document.getElementById('cfgMaxConcurrent').value, 4)),
-                max_total_exposure_pct: num(document.getElementById('cfgMaxExposure').value, 80),
-                require_approval: document.getElementById('cfgRequireApproval').checked,
+                execution_mode: (document.getElementById('cfgExecutionMode') || {}).value || 'paper',
+                aggressiveness: (document.getElementById('cfgAggressiveness') || {}).value || 'BALANCED',
+                min_confidence: Math.round(num((document.getElementById('cfgMinConfidence') || {}).value, 70)),
+                max_position_size_pct: pick('quickMaxPosPct', 'cfgMaxPosPct', 20),
+                max_concurrent_positions: Math.round(pick('quickMaxConcurrent', 'cfgMaxConcurrent', 4)),
+                max_total_exposure_pct: pick('quickMaxExposure', 'cfgMaxExposure', 80),
+                require_approval: (document.getElementById('cfgRequireApproval') || {}).checked || false,
             };
             try {
                 const commandsColRef = collection(db, 'artifacts', appId, 'public', 'data', 'admin_commands');
@@ -1477,12 +1548,24 @@ function setupRealtimeSubscriptions() {
                 renderRecentTrades(data.recent_trades);
             }
 
+            if (data && data.learning_snapshot) {
+                renderLearningSnapshot(data.learning_snapshot);
+            }
+
+            bindTradingConfigForm(data.trading_config);
+
             if (data && Array.isArray(data.active_positions_list)) {
                 renderActivePositions(data.active_positions_list);
             }
+            if (data && Array.isArray(data.trade_history)) {
+                renderClosedTrades(data.trade_history);
+            }
 
-            if (data && data.learning_snapshot) {
-                renderLearningSnapshot(data.learning_snapshot);
+            const fsStatusMain = document.getElementById('firestoreSyncStatus');
+            if (fsStatusMain && data.last_update) {
+                const mode = (data.execution_profile || {}).mode || (data.trading_config || {}).execution_mode || 'paper';
+                fsStatusMain.innerText = `Firebase OK · ${String(mode).toUpperCase()} · pozycje: ${data.active_trades_count ?? 0}`;
+                fsStatusMain.className = 'text-[8px] mono-font text-emerald-500/90';
             }
 
             if (data && Array.isArray(data.swarm_telemetry)) {
@@ -1513,6 +1596,11 @@ function setupRealtimeSubscriptions() {
         }
     }, (error) => {
         console.error("Błąd subskrypcji metryk:", error);
+        const fsStatus = document.getElementById('firestoreSyncStatus');
+        if (fsStatus) {
+            fsStatus.innerText = 'Firebase: błąd połączenia — uruchom firebase_sync';
+            fsStatus.className = 'text-[8px] mono-font text-rose-400';
+        }
     });
 
     // 📂 2. Pobieranie logów systemowych na żywo z Twojego i9
