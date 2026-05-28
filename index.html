@@ -496,14 +496,14 @@
                     <i class="fa-solid fa-clock-rotate-left"></i> HISTORIA POZYCJI (ZAMKNIĘTE)
                 </span>
                 <div id="closedTradesTicker" class="space-y-1 max-h-[110px] overflow-y-auto text-[9px] mono-font">
-                    <span class="text-gray-600">Ładowanie historii…</span>
+                    <span class="text-gray-600">Tylko CLOSE_* / SELL — ładowanie…</span>
                 </div>
             </div>
 
             <!-- RECENT TRADES -->
             <div class="bg-black/60 border border-gray-900 rounded-lg p-4">
                 <span class="mono-font text-[10px] text-emerald-400 tracking-widest border-b border-gray-900 pb-2 flex items-center gap-2 mb-2">
-                    <i class="fa-solid fa-receipt"></i> RECENT TRADES
+                    <i class="fa-solid fa-receipt"></i> RECENT TRADES (BUY + CLOSE)
                 </span>
                 <div id="recentTradesTicker" class="space-y-1 max-h-[110px] overflow-y-auto text-[9px] mono-font">
                     <span class="text-gray-600">Brak transakcji</span>
@@ -806,11 +806,38 @@
             return s.length > 19 ? s.slice(0, 19) : s;
         }
 
+        function renderFirestoreSyncStatus(data) {
+            const el = document.getElementById('firestoreSyncStatus');
+            if (!el || !data) return;
+            const mode = (data.execution_profile || {}).mode || (data.trading_config || {}).execution_mode || 'paper';
+            const pos = data.active_trades_count ?? 0;
+            const lu = data.last_portfolio_update || data.last_update || '';
+            const timePart = lu
+                ? (String(lu).includes('T') ? String(lu).slice(11, 19) + ' UTC' : String(lu))
+                : '—';
+            const reason = data.portfolio_sync_reason ? ` · ${data.portfolio_sync_reason}` : '';
+            const health = data.sync_health || {};
+            let statusPrefix = 'Firebase OK';
+            let cls = 'text-[8px] mono-font text-emerald-500/90';
+            if (health.ok === false) {
+                statusPrefix = '⚠ ROZJAZD SYNC';
+                cls = 'text-[8px] mono-font text-amber-400';
+            } else if (!lu) {
+                statusPrefix = 'Firebase: oczekiwanie…';
+                cls = 'text-[8px] mono-font text-gray-500';
+            }
+            const auditAt = health.checked_at
+                ? ` · audyt ${String(health.checked_at).slice(11, 19)}`
+                : '';
+            el.innerText = `${statusPrefix} · ${String(mode).toUpperCase()} · poz:${pos} · sync ${timePart}${reason}${auditAt}`;
+            el.className = cls;
+        }
+
         function renderClosedTrades(trades) {
             const el = document.getElementById('closedTradesTicker');
             if (!el) return;
             if (!Array.isArray(trades) || !trades.length) {
-                el.innerHTML = '<span class="text-gray-600">Brak zamkniętych pozycji w historii</span>';
+                el.innerHTML = '<span class="text-gray-600">Brak zamkniętych pozycji (CLOSE/SELL)</span>';
                 return;
             }
             el.innerHTML = trades.slice(0, 8).map(t => {
@@ -1217,10 +1244,7 @@
 
             const fsStatus = document.getElementById('firestoreSyncStatus');
             if (fsStatus) {
-                const mode = (data.execution_profile || {}).mode || (data.trading_config || {}).execution_mode || 'paper';
-                const lu = data.last_update || '—';
-                fsStatus.innerText = `Firebase OK · tryb: ${String(mode).toUpperCase()} · ${lu}`;
-                fsStatus.className = 'text-[8px] mono-font text-emerald-500/90';
+                renderFirestoreSyncStatus(data);
             }
 
             const perfGrid = document.getElementById('adminPerfGrid');
@@ -1588,12 +1612,7 @@ function setupRealtimeSubscriptions() {
         });
 
         safeUiRender('firestoreStatus', () => {
-            const fsStatusMain = document.getElementById('firestoreSyncStatus');
-            if (fsStatusMain && data.last_update) {
-                const mode = (data.execution_profile || {}).mode || (data.trading_config || {}).execution_mode || 'paper';
-                fsStatusMain.innerText = `Firebase OK · ${String(mode).toUpperCase()} · pozycje: ${data.active_trades_count ?? 0}`;
-                fsStatusMain.className = 'text-[8px] mono-font text-emerald-500/90';
-            }
+            renderFirestoreSyncStatus(data);
         });
 
         if (isAdmin) {
