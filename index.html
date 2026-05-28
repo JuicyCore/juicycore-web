@@ -792,6 +792,20 @@
             }).join('');
         }
 
+        function formatTradeTimestamp(ts, short = false) {
+            if (ts == null || ts === '') return '—';
+            if (typeof ts === 'number' && Number.isFinite(ts)) {
+                const ms = ts > 1e12 ? ts : ts * 1000;
+                const d = new Date(ms);
+                if (Number.isNaN(d.getTime())) return String(ts);
+                if (short) return d.toISOString().slice(11, 19);
+                return d.toISOString().slice(0, 19).replace('T', ' ');
+            }
+            const s = String(ts);
+            if (short && s.length > 10) return s.slice(11, 19) || s.slice(0, 8);
+            return s.length > 19 ? s.slice(0, 19) : s;
+        }
+
         function renderClosedTrades(trades) {
             const el = document.getElementById('closedTradesTicker');
             if (!el) return;
@@ -804,7 +818,7 @@
                 const action = String(t.action || '').toUpperCase();
                 const isClose = action.includes('SELL') || action.includes('CLOSE');
                 const pnlClass = isClose ? (pnl > 0 ? 'text-emerald-400' : (pnl < 0 ? 'text-rose-400' : 'text-gray-500')) : 'text-cyan-400';
-                const ts = String(t.timestamp || '—');
+                const ts = formatTradeTimestamp(t.timestamp, false);
                 const label = isClose ? `${pnl >= 0 ? '+' : ''}${pnl.toFixed(2)}` : action || 'OPEN';
                 return `<div class="flex justify-between items-center border-b border-gray-950 pb-1">
                     <span class="text-gray-500 truncate max-w-[40%]" title="${ts}">${ts.length > 16 ? ts.slice(0, 16) : ts}</span>
@@ -856,11 +870,13 @@
             trades.slice(0, 6).forEach(t => {
                 const pnl = parseFloat(t.pnl || 0);
                 const pnlClass = pnl > 0 ? 'text-emerald-400' : (pnl < 0 ? 'text-rose-400' : 'text-gray-500');
-                const action = (t.action || '').replace('_', ' ');
+                const action = String(t.action || '').replace('_', ' ');
+                const tsLabel = formatTradeTimestamp(t.timestamp, true);
+                const tsTitle = formatTradeTimestamp(t.timestamp, false);
                 const row = document.createElement('div');
                 row.className = 'flex justify-between items-center border-b border-gray-950 pb-1';
                 row.innerHTML = `
-                    <span class="text-gray-500 truncate max-w-[45%]" title="${t.timestamp || ''}">${(t.timestamp || '').slice(11, 19) || '—'} ${t.symbol || ''}</span>
+                    <span class="text-gray-500 truncate max-w-[45%]" title="${tsTitle}">${tsLabel} ${t.symbol || ''}</span>
                     <span class="text-gray-400">${action}</span>
                     <span class="${pnlClass} font-bold">${pnl >= 0 ? '+' : ''}${pnl.toFixed(2)}</span>`;
                 el.appendChild(row);
@@ -1075,15 +1091,20 @@
                 consoleBox.scrollTop = consoleBox.scrollHeight;
             }
         }
-        // Bezpieczna inicjalizacja autentykacji dla gości (Tylko Odczyt)
-        const initAuthentication = async () => {
-            try {
-                await signInAnonymously(auth);
-            } catch (err) {
-                console.error("Autoryzacja anonimowa błąd:", err);
-            }
+        window.initMiniEquityChart = initMiniEquityChart;
+        window.renderMiniEquityChart = renderMiniEquityChart;
+
+        function safeUiRender(label, fn) {
+            try { fn(); } catch (err) { console.warn('[UI]', label, err); }
+        }
+
+        // Firebase: logowanie anonimowe wyłączone w konsoli projektu — admin loguje się przez Google
+        const initAuthentication = () => {
+            /* signInAnonymously celowo pominięte (auth/admin-restricted-operation) */
         };
         initAuthentication();
+
+        let realtimeSubscriptionsStarted = false;
 
         onAuthStateChanged(auth, (user) => {
             if (!user) return;
@@ -1132,7 +1153,6 @@
 
             // BEZPIECZNY RE-RENDER: Generuje swarm na nowo, dołączając przyciski RESTART tylko dla Admina!
             renderSwarm();
-            setupRealtimeSubscriptions();
             renderSessionClock(computeTradingSessionClient());
             if (!window.__SESSION_CLOCK_IV) {
                 window.__SESSION_CLOCK_IV = setInterval(() => renderSessionClock(computeTradingSessionClient()), 1000);
@@ -1488,25 +1508,27 @@
 
         // --- OBSŁUGA DANYCH FIRESTORE NA ŻYWO (REAL-TIME DATA STREAMS) ---
 function setupRealtimeSubscriptions() {
+    if (realtimeSubscriptionsStarted) return;
+    realtimeSubscriptionsStarted = true;
+
     // 📊 1. Pobieranie realnych metryk rynkowych ze skryptu i9
     const metricsDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'metrics', 'live_state');
     onSnapshot(metricsDocRef, (snapshot) => {
-        if (snapshot.exists()) {
-            const data = snapshot.data();
-            
-            // Bezpośrednie bindowanie danych z pliku paper_portfolio.json
-            document.getElementById('freeBalance').innerText = parseFloat(data.balance || 1342.18).toLocaleString('pl-PL', { minimumFractionDigits: 2 }) + " USDC";
+        if (!snapshot.exists()) return;
+        const data = snapshot.data();
+
+        safeUiRender('balance', () => {
+            document.getElementById('freeBalance').innerText = parseFloat(data.balance || 0).toLocaleString('pl-PL', { minimumFractionDigits: 2 }) + " USDC";
             document.getElementById('totalEquity').innerText = parseFloat(data.total_equity || 10000.00).toLocaleString('pl-PL', { minimumFractionDigits: 2 }) + " USDC";
-            
             const totalReturn = ((parseFloat(data.total_equity || 10000.00) - 10000) / 10000) * 100;
             document.getElementById('roiValue').innerText = (totalReturn >= 0 ? "+" : "") + totalReturn.toFixed(2) + "%";
             document.getElementById('roiValue').className = totalReturn >= 0 ? "mono-font text-[9px] text-[#00FF66]" : "mono-font text-[9px] text-[#FF3366]";
-            
             document.getElementById('winRateVal').innerText = (data.win_rate ?? 0).toFixed(1) + "%";
             document.getElementById('profitFactorVal').innerText = (data.profit_factor ?? 0).toFixed(2);
             document.getElementById('systemStatusLabel').innerText = (data.system_status || "POŁĄCZONO").toUpperCase();
+        });
 
-            // Rysowanie wykresu kapitału z i9
+        safeUiRender('equityChart', () => {
             const equityChart = window.chartInstance || chartInstance;
             if (data.equity_chart_data && equityChart) {
                 chartData = data.equity_chart_data;
@@ -1515,84 +1537,76 @@ function setupRealtimeSubscriptions() {
                 equityChart.data.datasets[0].data = chartData;
                 equityChart.update();
             }
-
             if (data.equity_chart_data && data.equity_chart_data.length >= 2) {
                 renderMiniEquityChart(data.equity_chart_data, data.total_equity);
             }
+        });
 
-            if (data && data.sys_temp !== undefined) {
+        safeUiRender('telemetry', () => {
+            if (data.sys_temp !== undefined) {
                 document.getElementById('sysTemp').innerText = parseFloat(data.sys_temp).toFixed(1) + "°C";
             }
-
-            if (data && data.binance_ping_ms !== undefined) {
+            if (data.binance_ping_ms !== undefined) {
                 window.__LIVE_PING = true;
                 const pingEl = document.getElementById('binancePing');
                 if (pingEl) pingEl.innerText = Math.round(data.binance_ping_ms) + "ms";
             }
+        });
 
-            if (data && data.vortex_rsi && Object.keys(data.vortex_rsi).length > 0) {
-                renderVortexList(data.vortex_rsi);
-            }
+        safeUiRender('vortex', () => {
+            if (data.vortex_rsi && Object.keys(data.vortex_rsi).length > 0) renderVortexList(data.vortex_rsi);
+        });
 
-            if (data && data.social_intel && Object.keys(data.social_intel).length > 0) {
+        safeUiRender('social', () => {
+            if (data.social_intel && Object.keys(data.social_intel).length > 0) {
                 renderFearGreed(data.social_intel.fear_greed_index);
                 renderMarketPulse(data.social_intel.market_pulse, data.social_intel.trending_coins);
                 renderSocialSentiment(data.social_intel);
             }
+        });
 
-            if (data && data.trading_session) {
-                renderSessionClock(data.trading_session);
-            }
+        safeUiRender('session', () => {
+            if (data.trading_session) renderSessionClock(data.trading_session);
+        });
 
-            if (data && Array.isArray(data.recent_trades)) {
-                renderRecentTrades(data.recent_trades);
-            }
-
-            if (data && data.learning_snapshot) {
-                renderLearningSnapshot(data.learning_snapshot);
-            }
-
+        // Portfel — priorytet: pozycje i historia przed recent_trades
+        safeUiRender('positions', () => {
+            if (Array.isArray(data.active_positions_list)) renderActivePositions(data.active_positions_list);
+        });
+        safeUiRender('history', () => {
+            if (Array.isArray(data.trade_history)) renderClosedTrades(data.trade_history);
+        });
+        safeUiRender('swarm', () => {
+            if (Array.isArray(data.swarm_telemetry)) renderSwarm(data.swarm_telemetry);
+        });
+        safeUiRender('recentTrades', () => {
+            if (Array.isArray(data.recent_trades)) renderRecentTrades(data.recent_trades);
+        });
+        safeUiRender('learning', () => {
+            if (data.learning_snapshot) renderLearningSnapshot(data.learning_snapshot);
             bindTradingConfigForm(data.trading_config);
+        });
 
-            if (data && Array.isArray(data.active_positions_list)) {
-                renderActivePositions(data.active_positions_list);
-            }
-            if (data && Array.isArray(data.trade_history)) {
-                renderClosedTrades(data.trade_history);
-            }
-
+        safeUiRender('firestoreStatus', () => {
             const fsStatusMain = document.getElementById('firestoreSyncStatus');
             if (fsStatusMain && data.last_update) {
                 const mode = (data.execution_profile || {}).mode || (data.trading_config || {}).execution_mode || 'paper';
                 fsStatusMain.innerText = `Firebase OK · ${String(mode).toUpperCase()} · pozycje: ${data.active_trades_count ?? 0}`;
                 fsStatusMain.className = 'text-[8px] mono-font text-emerald-500/90';
             }
+        });
 
-            if (data && Array.isArray(data.swarm_telemetry)) {
-                renderSwarm(data.swarm_telemetry);
-            }
-
-            // Dynamiczna alokacja telemetryczna statystyk zaawansowanych (ADMIN ONLY)
-            if (isAdmin) {
-                injectAdvancedStatsUI(); 
-                
+        if (isAdmin) {
+            safeUiRender('adminStats', () => {
+                injectAdvancedStatsUI();
                 const sharpeEl = document.getElementById('adminSharpe');
-                if (sharpeEl && data.sharpe_ratio !== undefined) {
-                    sharpeEl.innerText = parseFloat(data.sharpe_ratio).toFixed(2);
-                }
-                
+                if (sharpeEl && data.sharpe_ratio !== undefined) sharpeEl.innerText = parseFloat(data.sharpe_ratio).toFixed(2);
                 const ddEl = document.getElementById('adminDrawdown');
-                if (ddEl && data.max_drawdown !== undefined) {
-                    ddEl.innerText = parseFloat(data.max_drawdown).toFixed(2) + "%";
-                }
-                
+                if (ddEl && data.max_drawdown !== undefined) ddEl.innerText = parseFloat(data.max_drawdown).toFixed(2) + "%";
                 const cpuEl = document.getElementById('adminCpu');
-                if (cpuEl && data.cpu_load !== undefined) {
-                    cpuEl.innerText = parseFloat(data.cpu_load).toFixed(1) + "%";
-                }
-
+                if (cpuEl && data.cpu_load !== undefined) cpuEl.innerText = parseFloat(data.cpu_load).toFixed(1) + "%";
                 updateAdminDashboard(data);
-            }
+            });
         }
     }, (error) => {
         console.error("Błąd subskrypcji metryk:", error);
@@ -1754,6 +1768,11 @@ function setupRealtimeSubscriptions() {
         }
         // --- INICJALIZACJA ELEMENTÓW GLOBALNYCH ---
         renderSwarm();
+        setupRealtimeSubscriptions();
+        renderSessionClock(computeTradingSessionClient());
+        if (!window.__SESSION_CLOCK_IV) {
+            window.__SESSION_CLOCK_IV = setInterval(() => renderSessionClock(computeTradingSessionClient()), 1000);
+        }
         
         // Zegar czasu UTC
         setInterval(() => {
@@ -2036,9 +2055,9 @@ function setupRealtimeSubscriptions() {
                     dashboardView.classList.remove('translate-y-10');
                     dashboardView.classList.add('opacity-100', 'translate-y-0');
                     lockSystemBtn.classList.remove('hidden');
-                    initEquityChart();
-                    initMiniEquityChart();
-                    startTerminalStream();
+                    if (typeof initEquityChart === 'function') initEquityChart();
+                    if (typeof window.initMiniEquityChart === 'function') window.initMiniEquityChart();
+                    if (typeof startTerminalStream === 'function') startTerminalStream();
                     // Ceny Vortex z Firebase (firebase_sync.py) — bez symulacji
                 }, 50);
             }, 800);
