@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JuicyCore | Project Zero Master Terminal</title>
+    <title>JuicyCore | Project Zero v6.0 Master Terminal</title>
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='gold' x1='0' y1='0' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23d4af37'/%3E%3Cstop offset='100%25' stop-color='%238c6b22'/%3E%3C/linearGradient%3E%3C/defs%3E%3Ccircle cx='50' cy='50' r='45' fill='none' stroke='url(%23gold)' stroke-width='6'/%3E%3Cpath d='M50 85 C30 65 20 50 20 35 A15 15 0 0 1 50 35 A15 15 0 0 1 80 35 C80 50 70 65 50 85' fill='url(%23gold)'/%3E%3C/svg%3E">
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -104,6 +104,25 @@
 
         .agent-active-glow {
             box-shadow: 0 0 8px rgba(0, 255, 102, 0.3);
+        }
+
+        /* Chart.js — canvas w ramce flex, bez overflow poza kartę */
+        .chart-panel {
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .chart-canvas-wrap {
+            position: relative;
+            flex: 1 1 auto;
+            min-height: 0;
+            width: 100%;
+            overflow: hidden;
+        }
+        .chart-canvas-wrap canvas {
+            display: block;
+            max-width: 100%;
+            max-height: 100%;
         }
     </style>
 </head>
@@ -253,8 +272,8 @@
 
             <!-- ZAKŁADKA 1: TRADING SUITE (WYKRES I LOGI SYSTEMOWE) -->
             <div id="view-trading" class="space-y-6 flex-grow flex flex-col">
-                <div class="bg-black/60 border border-gray-900 rounded-lg p-4 backdrop-blur-md h-[260px] flex flex-col justify-between">
-                    <div class="relative w-full h-[220px]">
+                <div class="bg-black/60 border border-gray-900 rounded-lg p-4 backdrop-blur-md h-[260px] flex flex-col overflow-hidden">
+                    <div class="chart-canvas-wrap flex-1 min-h-0">
                         <canvas id="equityChart"></canvas>
                     </div>
                 </div>
@@ -363,8 +382,14 @@
                     <button onclick="window.saveTradingConfig()" class="w-full bg-amber-950/40 hover:bg-amber-900/40 border border-amber-800/40 text-amber-200 text-[10px] mono-font py-2 rounded cursor-pointer">💾 ZAPISZ KONFIGURACJĘ RYZYKA</button>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="bg-black/60 border border-gray-900 rounded-lg p-3 h-[200px]"><span class="mono-font text-[9px] text-gray-500 block mb-2">📊 PnL PER TRADE</span><canvas id="pnlChart"></canvas></div>
-                    <div class="bg-black/60 border border-gray-900 rounded-lg p-3 h-[200px]"><span class="mono-font text-[9px] text-gray-500 block mb-2">🎯 WIN / LOSS</span><canvas id="winLossChart"></canvas></div>
+                    <div class="chart-panel bg-black/60 border border-gray-900 rounded-lg p-3 h-[220px]">
+                        <span class="mono-font text-[9px] text-gray-500 block mb-2 shrink-0">📊 PnL PER TRADE</span>
+                        <div class="chart-canvas-wrap"><canvas id="pnlChart"></canvas></div>
+                    </div>
+                    <div class="chart-panel bg-black/60 border border-gray-900 rounded-lg p-3 h-[220px]">
+                        <span class="mono-font text-[9px] text-gray-500 block mb-2 shrink-0">🎯 WIN / LOSS</span>
+                        <div class="chart-canvas-wrap"><canvas id="winLossChart"></canvas></div>
+                    </div>
                 </div>
                 <div class="bg-black/60 border border-gray-900 rounded-lg p-4">
                     <div class="flex justify-between items-center border-b border-gray-900 pb-2 mb-3">
@@ -442,7 +467,7 @@
                     <span id="miniEquityValue" class="mono-font text-sm text-[#d4af37] font-bold glow-text">— USDC</span>
                     <span id="miniEquityDelta" class="mono-font text-[9px] text-gray-500">Δ —</span>
                 </div>
-                <div class="relative h-[72px] w-full">
+                <div class="chart-canvas-wrap h-[72px] w-full overflow-hidden">
                     <canvas id="miniEquityChart"></canvas>
                 </div>
             </div>
@@ -558,7 +583,7 @@
     <!-- 📄 STOPKA -->
     <footer class="w-full z-20 px-8 py-8 flex flex-col md:flex-row justify-between items-center border-t border-gray-950 gap-4">
         <div class="mono-font text-[9px] text-gray-600 tracking-[0.2em] order-2 md:order-1 text-center md:text-left">
-            JUICYCORE LABS © 2026 | PROJECT ZERO QUANT SWARM
+            JUICYCORE LABS © 2026 | PROJECT ZERO v6.0 QUANT SWARM
         </div>
         <div class="flex space-x-8 mono-font text-[10px] tracking-[0.3em] order-1 md:order-2">
             <a href="https://github.com" target="_blank" class="text-gray-500 hover:text-[#d4af37] transition-all duration-300">GITHUB</a>
@@ -1021,6 +1046,7 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+                    layout: { padding: { top: 6, right: 8, bottom: 4, left: 6 } },
                     animation: { duration: 400 },
                     plugins: {
                         legend: { display: false },
@@ -1433,9 +1459,11 @@
         }
 
         window.initAdminCharts = function() {
+            const chartLayout = { padding: { top: 6, right: 8, bottom: 4, left: 6 } };
             const chartDefaults = {
                 responsive: true,
                 maintainAspectRatio: false,
+                layout: chartLayout,
                 plugins: { legend: { display: false } },
             };
 
@@ -1451,15 +1479,33 @@
                                 data: [],
                                 backgroundColor: [],
                                 borderWidth: 0,
+                                maxBarThickness: 18,
                             }]
                         },
                         options: {
                             ...chartDefaults,
                             scales: {
-                                x: { grid: { color: 'rgba(255,255,255,0.03)' }, ticks: { color: '#666', font: { size: 7 } } },
-                                y: { grid: { color: 'rgba(255,255,255,0.03)' }, ticks: { color: '#666', font: { size: 7 } } }
-                            }
-                        }
+                                x: {
+                                    grid: { display: false },
+                                    ticks: {
+                                        color: '#666',
+                                        font: { size: 7 },
+                                        maxRotation: 0,
+                                        autoSkip: true,
+                                        maxTicksLimit: 10,
+                                    },
+                                },
+                                y: {
+                                    grid: { color: 'rgba(255,255,255,0.03)' },
+                                    ticks: {
+                                        color: '#666',
+                                        font: { size: 7 },
+                                        padding: 4,
+                                        maxTicksLimit: 6,
+                                    },
+                                },
+                            },
+                        },
                     });
                 }
             }
@@ -1475,20 +1521,43 @@
                                 data: [0, 0],
                                 backgroundColor: ['rgba(0,255,102,0.7)', 'rgba(255,51,102,0.7)'],
                                 borderWidth: 0,
+                                hoverOffset: 2,
                             }]
                         },
                         options: {
-                            ...chartDefaults,
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            layout: { padding: { top: 2, right: 6, bottom: 6, left: 6 } },
+                            cutout: '62%',
+                            radius: '88%',
                             plugins: {
-                                legend: { display: true, labels: { color: '#888', font: { size: 9 } } }
-                            }
-                        }
+                                legend: {
+                                    display: true,
+                                    position: 'top',
+                                    align: 'center',
+                                    labels: {
+                                        color: '#888',
+                                        font: { size: 8 },
+                                        boxWidth: 10,
+                                        padding: 8,
+                                    },
+                                },
+                            },
+                        },
                     });
                 }
             }
 
             if (lastAdminMetrics) updateAdminCharts(lastAdminMetrics);
         };
+
+        function resizeVisibleCharts() {
+            requestAnimationFrame(() => {
+                [pnlChartInstance, winLossChartInstance, window.chartInstance, miniEquityChartInstance].forEach(ch => {
+                    if (ch && typeof ch.resize === 'function') ch.resize();
+                });
+            });
+        }
 
         function updateAdminCharts(data) {
             const perf = data.performance_report || {};
@@ -1866,10 +1935,12 @@ function setupRealtimeSubscriptions() {
             if (tabName === 'trading') {
                 tradingView.classList.remove('hidden');
                 tradingBtn.className = "border-b-2 border-[#d4af37] pb-2 px-1 text-gray-100 tracking-widest font-bold transition-all";
+                resizeVisibleCharts();
             } else if (tabName === 'admin' && isAdmin) {
                 if (adminView) adminView.classList.remove('hidden');
                 if (adminBtn) adminBtn.className = "border-b-2 border-red-500 pb-2 px-1 text-red-400 tracking-widest font-bold transition-all flex items-center gap-1.5";
                 window.initAdminCharts();
+                resizeVisibleCharts();
             } else {
                 intelligenceView.classList.remove('hidden');
                 intelligenceBtn.className = "border-b-2 border-[#d4af37] pb-2 px-1 text-gray-100 tracking-widest font-bold transition-all flex items-center gap-1.5";
@@ -2227,12 +2298,30 @@ function setupRealtimeSubscriptions() {
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+                    layout: { padding: { top: 8, right: 10, bottom: 6, left: 8 } },
                     plugins: { legend: { display: false } },
                     scales: {
-                        x: { grid: { color: 'rgba(255, 255, 255, 0.02)' }, ticks: { color: '#888', font: { family: 'JetBrains Mono', size: 8 } } },
-                        y: { grid: { color: 'rgba(255, 255, 255, 0.02)' }, ticks: { color: '#888', font: { family: 'JetBrains Mono', size: 8 } } }
-                    }
-                }
+                        x: {
+                            grid: { color: 'rgba(255, 255, 255, 0.02)' },
+                            ticks: {
+                                color: '#888',
+                                font: { family: 'JetBrains Mono', size: 8 },
+                                maxRotation: 0,
+                                autoSkip: true,
+                                maxTicksLimit: 12,
+                            },
+                        },
+                        y: {
+                            grid: { color: 'rgba(255, 255, 255, 0.02)' },
+                            ticks: {
+                                color: '#888',
+                                font: { family: 'JetBrains Mono', size: 8 },
+                                padding: 4,
+                                maxTicksLimit: 6,
+                            },
+                        },
+                    },
+                },
             });
         }
 
