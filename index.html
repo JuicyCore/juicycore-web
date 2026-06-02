@@ -617,7 +617,7 @@
         const db = getFirestore(app);
 
         // 🔑 PRZENIESIONE DEKLARACJE NA SAMĄ GÓRĘ (Zapobiega błędom wczytywania przed inicjalizacją)
-        const ADMIN_EMAIL = "patryk.beczek.925@gmail.com"; 
+        const ADMIN_EMAIL = "juicycore.official@gmail.com";
         let currentUser = null;
         let isAdmin = false;
         const appId = "juicycore-360b7";
@@ -1270,7 +1270,7 @@
                 const statusText = document.getElementById('llmStatusText');
                 if (statusText) statusText.innerText = "Lokalna Llama 3.1 czeka na Twoje rozkazy.";
                 
-                printAdminLog("Autoryzacja pomyślna. Witaj, Operatorze Patryku!");
+                printAdminLog("Autoryzacja pomyślna. Witaj, Operatorze JuicyCore!");
             } else {
                 isAdmin = false;
                 document.getElementById('loginBtnText').innerText = "ADMIN LOGIN";
