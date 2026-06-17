@@ -290,20 +290,20 @@
             <!-- ZAKŁADKA 2: INTEL & AI HUB (RAPORTY NAUKI I INTEGRACJA DISCORDA) -->
             <div id="view-intelligence" class="hidden space-y-6 flex-grow overflow-y-auto max-h-[50vh] pr-1">
                 
-                <!-- BLOK 1: WIZJA PUBLICZNA (bez progów strategii) -->
-                <div class="bg-gradient-to-r from-red-950/10 to-black/40 border border-red-900/20 rounded-lg p-4 backdrop-blur-md space-y-3">
+
+
+                <!-- BLOK 1: HL PERP - Titanium Beast (dynamiczny) -->
+                <div id="titaniumBeastCard" class="bg-gradient-to-r from-red-950/10 to-black/40 border border-red-900/20 rounded-lg p-4 backdrop-blur-md space-y-3">
                     <div class="flex justify-between items-center border-b border-red-900/20 pb-2">
                         <span class="mono-font text-[10px] text-red-400 font-bold tracking-widest flex items-center gap-1.5">
-                            <i class="fa-solid fa-radiation text-red-500 text-xs"></i> TITANIUM BEAST — WARSTWA SYGNAŁOWA
+                            <i class="fa-solid fa-radiation text-red-500 text-xs"></i> TITANIUM BEAST - HL PERP
                         </span>
-                        <span class="bg-gray-900/50 text-gray-500 border border-gray-800 text-[8px] px-1.5 py-0.5 rounded mono-font">PUBLIC VIEW</span>
+                        <span id="titaniumBeastBadge" class="bg-gray-900/50 text-amber-500/90 border border-amber-900/30 text-[8px] px-1.5 py-0.5 rounded mono-font">HL PULSE</span>
                     </div>
-                    <p class="text-[10px] text-gray-400 font-light leading-relaxed">
-                        Detekcja anomalii i pełna telemetria wskaźników są dostępne wyłącznie dla zalogowanego operatora.
-                        Goście widzą strumień RSI oraz puls rynku — bez parametrów wejść i reguł decyzyjnych.
-                    </p>
+                    <div id="titaniumBeastBody" class="text-[10px] text-gray-400 font-light leading-relaxed space-y-2">
+                        <p>Synchronizacja strumienia Hyperliquid (1h + telemetry)...</p>
+                    </div>
                 </div>
-
                 <!-- BLOK 2: NAUKA — treść IF/THEN tylko dla admina (initInteractiveLearning) -->
                 <div id="learningCardPublic" class="bg-black/60 border border-gray-900 rounded-lg p-4 backdrop-blur-md space-y-3 text-[11px] leading-relaxed">
                     <div class="flex justify-between items-center border-b border-gray-900 pb-2">
@@ -613,7 +613,8 @@
         const AGENTS = [
             { id: "supervisor", name: "juicy_supervisor.py", role: "Orchestration & Hot-Reload Watchdog", managed: true },
             { id: "scout", name: "juicy_social_scout.py", role: "Reddit & RSS Sentiment Scout", managed: true },
-            { id: "godzilla", name: "juicy_godzilla.py", role: "Titanium Market Ingestor (OHLCV)", managed: true },
+            { id: "godzilla", name: "juicy_godzilla.py", role: "Titanium Ingestor (Binance frozen)", managed: true },
+            { id: "godzilla_hl", name: "juicy_godzilla_HL.py", role: "Hyperliquid Perp Ingest", managed: true },
             { id: "analyst", name: "juicy_analyst_brain.py", role: "ML Engine & Discord Bot Suite", managed: true },
             { id: "guardian", name: "juicy_code_guardian.py", role: "AST Structure & Backup Protector", managed: true },
             { id: "trader", name: "juicy_logic_decision.py", role: "Quant Execution Core (Trader Engine)", managed: true },
@@ -623,6 +624,64 @@
             { id: "reporter", name: "juicy_reporter.py", role: "On-demand PnL Report + Discord (nie daemon)", managed: false },
             { id: "sync", name: "firebase_sync.py", role: "Firebase Bridge (UI ↔ Backend)", managed: true }
         ];
+
+
+        function isHlPerpFeed() {
+            const ep = window.__EXECUTION_PROFILE || {};
+            return ep.data_source === 'hl_perp' || ep.godzilla_binance_enabled === false;
+        }
+
+        function getAgentsForDisplay() {
+            if (!isHlPerpFeed()) return AGENTS;
+            return AGENTS.filter(a => a.id !== 'godzilla');
+        }
+
+        function renderTitaniumBeast(hl, profile) {
+            const badge = document.getElementById('titaniumBeastBadge');
+            const body = document.getElementById('titaniumBeastBody');
+            if (!body) return;
+            const source = (profile && profile.data_source) || (isHlPerpFeed() ? 'hl_perp' : 'binance_spot');
+            const admin = isAdmin === true;
+            if (badge) {
+                badge.innerText = admin ? 'OPERATOR HL' : 'HL PULSE';
+                badge.className = admin
+                    ? 'bg-emerald-950/40 text-emerald-400 border border-emerald-900/40 text-[8px] px-1.5 py-0.5 rounded mono-font'
+                    : 'bg-gray-900/50 text-amber-500/90 border border-amber-900/30 text-[8px] px-1.5 py-0.5 rounded mono-font';
+            }
+            if (!hl || typeof hl !== 'object') {
+                body.innerHTML = '<p>Strumien HL - oczekiwanie na telemetrie...</p>';
+                return;
+            }
+            const lag = hl.ingest_lag_sec != null ? hl.ingest_lag_sec : '?';
+            const rows1h = hl.csv_1h_rows ?? 0;
+            const rowsTel = hl.csv_telemetry_rows ?? 0;
+            const offline = hl.network_offline === true;
+            const fng = hl.fng || {};
+            const fgVal = fng.val != null ? fng.val : '?';
+            const fgClass = fng.class || '-';
+            const basis = hl.basis_bps_mean != null ? Number(hl.basis_bps_mean).toFixed(1) : '-';
+            const funding = hl.funding_rate_mean != null ? (Number(hl.funding_rate_mean) * 100).toFixed(4) + '%' : '-';
+            const statusDot = offline ? 'OFFLINE' : (Number(lag) > 120 ? 'LAG' : 'LIVE');
+            const statusCls = offline ? 'text-rose-400' : (Number(lag) > 120 ? 'text-amber-400' : 'text-emerald-400');
+            let html = '<div class="flex flex-wrap gap-3 mono-font text-[9px]"><span class="' + statusCls + ' font-bold">' + statusDot + '</span><span>feed: ' + source + '</span><span>1h: ' + rows1h + ' rows</span><span>tel: ' + rowsTel + '</span><span>lag: ' + lag + 's</span></div>';
+            html += '<div class="text-[9px] text-gray-500">F&amp;G: ' + fgVal + ' (' + fgClass + ')</div>';
+            if (admin) {
+                html += '<div class="grid grid-cols-2 gap-2 pt-1 border-t border-red-900/20 mono-font text-[9px] text-gray-400"><span>Basis bps: ' + basis + '</span><span>Funding: ' + funding + '</span></div>';
+            } else {
+                html += '<p class="text-[9px] text-gray-500">Gosc: puls HL. Reguly IF/THEN po logowaniu Admin.</p>';
+            }
+            body.innerHTML = html;
+        }
+
+        function startVortexPriceFeed() {
+            if (isHlPerpFeed()) {
+                window.__VORTEX_WS_ACTIVE = false;
+                if (window.__VORTEX_WS) { try { window.__VORTEX_WS.close(); } catch (_) {} window.__VORTEX_WS = null; }
+                console.info('[Vortex] HL perp - ceny z CSV, bez Binance WS');
+                return;
+            }
+            startVortexPriceFeed();
+        }
 
         function getVortexPairs() {
             const area = document.getElementById('vortexListArea');
@@ -692,6 +751,12 @@
                 const cls = vortexRsiColorClass(rawRsi);
                 rsiEl.className = `${cls} bg-black/40 px-1.5 py-0.5 rounded border border-gray-900 text-[9px] vortex-rsi-badge`;
                 rsiEl.innerText = `RSI9: ${parseFloat(rawRsi).toFixed(1)}`;
+                const csvPrice = coinData && coinData.csv_price != null ? parseFloat(coinData.csv_price) : 0;
+                if (Number.isFinite(csvPrice) && csvPrice > 0) {
+                    updateVortexLivePrice(vortexPairToStreamSymbol(symbolPair), csvPrice);
+                    const badge = row.querySelector('.vortex-live-badge');
+                    if (badge) { badge.innerText = 'HL'; badge.className = 'text-[7px] text-cyan-500/80 vortex-live-badge'; }
+                }
             });
         }
 
@@ -1240,7 +1305,7 @@
             const byId = {};
             telemetry.forEach(t => { byId[t.id] = t; });
 
-            AGENTS.forEach(a => {
+            getAgentsForDisplay().forEach(a => {
                 const live = byId[a.id] || {};
                 const status = live.status || 'OFFLINE';
                 const pid = live.pid != null ? live.pid : '—';
@@ -1376,6 +1441,7 @@
                 
                 printAdminLog("Autoryzacja pomyślna. Witaj, Operatorze JuicyCore!");
                 subscribeAdminFirestoreStreams();
+                if (typeof initInteractiveLearning === "function") initInteractiveLearning();
             } else {
                 isAdmin = false;
                 unsubscribeAdminFirestoreStreams();
@@ -1842,6 +1908,9 @@ function setupRealtimeSubscriptions() {
                 if (pingEl) pingEl.innerText = Math.round(data.binance_ping_ms) + "ms";
             }
         });
+
+        if (data.execution_profile) window.__EXECUTION_PROFILE = data.execution_profile;
+        safeUiRender('titanium', () => { renderTitaniumBeast(data.hl_summary, data.execution_profile); });
 
         safeUiRender('vortex', () => {
             if (data.vortex_rsi && Object.keys(data.vortex_rsi).length > 0) {
