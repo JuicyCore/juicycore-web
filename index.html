@@ -304,6 +304,17 @@
                         <p>Synchronizacja strumienia Hyperliquid (1h + telemetry)...</p>
                     </div>
                 </div>
+                <!-- BLOK 1b: E5 operator strip (admin only) -->
+                <div id="operatorE5Strip" class="hidden bg-black/60 border border-cyan-900/40 rounded-lg p-3 text-[9px] mono-font space-y-2">
+                    <div class="flex justify-between items-center border-b border-cyan-900/30 pb-1">
+                        <span class="text-cyan-300 tracking-widest text-[9px]">📡 E5 OPERATOR SNAPSHOT</span>
+                        <span id="operatorCbBadge" class="text-[8px] px-1.5 py-0.5 rounded border border-gray-800 text-gray-500">CB …</span>
+                    </div>
+                    <div id="operatorE5Body" class="grid grid-cols-2 md:grid-cols-4 gap-2 text-gray-400">
+                        <span class="text-gray-600 col-span-2">Zaloguj jako Admin — live z Firestore.</span>
+                    </div>
+                </div>
+
                 <!-- BLOK 2: NAUKA — treść IF/THEN tylko dla admina (initInteractiveLearning) -->
                 <div id="learningCardPublic" class="bg-black/60 border border-gray-900 rounded-lg p-4 backdrop-blur-md space-y-3 text-[11px] leading-relaxed">
                     <div class="flex justify-between items-center border-b border-gray-900 pb-2">
@@ -317,7 +328,7 @@
                         <div>• Korelacje pivotów, ATR i sentymentu — cykle offline (~27 min).</div>
                         <div>• Reguły IF/THEN: <strong class="text-gray-400">panel operatora po logowaniu Admin</strong>.</div>
                     </div>
-                    <div class="bg-black/40 border border-gray-950 p-2 rounded text-[8px] mono-font text-gray-600">
+                    <div id="publicLearningTeaser" class="bg-black/40 border border-gray-950 p-2 rounded text-[8px] mono-font text-gray-600">
                         🔒 Brak synchronizacji reguł do widoku publicznego.
                     </div>
                 </div>
@@ -1031,6 +1042,53 @@
             }).join('');
         }
 
+        function renderPublicLearningTeaser(teaser) {
+            const el = document.getElementById('publicLearningTeaser');
+            if (!el || isAdmin) return;
+            if (!teaser || !teaser.rules_count) {
+                el.innerHTML = '🔒 Reguły IF/THEN tylko dla operatora · cykle nauki ~27 min offline.';
+                return;
+            }
+            const when = teaser.last_updated ? ` · ostatni cykl ${teaser.last_updated}` : '';
+            el.innerHTML = `📊 Laboratorium: <strong class="text-gray-400">${teaser.rules_count}</strong> reguł canonical w pamięci${when} · szczegóły po logowaniu Admin.`;
+        }
+
+        function renderOperatorSnapshot(snap) {
+            const strip = document.getElementById('operatorE5Strip');
+            const body = document.getElementById('operatorE5Body');
+            const badge = document.getElementById('operatorCbBadge');
+            if (!strip || !body || !isAdmin) {
+                if (strip) strip.classList.add('hidden');
+                return;
+            }
+            if (!snap || !snap.experiment_id) {
+                strip.classList.remove('hidden');
+                body.innerHTML = '<span class="text-gray-600 col-span-2">Oczekiwanie na operator_snapshot z firebase_sync…</span>';
+                return;
+            }
+            strip.classList.remove('hidden');
+            const cbOk = snap.circuit_breaker_ok !== false && !snap.emergency_halt;
+            if (badge) {
+                badge.innerText = cbOk ? '🟢 EXEC OK' : `⏸ ${snap.circuit_breaker_reason || 'HALT'}`;
+                badge.className = cbOk
+                    ? 'text-[8px] px-1.5 py-0.5 rounded border border-emerald-900/50 text-emerald-400'
+                    : 'text-[8px] px-1.5 py-0.5 rounded border border-amber-900/50 text-amber-400';
+            }
+            const cells = [
+                ['Exp', snap.experiment_id || '—'],
+                ['Equity', snap.equity_usdc != null ? `${snap.equity_usdc} USDC` : '—'],
+                ['F0', `n=${snap.f0_n ?? 0} WR=${snap.f0_wr ?? 0}% PF=${snap.f0_pf ?? 0}`],
+                ['Gates', `EXEC ${snap.gates_executed ?? 0} · HB ${snap.gates_hard_block ?? 0} · MG ${snap.gates_memory ?? 0}`],
+                ['Otwarte', `${snap.open_count ?? 0} · F&G ${snap.fear_greed ?? '?'}`],
+                ['JSONL', `${snap.trader_jsonl_events ?? 0} events`],
+                ['Reguły', `${snap.canonical_rules ?? 0} frozen`],
+                ['CB', snap.circuit_breaker_reason || '—'],
+            ];
+            body.innerHTML = cells.map(([k, v]) =>
+                `<div class="bg-black/40 border border-gray-950 p-2 rounded"><span class="text-gray-600 block text-[7px]">${k}</span><span class="text-gray-200 font-bold text-[8px] break-all">${v}</span></div>`
+            ).join('');
+        }
+
         function renderLearningSnapshot(snapshot) {
             if (!snapshot) return;
             window.__learningSnapshot = snapshot;
@@ -1236,6 +1294,9 @@
             safeUiRender('learning', () => {
                 if (data.learning_snapshot) renderLearningSnapshot(data.learning_snapshot);
             });
+            safeUiRender('operator', () => {
+                if (data.operator_snapshot) renderOperatorSnapshot(data.operator_snapshot);
+            });
             safeUiRender('adminTelemetry', () => {
                 if (data.cpu_load !== undefined) {
                     const cpuEl = document.getElementById('adminCpu');
@@ -1315,12 +1376,12 @@
                     : '<span class="text-[7px] text-gray-600 border border-gray-900 px-1 rounded">SA</span>';
 
                 const card = document.createElement('div');
-                card.className = "bg-black/40 border border-gray-950 rounded-md p-3 flex justify-between items-center gold-bg-hover transition-all duration-300";
+                card.className = "bg-black/40 border border-gray-950 rounded-md p-3 flex flex-col gap-2 sm:flex-row sm:justify-between sm:items-center gold-bg-hover transition-all duration-300 overflow-visible";
 
                 const adminButtonsHTML = isAdmin
-                    ? `<div class="flex items-center gap-1">
-                        <button onclick="window.sendAgentCommand('${a.name}', 'STOP')" class="mono-font text-[8px] font-bold px-2 py-1 bg-red-950/40 hover:bg-red-900/40 border border-red-900/40 rounded text-red-400/80 hover:text-red-300 transition-all duration-300 uppercase cursor-pointer">STOP</button>
-                        <button onclick="window.sendAgentCommand('${a.name}', 'RESTART')" class="mono-font text-[8px] font-bold px-2.5 py-1 bg-gray-950 hover:bg-[#d4af37]/20 border border-gray-900 hover:border-[#d4af37]/40 rounded text-gray-400 hover:text-[#d4af37] transition-all duration-300 uppercase cursor-pointer">RESTART</button>
+                    ? `<div class="flex items-center gap-1 flex-shrink-0 min-w-[9rem] justify-end">
+                        <button onclick="window.sendAgentCommand('${a.name}', 'STOP')" title="STOP ${a.name}" class="mono-font text-[8px] font-bold px-2 py-1 bg-red-950/40 hover:bg-red-900/40 border border-red-900/40 rounded text-red-400/80 hover:text-red-300 transition-all duration-300 uppercase cursor-pointer flex-shrink-0 whitespace-nowrap">STOP</button>
+                        <button onclick="window.sendAgentCommand('${a.name}', 'RESTART')" title="RESTART ${a.name}" class="mono-font text-[8px] font-bold px-2.5 py-1 bg-gray-950 hover:bg-[#d4af37]/20 border border-gray-900 hover:border-[#d4af37]/40 rounded text-gray-400 hover:text-[#d4af37] transition-all duration-300 uppercase cursor-pointer flex-shrink-0 whitespace-nowrap min-w-[4.75rem]">RESTART</button>
                        </div>`
                     : '';
 
@@ -1334,8 +1395,8 @@
                         <p class="text-[9px] text-gray-500 tracking-wide">${a.role}</p>
                         <p class="text-[8px] text-gray-600 mono-font">${status}</p>
                     </div>
-                    <div class="flex items-center space-x-4">
-                        <div class="text-right mono-font text-[9px] text-gray-400 space-y-0.5">
+                    <div class="flex items-center justify-between sm:justify-end gap-2 w-full sm:w-auto flex-shrink-0">
+                        <div class="text-left sm:text-right mono-font text-[9px] text-gray-400 space-y-0.5 flex-shrink-0">
                             <div class="text-[#d4af37]">PID: ${pid}</div>
                             <div>RAM: ${parseFloat(ram).toFixed(1)} MB</div>
                         </div>
@@ -1441,7 +1502,7 @@
                 
                 printAdminLog("Autoryzacja pomyślna. Witaj, Operatorze JuicyCore!");
                 subscribeAdminFirestoreStreams();
-                if (typeof initInteractiveLearning === "function") initInteractiveLearning();
+                if (typeof window.initInteractiveLearning === "function") window.initInteractiveLearning();
             } else {
                 isAdmin = false;
                 unsubscribeAdminFirestoreStreams();
@@ -1942,6 +2003,10 @@ function setupRealtimeSubscriptions() {
             if (!isAdmin) renderPublicPortfolioTeasers(data);
         });
 
+        safeUiRender('learningTeaser', () => {
+            if (!isAdmin && data.learning_teaser) renderPublicLearningTeaser(data.learning_teaser);
+        });
+
         safeUiRender('firestoreStatus', () => {
             renderFirestoreSyncStatus(data);
         });
@@ -2083,7 +2148,7 @@ function setupRealtimeSubscriptions() {
             } else {
                 intelligenceView.classList.remove('hidden');
                 intelligenceBtn.className = "border-b-2 border-[#d4af37] pb-2 px-1 text-gray-100 tracking-widest font-bold transition-all flex items-center gap-1.5";
-                if (isAdmin) initInteractiveLearning();
+                if (isAdmin && typeof window.initInteractiveLearning === "function") window.initInteractiveLearning();
             }
         }
         // --- INICJALIZACJA ELEMENTÓW GLOBALNYCH ---
@@ -2124,7 +2189,7 @@ function setupRealtimeSubscriptions() {
     <!-- ========================================================= -->
     <script>
         // Automatyczny system wstrzykiwania przycisków i dynamicznego bindowania treści
-        function initInteractiveLearning() {
+        window.initInteractiveLearning = function initInteractiveLearning() {
             if (!isAdmin) return;
             const learningCard = document.getElementById('learningCardPublic');
             if (!learningCard) return;
@@ -2136,6 +2201,7 @@ function setupRealtimeSubscriptions() {
                     <span class="mono-font text-[10px] text-[#d4af37] tracking-widest flex items-center gap-1.5">
                         <i class="fa-solid fa-graduation-cap text-xs animate-pulse"></i> CYKLICZNA NAUKA PROJECT ZERO
                     </span>
+                    <span class="text-[8px] mono-font text-emerald-500/90 border border-emerald-900/40 px-1.5 py-0.5 rounded">OPERATOR | live_state_admin</span>
                     <div class="flex gap-1.5 bg-black/80 p-0.5 rounded border border-gray-900 text-[8px] mono-font">
                         <button onclick="window.switchLearningPhase(1)" id="phase1-btn" class="px-2 py-0.5 rounded bg-[#d4af37]/20 text-[#d4af37] font-bold transition-all duration-300">FAZA 1/2</button>
                         <button onclick="window.switchLearningPhase(2)" id="phase2-btn" class="px-2 py-0.5 rounded text-gray-500 hover:text-gray-300 transition-all duration-300">FAZA 2/2</button>
@@ -2158,7 +2224,7 @@ function setupRealtimeSubscriptions() {
                 // Start z domyślną Fazą 1
                 window.switchLearningPhase(1);
             }
-        }
+        };
 
         window.__learningPhase = 1;
 
@@ -2234,7 +2300,8 @@ function setupRealtimeSubscriptions() {
                 container.style.opacity = '1';
                 container.style.transform = 'translateY(0)';
             }, 180);
-        }
+        };
+        // end initInteractiveLearning
 
         // Animowana rotacja tekstowa na powitaniu
         const SUBTEXTS = [
