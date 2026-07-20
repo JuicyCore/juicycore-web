@@ -1149,9 +1149,12 @@
             window.__learningSnapshot = snapshot;
             const stampEl = document.getElementById('learningLastUpdated');
             if (stampEl) {
-                stampEl.innerText = snapshot.last_updated
-                    ? `Aktualizacja: ${snapshot.last_updated}`
-                    : 'Brak lekcji w pamięci';
+                const src = String(snapshot.source || '');
+                if (snapshot.last_updated) {
+                    stampEl.innerText = (src === 'hl' ? 'HL · ' : '') + 'Aktualizacja: ' + snapshot.last_updated;
+                } else {
+                    stampEl.innerText = src === 'hl' ? 'HL epoch — brak znacznika czasu' : 'Brak lekcji w pamięci';
+                }
             }
             if (typeof window.switchLearningPhase === 'function') {
                 window.switchLearningPhase(window.__learningPhase || 1);
@@ -2303,6 +2306,14 @@ function setupRealtimeSubscriptions() {
             const anomalies = snap.anomalies || [];
             const insights = snap.insights || [];
             const hasLive = rules.length > 0 || anomalies.length > 0 || insights.length > 0;
+            const isHl = String(snap.source || '') === 'hl';
+            const memFile = isHl ? 'juicy_memory_hl.txt' : 'juicy_memory.txt';
+            const rulesLabel = isHl
+                ? ('📌 REGUŁY F2 (z ' + memFile + '):')
+                : ('📌 STAŁE REGUŁY (z ' + memFile + '):');
+            const sourceFooter = isHl
+                ? ('Źródło: <code>' + memFile + '</code> · HL epoch · sync admin (live_state_admin)')
+                : ('Źródło: <code>' + memFile + '</code> · sync admin (live_state_admin)');
 
             const listHtml = (items, emptyMsg) => items.length
                 ? items.map(i => `<div>• ${i.replace(/</g, '&lt;')}</div>`).join('')
@@ -2334,7 +2345,7 @@ function setupRealtimeSubscriptions() {
                     container.innerHTML = `
                         <p class="serif-font italic text-gray-300 text-sm">"${hasLive ? (snap.title || 'Lekcja z Analyst Brain') : 'Oczekiwanie na cykl nauki Analyst (co ~27 min)…'}"</p>
                         <div class="bg-amber-500/5 border border-amber-500/10 p-3 rounded mt-2 text-[10px] mono-font space-y-1">
-                            <span class="text-[#d4af37] font-bold block mb-1">📌 STAŁE REGUŁY (z juicy_memory.txt):</span>
+                            <span class="text-[#d4af37] font-bold block mb-1">${rulesLabel}</span>
                             ${listHtml(rules, 'Brak reguł IF/THEN — pierwszy cykl po resecie epoki.')}
                         </div>
                         <div class="space-y-2 text-gray-400 font-light text-[10px] mt-2">
@@ -2352,7 +2363,7 @@ function setupRealtimeSubscriptions() {
                             ${listHtml(insights, 'Brak wniosków — Analyst uzupełni po kolejnym cyklu.')}
                         </div>
                         <div class="bg-black/40 border border-gray-950 p-2 rounded mt-2 text-[8px] mono-font text-gray-500">
-                            Źródło: <code>juicy_memory.txt</code> · sync admin (live_state_admin)
+                            ${sourceFooter}
                         </div>
                     `;
                 }
